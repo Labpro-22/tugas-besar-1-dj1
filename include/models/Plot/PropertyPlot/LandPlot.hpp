@@ -12,15 +12,19 @@ private:
     int level;
 
 public:
+    LandPlot();
+    ~LandPlot() = default;
+
+    int getBuyPrice();
+    int getUpgHousePrice();
+    int getUpgHotelPrice();
+    int getRentPrice(int level) const;
+    int getLevel();
+
     void build();
-    
     void sellBuildings();
-
     bool canBuild() const;
-
     int calculateRentPrice() const override;
-
     std::string getType() const override;
-
     Color getColor() const override;
 };

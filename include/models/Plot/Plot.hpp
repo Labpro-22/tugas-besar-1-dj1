@@ -11,7 +11,14 @@ protected:
     std::string code;
 
 public:
+    Plot(std::string name, std::string code);
+    virtual ~Plot() = default;
+
+    std::string getName() const;
+    std::string getCode() const;
+
     virtual std::string getType() const = 0;
     virtual Color getColor() const = 0;
-    void startEvent();
+    virtual void startEvent() = 0;
+    //TODO updateState method??
 };

@@ -5,11 +5,14 @@
 class UtilityPlot: public PropertyPlot{
 private:
     std::map<int, int> rentPrice;
-    
+
 public:
+    UtilityPlot();
+    ~UtilityPlot() = default;
+    
+    std::map<int, int> getRentPrice() const;
+
     int calculateRentPrice() const override;
-
     std::string getType() const override;
-
     Color getColor() const override;
 };
