@@ -1,3 +1,4 @@
+#pragma once
 #include "models/Board/CardDeck.hpp"
 
 class SkillCard {

@@ -1,3 +1,4 @@
+#pragma once
 #include "models/Card/SkillCard/SkillCard.hpp"
 
 class ShieldCard : public SkillCard {

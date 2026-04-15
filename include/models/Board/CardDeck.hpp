@@ -1,3 +1,4 @@
+#pragma once
 #include "iostream"
 #include "deque"
 #include "vector"
@@ -22,7 +23,7 @@ class CardDeck {
 
         int drawPileSize();
         int discardPileSize();
-        
+
         vector<T> getAllCards();
 };
 
