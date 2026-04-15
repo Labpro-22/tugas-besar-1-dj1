@@ -1,21 +1,22 @@
 #include "models/Plot/PropertyPlot/StationPlot.hpp"
 
-// StationPlot(){
-    
-// }
+StationPlot::StationPlot(std::string name, std::string code, int mortgageValue,
+                        std::map<int, int> rentPriceTable, PropertyStatus propertyStatus = PropertyStatus::BANK):
+    PropertyPlot(name, code, mortgageValue, propertyStatus),
+    rentPriceTable(rentPriceTable){}
 
-std::map<int, int> StationPlot::getRentPrice() const {
-    return rentPrice;
+std::map<int, int> StationPlot::getRentPriceTable() const {
+    return rentPriceTable;
 }
 
-void StationPlot::setRentPrice(std::map<int, int> rentPriceTable){
-    rentPrice = rentPriceTable;
+int StationPlot::getRentPrice(int level) const {
+    return rentPriceTable.at(level);
 }
+
 
 int StationPlot::calculateRentPrice() const {
     int ownedStation = 0; //TODO: dummy
-    auto it = rentPrice.find(ownedStation);
-    return rentPrice.at(ownedStation);
+    return rentPriceTable.at(ownedStation)*festivalMultiplier;
 }
 
 std::string StationPlot::getType() const {

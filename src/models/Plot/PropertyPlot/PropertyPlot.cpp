@@ -17,5 +17,13 @@
         return propertyStatus == PropertyStatus::MORTGAGED;
     }
     void PropertyPlot::applyFestival(){
+        if (festivalMultiplier < 8){
+            festivalMultiplier *= 2;
+        }
         festivalDuration = 3;
+    }
+
+    void PropertyPlot::endFestival(){
+        festivalDuration = 0;
+        festivalMultiplier = 1;
     }

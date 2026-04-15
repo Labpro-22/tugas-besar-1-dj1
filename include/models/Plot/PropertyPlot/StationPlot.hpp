@@ -4,14 +4,15 @@
 
 class StationPlot: public PropertyPlot{
 private:
-    std::map<int, int> rentPrice;
+    std::map<int, int> rentPriceTable;
 
 public:
-    StationPlot();
+    StationPlot(std::string name, std::string code, int mortgageValue,
+            std::map<int, int> rentPriceTable, PropertyStatus propertyStatus = PropertyStatus::BANK);
     ~StationPlot() = default;
 
-    std::map<int, int> getRentPrice() const;
-    void setRentPrice(std::map<int, int> rentPriceTable);
+    std::map<int, int> getRentPriceTable() const override;
+    int getRentPrice(int level) const override;
 
     int calculateRentPrice() const override;
     std::string getType() const override;

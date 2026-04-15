@@ -1,22 +1,22 @@
 #include "models/Plot/PropertyPlot/UtilityPlot.hpp"
 
-// UtilityPlot(){
-    
-// }
+UtilityPlot::UtilityPlot(std::string name, std::string code, int mortgageValue,
+                        std::map<int, int> rentPriceTable, PropertyStatus propertyStatus = PropertyStatus::BANK):
+    PropertyPlot(name, code, mortgageValue, propertyStatus),
+    rentPriceTable(rentPriceTable){}
 
-std::map<int, int> UtilityPlot::getRentPrice() const {
-    return rentPrice;
+std::map<int, int> UtilityPlot::getRentPriceTable() const {
+    return rentPriceTable;
 }
 
-void UtilityPlot::setRentPrice(std::map<int, int> rentPriceTable){
-    rentPrice = rentPriceTable;
+int UtilityPlot::getRentPrice(int level) const {
+    return rentPriceTable.at(level);
 }
 
 int UtilityPlot::calculateRentPrice() const {
     int ownedUtility = 0; //TODO: dummy
     int diceTotal = 6; //TODO: dummy
-    auto it = rentPrice.find(ownedUtility);
-    return rentPrice.at(ownedUtility)*diceTotal;
+    return rentPriceTable.at(ownedUtility)*diceTotal*festivalMultiplier;
 }
 
 std::string UtilityPlot::getType() const {

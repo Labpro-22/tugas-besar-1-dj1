@@ -10,6 +10,7 @@ protected:
     PropertyStatus propertyStatus;
     // Player* ownedBy;
     int festivalDuration;
+    int festivalMultiplier;
 
     bool isFestival() const;
 
@@ -19,8 +20,13 @@ public:
 
     int getMortgageValue() const;
     PropertyStatus getPropertyStatus() const;
+    int getFestivalDuration() const;
+    int getFestivalMultiplier() const;
+    virtual std::map<int, int> getRentPriceTable() const = 0;
+    virtual int getRentPrice(int level) const = 0;
 
     bool isMortgaged() const;
     void applyFestival();
+    void endFestival();
     virtual int calculateRentPrice() const = 0;
 };

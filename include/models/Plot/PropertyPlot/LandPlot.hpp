@@ -8,18 +8,23 @@ private:
     int buyPrice;
     int upgHousePrice;
     int upgHotelPrice;
-    std::vector<int> rentPricePerLevel;
+    std::map<int, int> rentPriceTable;
     int level;
 
 public:
-    LandPlot();
+    LandPlot(std::string name, std::string code, int mortgageValue,
+            Color color, int buyPrice, int upgHousePrice, int upgHotelPrice,
+            std::map<int, int> rentPriceTable, PropertyStatus propertyStatus = PropertyStatus::BANK);
+
     ~LandPlot() = default;
 
     int getBuyPrice() const;
     int getUpgHousePrice() const;
     int getUpgHotelPrice() const;
-    int getRentPrice(int level) const;
+    std::map<int, int> getRentPriceTable() const override;
+    int getRentPrice(int level) const override;
     int getLevel() const;
+    int setLandPlot(Color color, int buyPrice, int upgHousePrice, int upgHotelPrice, std::map<int, int> rentPriceTable);
 
     void build();
     void sellBuildings();
