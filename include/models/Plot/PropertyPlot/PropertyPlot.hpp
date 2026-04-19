@@ -6,6 +6,7 @@
 
 class PropertyPlot: public Plot{
 protected:
+    Color color;
     int mortgageValue;
     PropertyStatus propertyStatus;
     // Player* ownedBy;
@@ -15,7 +16,7 @@ protected:
     bool isFestival() const;
 
 public:
-    PropertyPlot(std::string name, std::string code, int mortgageValue, PropertyStatus propertyStatus);
+    PropertyPlot(std::string name, std::string code, Color color, int mortgageValue, PropertyStatus propertyStatus);
     virtual ~PropertyPlot() = default;
 
     int getMortgageValue() const;
@@ -24,6 +25,7 @@ public:
     int getFestivalMultiplier() const;
     virtual std::map<int, int> getRentPriceTable() const = 0;
     virtual int getRentPrice(int level) const = 0;
+    Color getColor() const override;
 
     bool isMortgaged() const;
     void applyFestival();

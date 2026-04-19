@@ -52,6 +52,42 @@ std::tuple<int, int, int> ConfigLoader::loadTuple3(std::string path){
 }
 
 
+Color ConfigLoader::colorTypeToEnum(std::string color){
+    if (color.compare("DEFAULT")){
+        return Color::DEFAULT;
+    }
+    else if (color.compare("COKLAT")){
+        return Color::BROWN;
+    }
+    else if (color.compare("BIRU_MUDA")){
+        return Color::LIGHTBLUE;
+    }
+    else if (color.compare("MERAH_MUDA")){
+        return Color::PINK;
+    }
+    else if (color.compare("ABU_ABU")){
+        return Color::GRAY;
+    }
+    else if (color.compare("ORANGE")){
+        return Color::ORANGE;
+    }
+    else if (color.compare("MERAH")){
+        return Color::RED;
+    }
+    else if (color.compare("KUNING")){
+        return Color::YELLOW;
+    }
+    else if (color.compare("HIJAU")){
+        return Color::GREEN;
+    }
+    else if (color.compare("BIRU_TUA")){
+        return Color::DARKBLUE;
+    }
+    else{
+        // throw UnknownColorException(color);
+    }
+}
+
 std::vector<std::pair<int, Plot*>> ConfigLoader::loadProperty(std::string path){
     std::ifstream file = ConfigLoader::open(path);
     std::vector<std::pair<int, Plot*>> tiles;
@@ -64,42 +100,14 @@ std::vector<std::pair<int, Plot*>> ConfigLoader::loadProperty(std::string path){
             //Baca tipe
             file >> id >> code >> name >> type >> color;
 
+            
+            //Ubah color (string) menjadi enum Color //TODO: color disimpan di property, bukan di land
+            Color colorEnum = ConfigLoader::colorTypeToEnum(color);
+
             //Buat plot sesuai tipenya
             Plot* plot;
     
             if (type.compare("STREET")){
-
-                //Ubah color (string) menjadi enum Color //TODO: color disimpan di property, bukan di land
-                Color colorEnum;
-                if (color.compare("COKLAT")){
-                    colorEnum = Color::BROWN;
-                }
-                else if (color.compare("BIRU_MUDA")){
-                    colorEnum = Color::LIGHTBLUE;
-                }
-                else if (color.compare("MERAH_MUDA")){
-                    colorEnum = Color::PINK;
-                }
-                else if (color.compare("ORANGE")){
-                    colorEnum = Color::ORANGE;
-                }
-                else if (color.compare("MERAH")){
-                    colorEnum = Color::RED;
-                }
-                else if (color.compare("KUNING")){
-                    colorEnum = Color::YELLOW;
-                }
-                else if (color.compare("HIJAU")){
-                    colorEnum = Color::GREEN;
-                }
-                else if (color.compare("BIRU_TUA")){
-                    colorEnum = Color::DARKBLUE;
-                }
-                else{
-                    // throw UnknownColorException(color);
-                }
-
-
                 //Baca data lainnya
                 int upgHousePrice, upgHotelPrice;
                 file >> buyPrice >> mortgageValue >> upgHousePrice >> upgHotelPrice;
@@ -112,15 +120,15 @@ std::vector<std::pair<int, Plot*>> ConfigLoader::loadProperty(std::string path){
                     rentPriceTable[i] = value;
                 }       
 
-                plot = new LandPlot(name, code, mortgageValue, colorEnum, buyPrice, 
+                plot = new LandPlot(name, code, colorEnum, mortgageValue, buyPrice, 
                                     upgHousePrice, upgHotelPrice, rentPriceTable);
 
             }
             else if (type.compare("RAILROAD")){
-                plot = new StationPlot(name, code, mortgageValue);
+                plot = new StationPlot(name, code, colorEnum, mortgageValue);
             }
             else if (type.compare("UTILITY")){
-                plot = new UtilityPlot(name, code, mortgageValue);
+                plot = new UtilityPlot(name, code, colorEnum, mortgageValue);
             }
             else{
                 // throw UnknownTypeException(type);

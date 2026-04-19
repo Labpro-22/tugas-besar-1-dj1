@@ -20,6 +20,8 @@ private:
     
     static std::tuple<int, int, int> loadTuple3(std::string path);
 
+    static Color colorTypeToEnum(std::string color);
+
 public:
     //TODO: pake unique_ptr biar lebih aman
     static std::vector<std::pair<int, Plot*>> loadProperty(std::string path);
