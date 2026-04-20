@@ -4,7 +4,7 @@ Dice::Dice() : dice1(0), dice2(0), isManual(false) {}
 
 Dice::~Dice() {}
 
-int Dice::roll() {
+std::pair<int, int> Dice::roll() {
     if (!isManual) {
         random_device random;
         mt19937 gen(random());
@@ -14,7 +14,7 @@ int Dice::roll() {
         dice2 = distribution(gen);
     }
     isManual = false;
-    return getTotal();
+    return {dice1, dice2};
 }
 
 void Dice::setDiceManual(int d1, int d2) {

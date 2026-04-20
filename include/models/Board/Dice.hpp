@@ -11,7 +11,7 @@ public:
     Dice();
     ~Dice();
 
-    int roll();
+    std::pair<int, int> roll();
     void setDiceManual(int d1, int d2);
     void resetManual();
     bool isDouble() const;

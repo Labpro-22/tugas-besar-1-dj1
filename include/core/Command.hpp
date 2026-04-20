@@ -22,11 +22,11 @@ public:
 
 class SetDiceCommand : public Command {
 private:
-    int die1;
-    int die2;
+    int dice1;
+    int dice2;
 
 public:
-    SetDiceCommand(int die1, int die2);
+    SetDiceCommand(int dice1, int dice2);
     bool execute(GameState& state, EffectResolver& effectResolver, TurnManager& turnManager) const override;
 };
 

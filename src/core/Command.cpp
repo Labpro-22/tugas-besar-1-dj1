@@ -27,11 +27,11 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
     return true;
 }
 
-SetDiceCommand::SetDiceCommand(int die1, int die2) : die1(die1), die2(die2) {}
+SetDiceCommand::SetDiceCommand(int dice1, int dice2) : dice1(dice1), dice2(dice2) {}
 
 bool SetDiceCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
-    state.getDice().setManual(die1, die2);
-    state.addLog("Dadu manual diset ke " + std::to_string(die1) + " dan " + std::to_string(die2) + ".");
+    state.getDice().setDiceManual(dice1, dice2);
+    state.addLog("Dadu manual diset ke " + std::to_string(dice1) + " dan " + std::to_string(dice2) + ".");
     return true;
 }
 
