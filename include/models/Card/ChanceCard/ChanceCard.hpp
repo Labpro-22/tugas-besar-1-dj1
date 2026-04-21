@@ -1,7 +1,7 @@
 #pragma once
 #include "models/Board/CardDeck.hpp"
 
-class SkillCard {
+class ChanceCard {
     public:
         virtual void activate() = 0;
         virtual string getName() = 0;
