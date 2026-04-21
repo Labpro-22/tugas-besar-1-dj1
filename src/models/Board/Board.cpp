@@ -9,7 +9,9 @@ Board::Board()
     tiles.reserve(DEFAULT_BOARD_SIZE);
 }
  
-Board::~Board() {}
+Board::~Board() {
+
+}
  
 bool Board::addPlot(unique_ptr<Plot> plot) {
     if (!plot) return false;
@@ -52,7 +54,7 @@ int Board::findPlotIndex(const string& code) const {
     return -1;
 }
 
-CardDeck<ChanceCard>& Board::getChanceDeckPile() {
+CardDeck<unique_ptr<ChanceCard>>& Board::getChanceDeckPile() {
     return chanceDeckPile;
 }
  
@@ -60,11 +62,11 @@ CardDeck<CommunityChestCard>& Board::getCommunityChestDeckPile() {
     return communityChestDeckPile;
 }
  
-CardDeck<SkillCard>& Board::getSkillCardDeckPile() {
+CardDeck<unique_ptr<SkillCard>>& Board::getSkillCardDeckPile() {
     return skillCardDeckPile;
 }
  
-const CardDeck<ChanceCard>& Board::getChanceDeckPile() const {
+const CardDeck<unique_ptr<ChanceCard>>& Board::getChanceDeckPile() const {
     return chanceDeckPile;
 }
  
@@ -72,11 +74,11 @@ const CardDeck<CommunityChestCard>& Board::getCommunityChestDeckPile() const {
     return communityChestDeckPile;
 }
  
-const CardDeck<SkillCard>& Board::getSkillCardDeckPile() const {
+const CardDeck<unique_ptr<SkillCard>>& Board::getSkillCardDeckPile() const {
     return skillCardDeckPile;
 }
  
-ChanceCard Board::drawChanceCard() {
+unique_ptr<ChanceCard> Board::drawChanceCard() {
     return chanceDeckPile.draw();
 }
  
@@ -84,6 +86,6 @@ CommunityChestCard Board::drawCommunityChestCard() {
     return communityChestDeckPile.draw();
 }
  
-SkillCard Board::drawSkillCard() {
+unique_ptr<SkillCard> Board::drawSkillCard() {
     return skillCardDeckPile.draw();
 }

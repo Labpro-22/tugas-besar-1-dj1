@@ -5,7 +5,7 @@
 
 #include "CardDeck.hpp"
 #include "models/Plot/Plot.hpp"
-#include "models/Card/ChanceCard.hpp"
+#include "models/Card/ChanceCard/ChanceCard.hpp"
 #include "models/Card/CommunityChestCard.hpp"
 #include "models/Card/SkillCard/SkillCard.hpp"
 
@@ -16,11 +16,11 @@ public:
     static const int DEFAULT_BOARD_SIZE = 40;
  
 private:
-    std::vector<std::unique_ptr<Plot>> tiles;
+    vector<unique_ptr<Plot>> tiles;
  
-    CardDeck<ChanceCard>         chanceDeckPile;
+    CardDeck<unique_ptr<ChanceCard>> chanceDeckPile;
     CardDeck<CommunityChestCard> communityChestDeckPile;
-    CardDeck<SkillCard>          skillCardDeckPile;
+    CardDeck<unique_ptr<SkillCard>>  skillCardDeckPile;
  
     Board(const Board&)            = delete;
     Board& operator=(const Board&) = delete;
@@ -32,24 +32,24 @@ public:
     Board(Board&&) noexcept            = default;
     Board& operator=(Board&&) noexcept = default;
  
-    bool addPlot(std::unique_ptr<Plot> plot);
+    bool addPlot(unique_ptr<Plot> plot);
     bool isReady() const;
  
     Plot* getPlot(int index) const;
     int getSize() const;
+    const vector<unique_ptr<Plot>>& getPlots() const;
+    
+    int findPlotIndex(const string& code) const;
  
-    const vector<std::unique_ptr<Plot>>& getPlots() const;
-    int findPlotIndex(const std::string& code) const;
- 
-    CardDeck<ChanceCard>&         getChanceDeckPile();
+    CardDeck<unique_ptr<ChanceCard>>& getChanceDeckPile();
     CardDeck<CommunityChestCard>& getCommunityChestDeckPile();
-    CardDeck<SkillCard>&          getSkillCardDeckPile();
+    CardDeck<unique_ptr<SkillCard>>&   getSkillCardDeckPile();
  
-    const CardDeck<ChanceCard>&         getChanceDeckPile() const;
+    const CardDeck<unique_ptr<ChanceCard>>& getChanceDeckPile() const;
     const CardDeck<CommunityChestCard>& getCommunityChestDeckPile() const;
-    const CardDeck<SkillCard>&          getSkillCardDeckPile() const;
+    const CardDeck<unique_ptr<SkillCard>>&  getSkillCardDeckPile() const;
  
-    ChanceCard         drawChanceCard();
+    unique_ptr<ChanceCard> drawChanceCard();
     CommunityChestCard drawCommunityChestCard();
-    SkillCard          drawSkillCard();
+    unique_ptr<SkillCard> drawSkillCard();
 };
