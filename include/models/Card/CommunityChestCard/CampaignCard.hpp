@@ -7,6 +7,6 @@ class CampaignCard : public CommunityChestCard {
         ~CampaignCard();
         string getName();
         string getDescription();
-        void activate();
+        void activate(GameEngine& ge);
 };
  

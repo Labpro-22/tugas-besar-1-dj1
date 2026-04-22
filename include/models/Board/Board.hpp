@@ -6,7 +6,7 @@
 #include "CardDeck.hpp"
 #include "models/Plot/Plot.hpp"
 #include "models/Card/ChanceCard/ChanceCard.hpp"
-#include "models/Card/CommunityChestCard.hpp"
+#include "models/Card/CommunityChestCard/CommunityChestCard.hpp"
 #include "models/Card/SkillCard/SkillCard.hpp"
 
 class Board {

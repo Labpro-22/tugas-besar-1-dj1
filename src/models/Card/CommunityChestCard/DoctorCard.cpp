@@ -1,16 +1,5 @@
 #include "models/Card/CommunityChestCard/DoctorCard.hpp"
- 
-DoctorCard::DoctorCard() {
- 
-}
- 
-DoctorCard::~DoctorCard() {
- 
-}
- 
-void DoctorCard::activate() {
-    // TODO:
-}
+#include "core/GameEngine.hpp"
  
 string DoctorCard::getName() {
     return "DoctorCard";
@@ -18,5 +7,10 @@ string DoctorCard::getName() {
  
 string DoctorCard::getDescription() {
     return "Biaya dokter. Bayar M700.";
+}
+ 
+void DoctorCard::activate(GameEngine& ge) {
+    Player& currPlayer = ge.getState().getCurrentPlayer();
+    currPlayer.pay(700);
 }
  
