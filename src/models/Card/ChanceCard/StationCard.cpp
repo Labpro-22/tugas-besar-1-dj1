@@ -1,17 +1,17 @@
 #include "models/Card/ChanceCard/StationCard.hpp"
 
-string StationCard::getName() {
+const string StationCard::getName() const{
     return "StationCard";
 }
 
-string StationCard::getDescription() {
+const string StationCard::getDescription() const{
     return "Pergi ke stasiun terdekat";
 }
 
-void StationCard::activate(GameEngine& ge) {
-    int playerPosition = ge.getState().getCurrentPlayerIdx();
-    Player& currPlayer = ge.getState().getCurrentPlayer();
-    Board& board = ge.getState().getBoard();
+void StationCard::activate(GameState& state) {
+    int playerPosition = state.getCurrentPlayerIdx();
+    Player& currPlayer = state.getCurrentPlayer();
+    Board& board = state.getBoard();
     int boardSize = board.getSize();
     const vector<unique_ptr<Plot>>& plots = board.getPlots();
     

@@ -1,13 +1,13 @@
 #include "models/Card/SkillCard/DemolitionCard.hpp"
 
-void DemolitionCard::activate(GameEngine& ge) {
+void DemolitionCard::activate(GameState& state) {
     // TODO: 
 }
 
-string DemolitionCard::getName() {
+const string DemolitionCard::getName() const {
     return "DemolitionCard";
 }
 
-string DemolitionCard::getDescription() {
+const string DemolitionCard::getDescription() const {
     return "Menghancurkan satu properti milik pemain lawan.";
 }

@@ -1,6 +1,6 @@
 #include "models/Card/SkillCard/DiscountCard.hpp"
 
-void DiscountCard::activate(GameEngine& ge) {
+void DiscountCard::activate(GameState& state) {
     random_device random;
     mt19937 g(random());
     uniform_int_distribution<> number(1,100);
@@ -10,10 +10,10 @@ void DiscountCard::activate(GameEngine& ge) {
 
 }
 
-string DiscountCard::getName() {
+const string DiscountCard::getName() const {
     return "DiscountCard";
 }
 
-string DiscountCard::getDescription() {
+const string DiscountCard::getDescription() const {
     return "Memberikan diskon dengan persentase acak kepada pemain saat kartu didapatkan. Masa berlaku DiscountCard adalah 1 giliran.";
 }

@@ -1,13 +1,13 @@
 #include "models/Card/SkillCard/ShieldCard.hpp"
 
-void ShieldCard::activate(GameEngine& ge) {
+void ShieldCard::activate(GameState& state) {
      // TODO: 
 }
 
-string ShieldCard::getName() {
+const string ShieldCard::getName() const {
     return "ShieldCard";
 }
 
-string ShieldCard::getDescription() {
+const string ShieldCard::getDescription() const {
     return "Melindungi pemain dari tagihan sewa maupun sanksi apapun yang merugikan selama 1 giliran.";
 }

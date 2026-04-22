@@ -1,18 +1,18 @@
 #include "models/Card/ChanceCard/PrisonCard.hpp"
 
-string PrisonCard::getName() {
+const string PrisonCard::getName() const {
     return "PrisonCard";
 }
 
-string PrisonCard::getDescription() {
+const string PrisonCard::getDescription() const{
     return "Masuk Penjara";
 }
 
-void PrisonCard::activate(GameEngine& ge) {
-     Player& currPlayer = ge.getState().getCurrentPlayer();
-     int boardSize = ge.getState().getBoard().getSize();
+void PrisonCard::activate(GameState& state) {
+     Player& currPlayer = state.getCurrentPlayer();
+     int boardSize = state.getBoard().getSize();
 
-     int index = ge.getState().getBoard().findPlotIndex("PEN");
+     int index = state.getBoard().findPlotIndex("PEN");
      currPlayer.moveTo(index, boardSize);
      currPlayer.setJailTurns(3);
 }

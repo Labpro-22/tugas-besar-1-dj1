@@ -1,15 +1,15 @@
 #include "models/Card/ChanceCard/BackwardMoveCard.hpp"
 
-string BackwardMoveCard::getName() {
+const string BackwardMoveCard::getName() const {
     return "BackwardMoveCard";
 }
 
-string BackwardMoveCard::getDescription() {
+const string BackwardMoveCard::getDescription() const {
     return "Mundur 3 petak";
 }
 
-void BackwardMoveCard::activate(GameEngine& ge) {
-    Player currPlayer = ge.getState().getCurrentPlayer();
-    int boardSize = ge.getState().getBoard().getSize();
+void BackwardMoveCard::activate(GameState& state) {
+    Player currPlayer = state.getCurrentPlayer();
+    int boardSize = state.getBoard().getSize();
     currPlayer.move(-3, boardSize);
 }
