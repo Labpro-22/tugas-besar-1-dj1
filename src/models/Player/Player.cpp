@@ -1,11 +1,23 @@
 #include "models/Player/Player.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 #include <utility>
 #include "core/GameException.hpp"
+#include "models/Card/SkillCard/SkillCard.hpp"
+#include "models/Plot/Plot.hpp"
+#include "models/Plot/PropertyPlot/LandPlot.hpp"
+#include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
 Player::Player()
-    : username(""), cash(0), position(0), status(PlayerStatus::ACTIVE), jailTurns(0), usedSkillThisTurn(false) {}
+    : username(""),
+      cash(0),
+      position(0),
+      status(PlayerStatus::ACTIVE),
+      jailTurns(0),
+      hasRolled(false),
+      shieldActive(false),
+      usedSkillThisTurn(false) {}
 
 Player::Player(std::string username, int startingCash, int startPosition)
     : username(std::move(username)),
@@ -13,6 +25,8 @@ Player::Player(std::string username, int startingCash, int startPosition)
       position(startPosition),
       status(PlayerStatus::ACTIVE),
       jailTurns(0),
+      hasRolled(false),
+      shieldActive(false),
       usedSkillThisTurn(false) {
     if (startingCash < 0) {
         throw std::invalid_argument("startingCash tidak boleh negatif.");
@@ -39,8 +53,44 @@ int Player::getJailTurns() const {
     return jailTurns;
 }
 
+const std::vector<std::reference_wrapper<Plot>>& Player::getOwnedProperties() const {
+    return ownedProperties;
+}
+
+const std::vector<std::shared_ptr<SkillCard>>& Player::getOwnedCards() const {
+    return ownedCards;
+}
+
+bool Player::getHasRolled() const {
+    return hasRolled;
+}
+
+bool Player::isShieldActive() const {
+    return shieldActive;
+}
+
 bool Player::hasUsedSkillThisTurn() const {
     return usedSkillThisTurn;
+}
+
+int Player::getTotalWealth() const {
+    int wealth = cash;
+    for (const std::reference_wrapper<Plot>& propertyRef : ownedProperties) {
+        const Plot& property = propertyRef.get();
+        if (const auto* land = dynamic_cast<const LandPlot*>(&property)) {
+            wealth += land->getBuyPrice();
+            continue;
+        }
+
+        if (const auto* genericProperty = dynamic_cast<const PropertyPlot*>(&property)) {
+            wealth += genericProperty->getMortgageValue();
+        }
+    }
+    return wealth;
+}
+
+void Player::move() {
+    move(1, 40);
 }
 
 void Player::move(int steps, int boardSize) {
@@ -76,6 +126,79 @@ void Player::pay(int amount) {
     cash -= amount;
 }
 
+void Player::payTaxes() {
+    if (shieldActive) {
+        shieldActive = false;
+        return;
+    }
+    pay(cash / 10);
+}
+
+bool Player::buyProperty(Plot& property) {
+    const auto alreadyOwned = std::find_if(
+        ownedProperties.begin(),
+        ownedProperties.end(),
+        [&](const std::reference_wrapper<Plot>& ownedProperty) {
+            return ownedProperty.get().getCode() == property.getCode();
+        }
+    );
+    if (alreadyOwned != ownedProperties.end()) {
+        return false;
+    }
+
+    int price = 0;
+    if (const auto* land = dynamic_cast<const LandPlot*>(&property)) {
+        price = land->getBuyPrice();
+    } else if (const auto* genericProperty = dynamic_cast<const PropertyPlot*>(&property)) {
+        price = genericProperty->getMortgageValue() * 2;
+    } else {
+        throw std::invalid_argument("Plot yang dibeli harus berupa properti.");
+    }
+
+    pay(price);
+    ownedProperties.push_back(property);
+    return true;
+}
+
+bool Player::useCards() {
+    return useCards(0);
+}
+
+bool Player::useCards(std::size_t cardIndex) {
+    if (usedSkillThisTurn || cardIndex >= ownedCards.size()) {
+        return false;
+    }
+
+    std::shared_ptr<SkillCard> selectedCard = ownedCards[cardIndex];
+    ownedCards.erase(ownedCards.begin() + static_cast<std::vector<std::shared_ptr<SkillCard>>::difference_type>(cardIndex));
+    if (!selectedCard) {
+        return false;
+    }
+
+    selectedCard->activate();
+    if (selectedCard->getName() == "ShieldCard") {
+        shieldActive = true;
+    }
+    usedSkillThisTurn = true;
+    return true;
+}
+
+bool Player::dropCard() {
+    if (ownedCards.empty()) {
+        return false;
+    }
+    return dropCard(ownedCards.size() - 1);
+}
+
+bool Player::dropCard(std::size_t cardIndex) {
+    if (cardIndex >= ownedCards.size()) {
+        return false;
+    }
+
+    ownedCards.erase(ownedCards.begin() + static_cast<std::vector<std::shared_ptr<SkillCard>>::difference_type>(cardIndex));
+    return true;
+}
+
 void Player::receive(int amount) {
     if (amount < 0) {
         throw std::invalid_argument("Nilai penerimaan tidak boleh negatif.");
@@ -83,11 +206,34 @@ void Player::receive(int amount) {
     cash += amount;
 }
 
+Player& Player::operator+=(int amount) {
+    receive(amount);
+    return *this;
+}
+
+Player& Player::operator-=(int amount) {
+    pay(amount);
+    return *this;
+}
+
+bool Player::operator<(Player& other) {
+    return getTotalWealth() < other.getTotalWealth();
+}
+
+bool Player::operator>(Player& other) {
+    return getTotalWealth() > other.getTotalWealth();
+}
+
 void Player::setStatus(PlayerStatus newStatus) {
     status = newStatus;
     if (newStatus == PlayerStatus::BANKRUPT) {
         cash = 0;
         jailTurns = 0;
+        hasRolled = false;
+        shieldActive = false;
+        usedSkillThisTurn = false;
+        ownedCards.clear();
+        ownedProperties.clear();
     }
 }
 
@@ -98,10 +244,25 @@ void Player::setJailTurns(int turns) {
     jailTurns = turns;
 }
 
+void Player::setHasRolled(bool value) {
+    hasRolled = value;
+}
+
+void Player::setShieldActive(bool value) {
+    shieldActive = value;
+}
+
 void Player::decrementJailTurns() {
     if (jailTurns > 0) {
         --jailTurns;
     }
+}
+
+void Player::addOwnedCard(const std::shared_ptr<SkillCard>& card) {
+    if (!card) {
+        throw std::invalid_argument("Card tidak boleh null.");
+    }
+    ownedCards.push_back(card);
 }
 
 void Player::setUsedSkillThisTurn(bool used) {
@@ -110,6 +271,8 @@ void Player::setUsedSkillThisTurn(bool used) {
 
 void Player::resetTurnFlags() {
     usedSkillThisTurn = false;
+    hasRolled = false;
+    shieldActive = false;
 }
 
 bool Player::isBankrupt() const {
