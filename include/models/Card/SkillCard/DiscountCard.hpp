@@ -5,7 +5,7 @@ class DiscountCard : public SkillCard {
     public:
         DiscountCard() = default;
         ~DiscountCard() = default;
-        void activate(GameEngine&);
-        string getName();
-        string getDescription();
+        void activate(GameState&);
+        const string getName() const;
+        const string getDescription() const;
 };

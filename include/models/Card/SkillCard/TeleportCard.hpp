@@ -1,7 +1,5 @@
 #pragma once
 #include "models/Card/SkillCard/SkillCard.hpp"
-#include "iostream"
-using namespace std;
 
 class TeleportCard : public SkillCard {
     private:
@@ -9,7 +7,7 @@ class TeleportCard : public SkillCard {
     public:
         TeleportCard(int targetIndex);
         ~TeleportCard();
-        void activate(GameEngine&);
-        string getName();
-        string getDescription();
+        void activate(GameState&);
+        const string getName() const;
+        const string getDescription() const;
 };

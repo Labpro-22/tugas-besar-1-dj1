@@ -5,7 +5,7 @@ class PrisonCard : public ChanceCard{
     public:
         PrisonCard() = default;
         ~PrisonCard() = default;
-        string getName();
-        string getDescription();
-        void activate(GameEngine&);
+        const string getName() const;
+        const string getDescription() const;
+        void activate(GameState&);
 };

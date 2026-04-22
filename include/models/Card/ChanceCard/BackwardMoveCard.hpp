@@ -5,8 +5,8 @@ class BackwardMoveCard : public ChanceCard{
     public:
         BackwardMoveCard() = default;
         ~BackwardMoveCard() = default;
-        string getName();
-        string getDescription();
-        void activate(GameEngine&);
+        const string getName() const;
+        const string getDescription() const;
+        void activate(GameState&);
 };
 

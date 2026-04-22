@@ -5,7 +5,7 @@ class StationCard : public ChanceCard{
     public:
         StationCard() = default;
         ~StationCard() = default;
-        string getName();
-        string getDescription();
-        void activate(GameEngine&);
+        const string getName() const;
+        const string getDescription() const;
+        void activate(GameState&);
 };
