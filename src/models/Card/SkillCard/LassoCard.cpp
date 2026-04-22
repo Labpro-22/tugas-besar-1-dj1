@@ -5,16 +5,24 @@ void LassoCard::activate(GameState& state) {
     int currPlayerPosition = state.getCurrentPlayer().getPosition();
     int boardSize = state.getBoard().getSize();
 
-    // Asumsi hanya bisa narik player 1 index setelah current player
-    auto it = find_if(players.begin(), players.end(), [&](const Player& p) {
-        return (p.getPosition() - currPlayerPosition + boardSize) % boardSize == 1;
+    Player* nearestPlayer = nullptr;
+    int minDistance = boardSize + 1;
+    for_each(players.begin(), players.end(), [&](Player& player){
+        int distance = (player.getPosition() - currPlayerPosition + boardSize) % boardSize;
+        
+        if(distance > 0 && distance < minDistance) {
+            minDistance = distance;
+            nearestPlayer = &player;
+        }
     });
 
-    if (it != players.end()) {
-        it->moveTo(currPlayerPosition, boardSize);
-        it->setUsedSkillThisTurn(true);
-    } else {
-        throw std::runtime_error("Tidak ada player didepan");
+    try {
+        nearestPlayer->moveTo(currPlayerPosition, boardSize);
+        state.getCurrentPlayer().setUsedSkillThisTurn(true);
+    } catch(const std::invalid_argument& e){
+        std::cerr << e.what() << '\n';
+    } catch(const std::out_of_range& e) {
+        std::cerr << e.what() << '\n';
     }
 }
 

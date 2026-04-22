@@ -1,5 +1,6 @@
 #pragma once
 #include "models/Board/CardDeck.hpp"
+#include "core/GameException.hpp"
 #include "core/GameState.hpp"
 
 class SkillCard {

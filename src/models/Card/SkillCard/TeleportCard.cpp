@@ -7,9 +7,15 @@ TeleportCard::~TeleportCard() {}
 void TeleportCard::activate(GameState& state) {
     Player& currPlayer = state.getCurrentPlayer();
     int boardSize = state.getBoard().getSize();
-    
-    currPlayer.moveTo(targetIndex, boardSize);
-    currPlayer.setUsedSkillThisTurn(true);
+
+    try {
+        currPlayer.moveTo(targetIndex, boardSize);
+        currPlayer.setUsedSkillThisTurn(true);
+    } catch(const std::invalid_argument& e){
+        std::cerr << e.what() << '\n';
+    } catch(const std::out_of_range& e) {
+        std::cerr << e.what() << '\n';
+    }
 }
 
 const string TeleportCard::getName() const{

@@ -11,10 +11,11 @@ void GameRenderer::showControlDice(Player& player, Dice& dice) {
     cout << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << "petak..." << endl;
     cout << player.getUsername() << " mendarat di " << player.getPosition() << endl;
 };
-void GameRenderer::showDeed(string code) {
+void GameRenderer::showDeed(Plot& plot) {
     cout << "+===========================================+" << endl;
     cout << "|              AKTA KEPEMILIKAN             |" << endl;
     cout << "+===========================================+" << endl;
+
 };    
 void GameRenderer::showPlayerProperties(Player& player) {
 
