@@ -6,10 +6,21 @@
 #include <tuple>
 #include <utility>
 #include <memory>
+#include "core/GameState.hpp"
 #include "core/GameException.hpp"
 #include "models/Plot/PropertyPlot/LandPlot.hpp"
 #include "models/Plot/PropertyPlot/StationPlot.hpp"
 #include "models/Plot/PropertyPlot/UtilityPlot.hpp"
+#include "models/Plot/ActionPlot/ActionPlot.hpp"
+#include "models/Plot/ActionPlot/ChanceCardPlot.hpp"
+#include "models/Plot/ActionPlot/CommunityChestCardPlot.hpp"
+#include "models/Plot/ActionPlot/FestivalPlot.hpp"
+#include "models/Plot/ActionPlot/IncomeTaxPlot.hpp"
+#include "models/Plot/ActionPlot/LuxuryTaxPlot.hpp"
+#include "models/Plot/SpecialPlot/FreeParkPlot.hpp"
+#include "models/Plot/SpecialPlot/GoPrisonPlot.hpp"
+#include "models/Plot/SpecialPlot/PrisonPlot.hpp"
+#include "models/Plot/SpecialPlot/StartPlot.hpp"
 
 class ConfigLoader{
 private:
@@ -24,11 +35,22 @@ private:
     static Color colorTypeToEnum(std::string color);
 
 public:
+    static const std::string configPath;
+    static const std::string defaultPropertyFileName;
+    static const std::string defaultStationFileName;
+    static const std::string defaultUtilityFileName;
+    static const std::string defaultTaxFileName;
+    static const std::string defaultActionFileName;
+    static const std::string defaultSpecialFileName;
+    static const std::string defaultMiscFileName;
+    
     static std::vector<std::pair<int, std::unique_ptr<Plot>>> loadProperty(std::string path);
 
     static std::map<int, int> loadRailroad(std::string path);
 
     static std::map<int, int> loadUtility(std::string path);
+
+    static std::vector<std::pair<int, std::unique_ptr<Plot>>> loadAction(std::string path);
 
     static std::tuple<int, int, int> loadTax(std::string path);
 

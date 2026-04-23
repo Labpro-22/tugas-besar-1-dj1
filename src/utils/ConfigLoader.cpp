@@ -1,5 +1,14 @@
 #include "utils/ConfigLoader.hpp"
 
+const std::string ConfigLoader::configPath = "config/ ";
+const std::string ConfigLoader::defaultPropertyFileName = "property.txt";
+const std::string ConfigLoader::defaultStationFileName = "railroad.txt";
+const std::string ConfigLoader::defaultUtilityFileName = "utility.txt";
+const std::string ConfigLoader::defaultTaxFileName = "tax.txt";
+const std::string ConfigLoader::defaultActionFileName = "aksi.txt";
+const std::string ConfigLoader::defaultSpecialFileName = "special.txt";
+const std::string ConfigLoader::defaultMiscFileName = "misc.txt";
+
 std::ifstream ConfigLoader::open(std::string path){
     std::ifstream file(path);
     if (!file){
@@ -19,7 +28,7 @@ std::map<int, int> ConfigLoader::loadIntMap(std::string path){
             map[key] = value;
         }
     }
-    catch (std::exception e){
+    catch (const std::exception&){
         throw InvalidFileDataException();
     } 
     return map;
@@ -32,7 +41,7 @@ std::tuple<int, int> ConfigLoader::loadTuple2(std::string path){
     try{
         file >> num1 >> num2;
     }
-    catch (std::exception e){
+    catch (const std::exception&){
         throw InvalidFileDataException();
     } 
     return std::make_tuple(num1, num2);
@@ -45,7 +54,7 @@ std::tuple<int, int, int> ConfigLoader::loadTuple3(std::string path){
     try{
         file >> num1 >> num2 >> num3;
     }
-    catch (std::exception e){
+    catch (const std::exception&){
         throw InvalidFileDataException();
     } 
     return std::make_tuple(num1, num2, num3);
@@ -98,7 +107,7 @@ std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadProperty(st
             std::map<int, int> rentPriceTable; 
 
             //Baca tipe
-            file >> id >> code >> name >> type >> color;
+            file >> id >> code >> name >> type >> color >> buyPrice >> mortgageValue;
 
             
             //Ubah color (string) menjadi enum Color
@@ -110,7 +119,7 @@ std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadProperty(st
             if (type.compare("STREET")){
                 //Baca data lainnya
                 int upgHousePrice, upgHotelPrice;
-                file >> buyPrice >> mortgageValue >> upgHousePrice >> upgHotelPrice;
+                file >> upgHousePrice >> upgHotelPrice;
 
                 //Isi rentPriceTable
                 file >> id >> code >> name >> type;
@@ -120,15 +129,15 @@ std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadProperty(st
                     rentPriceTable[i] = value;
                 }       
 
-                plot = std::make_unique<Plot>(LandPlot(name, code, colorEnum, mortgageValue, buyPrice, 
+                plot = std::make_unique<Plot>(LandPlot(name, code, colorEnum, buyPrice, mortgageValue,
                                     upgHousePrice, upgHotelPrice, rentPriceTable));
 
             }
             else if (type.compare("RAILROAD")){
-                plot = std::make_unique<Plot>(StationPlot(name, code, colorEnum, mortgageValue));
+                plot = std::make_unique<Plot>(StationPlot(name, code, colorEnum, buyPrice, mortgageValue));
             }
             else if (type.compare("UTILITY")){
-                plot = std::make_unique<Plot>(UtilityPlot(name, code, colorEnum, mortgageValue));
+                plot = std::make_unique<Plot>(UtilityPlot(name, code, colorEnum, buyPrice, mortgageValue));
             }
             else{
                 throw UnknownTypeException(type);
@@ -137,10 +146,10 @@ std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadProperty(st
             tiles.push_back(std::make_pair(id, plot));
         }
     }
-    catch (GameException e){
-        throw e;
+    catch (const GameException&){
+        throw;
     }
-    catch (std::exception e){
+    catch (const std::exception&){
         throw InvalidFileDataException();
     } 
 
@@ -155,6 +164,83 @@ std::map<int, int> ConfigLoader::loadRailroad(std::string path){
 
 std::map<int, int> ConfigLoader::loadUtility(std::string path){
     return loadIntMap(path);
+}
+
+std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadAction(std::string path){
+    std::ifstream file = ConfigLoader::open(path);
+    std::vector<std::pair<int, std::unique_ptr<Plot>>> tiles;
+    try{
+        while (!file.eof()){
+            int id;
+            std::string code, name, type, color;
+
+            //Baca tipe
+            file >> id >> code >> name >> type >> color;
+
+            
+            //Ubah color (string) menjadi enum Color
+            Color colorEnum = ConfigLoader::colorTypeToEnum(color);
+
+            //Buat plot sesuai tipenya
+            std::unique_ptr<Plot> plot;
+    
+            if (type.compare("SPESIAL")){
+                if (code.compare("GO")){
+                    plot = std::make_unique<Plot>(StartPlot(name, code, colorEnum));
+                }
+                else if (code.compare("PEN")){
+                    plot = std::make_unique<Plot>(PrisonPlot(name, code, colorEnum));
+                }
+                else if (code.compare("BBP")){
+                    plot = std::make_unique<Plot>(FreeParkPlot(name, code, colorEnum));
+                }
+                else if (code.compare("PPJ")){
+                    plot = std::make_unique<Plot>(GoPrisonPlot(name, code, colorEnum));
+                }
+                else{
+                    throw UnknownTypeException(type + " dengan kode " + code);
+                }
+            }
+            else if (type.compare("KARTU")){
+                if (code.compare("DNU")){
+                    plot = std::make_unique<Plot>(CommunityChestCardPlot(name, code, colorEnum));
+                }
+                else if (code.compare("KSP")){
+                    plot = std::make_unique<Plot>(ChanceCardPlot(name, code, colorEnum));
+                }
+                else{
+                    throw UnknownTypeException(type + " dengan kode " + code);
+                }
+            }
+            else if (type.compare("PAJAK")){
+                if (code.compare("PPH")){
+                    plot = std::make_unique<Plot>(IncomeTaxPlot(name, code, colorEnum));
+                }
+                else if (code.compare("PBM")){
+                    plot = std::make_unique<Plot>(LuxuryTaxPlot(name, code, colorEnum));
+                }
+                else{
+                    throw UnknownTypeException(type + " dengan kode " + code);
+                }
+            }
+            else if (type.compare("FESTIVAL")){
+                plot = std::make_unique<Plot>(FestivalPlot(name, code, colorEnum));
+            }
+            else{
+                throw UnknownTypeException(type);
+            }
+
+            tiles.push_back(std::make_pair(id, plot));
+        }
+    }
+    catch (const GameException&){
+        throw;
+    }
+    catch (const std::exception&){
+        throw InvalidFileDataException();
+    } 
+
+    return tiles;
 }
 
 

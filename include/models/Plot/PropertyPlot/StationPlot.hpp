@@ -8,11 +8,12 @@ private:
 
 public:
     StationPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
-            Player* owner, PropertyStatus propertyStatus, int festivalDuration, int festivalMultiplier);
+            Player* owner = NULL, PropertyStatus propertyStatus = PropertyStatus::BANK,
+            int festivalDuration = 0, int festivalMultiplier = 1);
     ~StationPlot() = default;
 
     std::map<int, int> getRentPriceTable() const override;
-    void setRentPriceTable(std::map<int, int> rentPriceTable);
+    static void setRentPriceTable(std::map<int, int> rentPriceTable);
     int getRentPrice(int level) const override;
 
     int calculateRentPrice() const override;
