@@ -1,10 +1,15 @@
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
-    PropertyPlot::PropertyPlot(std::string name, std::string code, Color color, int mortgageValue, PropertyStatus propertyStatus = PropertyStatus::BANK):
+    PropertyPlot::PropertyPlot(std::string name, std::string code, Color color, int mortgageValue, 
+                               Player* owner = NULL, PropertyStatus propertyStatus = PropertyStatus::BANK,
+                               int festivalDuration = 0, int festivalMultiplier = 1):
         Plot(name, code),
         color(color),
         mortgageValue(mortgageValue),
-        propertyStatus(propertyStatus) //TODO add ownedBy and festivalDuration
+        propertyStatus(propertyStatus),
+        owner(owner),
+        festivalDuration(festivalDuration),
+        festivalMultiplier(festivalMultiplier)
         {}
 
     int PropertyPlot::getMortgageValue() const{

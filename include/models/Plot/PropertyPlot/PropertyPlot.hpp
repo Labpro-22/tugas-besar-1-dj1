@@ -15,7 +15,8 @@ protected:
     bool isFestival() const;
 
 public:
-    PropertyPlot(std::string name, std::string code, Color color, int mortgageValue, PropertyStatus propertyStatus);
+    PropertyPlot(std::string name, std::string code, Color color, int mortgageValue, Player* owner, 
+                 PropertyStatus propertyStatus, int festivalDuration, int festivalMultiplier);
     virtual ~PropertyPlot() = default;
 
     int getMortgageValue() const;
