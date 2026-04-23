@@ -1,12 +1,12 @@
 #include "core/Command.hpp"
 
-#include <stdexcept>
 #include <utility>
+#include "core/GameException.hpp"
 #include "core/SkillContext.hpp"
 
 RollDiceCommand::RollDiceCommand(int boardSize) : boardSize(boardSize) {
     if (boardSize <= 0) {
-        throw std::invalid_argument("boardSize harus lebih dari 0.");
+        throw InvalidInputException("boardSize harus lebih dari 0.");
     }
 }
 
@@ -114,7 +114,7 @@ bool RedeemCommand::execute(GameState& state, EffectResolver&, TurnManager&) con
 
 UseSkillCardCommand::UseSkillCardCommand(int cardIndex) : cardIndex(cardIndex) {
     if (cardIndex < 0) {
-        throw std::invalid_argument("cardIndex tidak boleh negatif.");
+        throw InvalidInputException("cardIndex tidak boleh negatif.");
     }
 }
 
@@ -122,7 +122,7 @@ bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager
     Player& player = state.getCurrentPlayer();
     SkillContext ctx{player, state.getPlayers(), state.getBoard(), state.getLogger()};
     if (!player.useCards(static_cast<std::size_t>(cardIndex), ctx)) {
-        throw std::invalid_argument("Kartu skill pada index tersebut tidak dapat digunakan.");
+        throw InvalidInputException("Kartu skill pada index tersebut tidak dapat digunakan.");
     }
 
     state.addLog(player.getUsername() + " menggunakan skill card index " + std::to_string(cardIndex) + ".");
@@ -138,7 +138,7 @@ bool SaveCommand::execute(GameState& state, EffectResolver&, TurnManager&) const
 
 TaxCommand::TaxCommand(int amount) : amount(amount) {
     if (amount < 0) {
-        throw std::invalid_argument("Nominal pajak tidak boleh negatif.");
+        throw InvalidInputException("Nominal pajak tidak boleh negatif.");
     }
 }
 
@@ -149,7 +149,7 @@ bool TaxCommand::execute(GameState& state, EffectResolver& effectResolver, TurnM
 
 EarnCommand::EarnCommand(int amount) : amount(amount) {
     if (amount < 0) {
-        throw std::invalid_argument("Nominal uang tidak boleh negatif.");
+        throw InvalidInputException("Nominal uang tidak boleh negatif.");
     }
 }
 

@@ -1,7 +1,6 @@
 #include "models/Player/Player.hpp"
 
 #include <algorithm>
-#include <stdexcept>
 #include <utility>
 #include "core/GameException.hpp"
 #include "core/SkillContext.hpp"
@@ -38,7 +37,7 @@ Player::Player(std::string username, int startingCash, int startPosition)
       discountValue(0),
       consecutiveDoubles(0) {
     if (startingCash < 0) {
-        throw std::invalid_argument("startingCash tidak boleh negatif.");
+        throw InvalidInputException("startingCash tidak boleh negatif.");
     }
 }
 
@@ -120,7 +119,7 @@ void Player::move() {
 
 void Player::move(int steps, int boardSize) {
     if (boardSize <= 0) {
-        throw std::invalid_argument("boardSize harus lebih dari 0."); //TODO: Buat exception
+        throw InvalidInputException("boardSize harus lebih dari 0.");
     }
 
     int next = (position + steps) % boardSize;
@@ -132,10 +131,10 @@ void Player::move(int steps, int boardSize) {
 
 void Player::moveTo(int index, int boardSize) {
     if (boardSize <= 0) { 
-        throw std::invalid_argument("boardSize harus lebih dari 0."); //TODO: Buat exception
+        throw InvalidInputException("boardSize harus lebih dari 0.");
     }
     if (index < 0 || index >= boardSize) {
-        throw std::out_of_range("Posisi tujuan di luar board."); //TODO: Buat exception
+        throw OutOfRangeException("Posisi tujuan di luar board.");
     }
 
     position = index;
@@ -143,7 +142,7 @@ void Player::moveTo(int index, int boardSize) {
 
 void Player::pay(int amount) {
     if (amount < 0) {
-        throw std::invalid_argument("Nilai pembayaran tidak boleh negatif."); //TODO: Buat exception
+        throw InvalidInputException("Nilai pembayaran tidak boleh negatif.");
     }
     if (cash < amount) {
         throw InsufficientFundException();
@@ -206,7 +205,7 @@ bool Player::dropCard(std::size_t cardIndex) {
 
 void Player::receive(int amount) {
     if (amount < 0) {
-        throw std::invalid_argument("Nilai penerimaan tidak boleh negatif."); //TODO: Buat exception
+        throw InvalidInputException("Nilai penerimaan tidak boleh negatif.");
     }
     cash += amount;
 }
@@ -248,7 +247,7 @@ void Player::setStatus(PlayerStatus newStatus) {
 
 void Player::setJailTurns(int turns) {
     if (turns < 0) {
-        throw std::invalid_argument("Jumlah giliran penjara tidak boleh negatif.");
+        throw InvalidInputException("Jumlah giliran penjara tidak boleh negatif.");
     }
     jailTurns = turns;
 }
@@ -263,21 +262,21 @@ void Player::setShieldActive(bool value) {
 
 void Player::setShieldTurnLeft(int turns) {
     if (turns < 0) {
-        throw std::invalid_argument("shieldTurnLeft tidak boleh negatif.");
+        throw InvalidInputException("shieldTurnLeft tidak boleh negatif.");
     }
     shieldTurnLeft = turns;
 }
 
 void Player::setDiscountTurnLeft(int turns) {
     if (turns < 0) {
-        throw std::invalid_argument("discountTurnLeft tidak boleh negatif.");
+        throw InvalidInputException("discountTurnLeft tidak boleh negatif.");
     }
     discountTurnLeft = turns;
 }
 
 void Player::setDiscountValue(int value) {
     if (value < 0) {
-        throw std::invalid_argument("discountValue tidak boleh negatif.");
+        throw InvalidInputException("discountValue tidak boleh negatif.");
     }
     discountValue = value;
 }
@@ -313,7 +312,7 @@ void Player::resetConsecutiveDoubles() {
 
 void Player::addOwnedCard(const std::shared_ptr<SkillCard>& card) {
     if (!card) {
-        throw std::invalid_argument("Card tidak boleh null.");
+        throw InvalidInputException("Card tidak boleh null.");
     }
     ownedCards.push_back(card);
 }

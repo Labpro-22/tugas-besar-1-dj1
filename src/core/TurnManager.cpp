@@ -1,7 +1,7 @@
 #include "core/TurnManager.hpp"
 
-#include <exception>
 #include <string>
+#include "core/GameException.hpp"
 #include "core/services/BankruptcyService.hpp"
 
 void TurnManager::startTurn(Player& player, GameState& state) {
@@ -62,7 +62,7 @@ void TurnManager::sendToJail(Player& player, GameState& state) {
 
     try {
         player.moveTo(jailIndex, boardSize);
-    } catch (const std::exception&) {
+    } catch (const GameException&) {
         // ignore move failure — status change is the important part
     }
     player.setStatus(PlayerStatus::JAILED);
