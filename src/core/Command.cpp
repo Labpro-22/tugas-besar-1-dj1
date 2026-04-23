@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <utility>
+#include "core/SkillContext.hpp"
 
 RollDiceCommand::RollDiceCommand(int boardSize) : boardSize(boardSize) {
     if (boardSize <= 0) {
@@ -16,12 +17,18 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
     }
 
     Player& player = state.getCurrentPlayer();
+    if (player.getHasRolled()) {
+        state.addLog(player.getUsername() + " sudah melakukan ROLL pada giliran ini.");
+        return false;
+    }
+
     const std::pair<int, int> dicePair = state.getDice().roll();
     const int steps = dicePair.first + dicePair.second;
     const int effectiveBoardSize = state.getBoardSizeOrDefault(boardSize);
 
     state.addLog(player.getUsername() + " melempar dadu: " + std::to_string(dicePair.first) + " dan " + std::to_string(dicePair.second) + ".");
     player.move(steps, effectiveBoardSize);
+    player.setHasRolled(true);
     effectResolver.resolveLanding(player, player.getPosition(), state);
 
     turnManager.handleExtraTurn(player, state.getDice().isDouble(), state);
@@ -86,11 +93,11 @@ UseSkillCardCommand::UseSkillCardCommand(int cardIndex) : cardIndex(cardIndex) {
 
 bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     Player& player = state.getCurrentPlayer();
-    if (player.hasUsedSkillThisTurn()) {
-        throw std::invalid_argument("Player sudah menggunakan skill pada giliran ini.");
+    SkillContext ctx{player, state.getPlayers(), state.getBoard(), state.getLogger()};
+    if (!player.useCards(static_cast<std::size_t>(cardIndex), ctx)) {
+        throw std::invalid_argument("Kartu skill pada index tersebut tidak dapat digunakan.");
     }
 
-    player.setUsedSkillThisTurn(true);
     state.addLog(player.getUsername() + " menggunakan skill card index " + std::to_string(cardIndex) + ".");
     return true;
 }
