@@ -10,11 +10,10 @@ const string StationCard::getDescription() const{
 }
 
 void StationCard::activate(SkillContext& ctx) {
-    int playerPosition = ctx.getCurrentPlayerIdx();
     Player& currPlayer = ctx.getCurrentPlayer();
     Board& board = ctx.getBoard();
     int boardSize = board.getSize();
-    const vector<unique_ptr<Plot>>& plots = board.getPlots();
+    int playerPosition = currPlayer.getPosition();
 
     try {
         // TODO: Index masih sama seperti spesifikasi, sesuaikan sama implementasi
