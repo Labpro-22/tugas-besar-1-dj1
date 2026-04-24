@@ -155,3 +155,32 @@ bool CommandHandler::promptYesNo(std::string prompt){
     }
     return true;
 }
+
+// CommandHandler.cpp
+std::size_t CommandHandler::promptCardDrop(const Player& player) {
+    const auto& cards = player.getOwnedCards();
+
+    while (true) {
+        try {
+            // TODO: Tampilkan daftar kartu
+            std::cout << "Tangan penuh! Pilih kartu yang akan dibuang:\n";
+            for (std::size_t i = 0; i < cards.size(); ++i) {
+                std::cout << "  [" << (i + 1) << "] "
+                          << cards[i]->getName() << "\n";
+            }
+
+            std::string raw = promptInput("Pilih nomor kartu (1-"
+                                          + std::to_string(cards.size()) + ")");
+            int choice = parseInt(raw);
+
+            if (choice < 1 || static_cast<std::size_t>(choice) > cards.size()) {
+                throw InvalidInputException("Nomor tidak valid.");
+            }
+
+            return static_cast<std::size_t>(choice - 1);
+
+        } catch (const GameException& e) {
+            std::cout << e.what() << "\n";
+        }
+    }
+}

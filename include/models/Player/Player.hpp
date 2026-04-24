@@ -56,6 +56,7 @@ public:
     bool useCards(std::size_t cardIndex, SkillContext& ctx);
     bool dropCard();
     bool dropCard(std::size_t cardIndex);
+    bool dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& discardPile);
     void receive(int amount);
 
     Player& operator+=(int amount);

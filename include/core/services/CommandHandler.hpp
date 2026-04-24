@@ -10,4 +10,5 @@ public:
     bool execute(const Command& command, GameState& state, EffectResolver& effectResolver, TurnManager& turnManager) const;
     static std::string promptInput(std::string prompt);
     static bool promptYesNo(std::string prompt);
+    std::size_t promptCardDrop(const Player& player);
 };

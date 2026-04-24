@@ -8,9 +8,6 @@ GameState::GameState()
       currentTurn(1),
       gameOver(false),
       board(Board()) {
-    if (maxTurn <= 0) {
-        throw InvalidInputException("maxTurn harus lebih dari 0.");
-    }
 }
 
 void GameState::addPlayer(const Player& player) {
@@ -76,6 +73,9 @@ void GameState::setCurrentPlayerIdx(int idx) {
 }
 
 void GameState::setMaxTurn(int maxTurn){
+    if (maxTurn <= 0) {
+        throw InvalidInputException("maxTurn harus lebih dari 0.");
+    }
     this->maxTurn = maxTurn;
 }
 
