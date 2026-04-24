@@ -328,7 +328,7 @@ string Formatter::buildSuccess(const Player& player, const LandPlot& landPlot) {
     return oss.str();
 }
 
-string Formatter::buildUpgradePrompt(const Player& player, const LandPlot& landPlot) {
+string Formatter::buildUpgradePrompt(const LandPlot& landPlot) {
     std::ostringstream oss;
     oss << "Upgrade ke hotel? Biaya: " << moneyString(landPlot.getUpgHotelPrice()) << " (y/n): ";
     return oss.str();
