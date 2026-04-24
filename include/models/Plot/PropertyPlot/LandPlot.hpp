@@ -35,6 +35,7 @@ public:
     std::string getBuildingType() const;
     int getBuildingCount() const;
     int calculateBuildingValue() const;
+    int calculateTotalValue() const override;
     int calculateRentPrice(PlotContext& ctx) const override;
 
     PlotType getType() const override;

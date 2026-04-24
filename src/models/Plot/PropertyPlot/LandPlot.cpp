@@ -106,6 +106,12 @@ int LandPlot::calculateBuildingValue() const{
     return value;
 }
 
+int LandPlot::calculateTotalValue() const{
+    int value = isMortgaged() ? 0 : buyPrice; //TODO cek bagaimana harga dihitung atau tidak jika mortgaged
+    value += calculateBuildingValue();
+    return value;
+}
+
 int LandPlot::calculateRentPrice(PlotContext& ctx) const {
     int rentPrice = rentPriceTable.at(level);
 

@@ -60,3 +60,8 @@ void PropertyPlot::endFestival(){
 int PropertyPlot::calculateBuildingValue() const{
     return 0;
 }
+
+int PropertyPlot::calculateTotalValue() const{
+    return buyPrice;
+}
+

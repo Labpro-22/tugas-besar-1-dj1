@@ -99,16 +99,9 @@ int Player::getConsecutiveDoubles() const {
 
 int Player::getTotalWealth() const {
     int wealth = cash;
-    for (const std::reference_wrapper<Plot>& propertyRef : ownedProperties) {//FIXME
-        const Plot& property = propertyRef.get();
-        if (const auto* land = dynamic_cast<const LandPlot*>(&property)) {
-            wealth += land->getBuyPrice(); //TODO: hindari penggunaan dynamic cast dan hitung harga bangunan
-            continue;
-        }
-
-        if (const auto* genericProperty = dynamic_cast<const PropertyPlot*>(&property)) {
-            wealth += genericProperty->getMortgageValue();
-        }
+    for (const std::reference_wrapper<PropertyPlot>& propertyRef : ownedProperties) {//FIXME
+        const PropertyPlot& property = propertyRef.get();
+        wealth += property.calculateTotalValue();
     }
     return wealth;
 }
