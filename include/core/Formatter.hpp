@@ -1,7 +1,10 @@
 #include "core/GameEngine.hpp"
 #include "models/Plot/PropertyPlot/LandPlot.hpp"
+#include "models/Plot/PropertyPlot/StationPlot.hpp"
+#include "models/Plot/PropertyPlot/UtilityPlot.hpp"
 #include "models/Card/CommunityChestCard/CommunityChestCard.hpp"
 #include "sstream"
+#include <iomanip>
 
 class Formatter {
     public:
@@ -16,8 +19,21 @@ class Formatter {
         static string showControlDice(const Player& player, const Dice& dice, string& position); 
         static string makeDeedTable(const LandPlot& landPlot);
 
-        static string makePropertyList(const PropertyPlot& property);
-        static string makePropertyList(const PropertyPlot& property);
+        static string makePropertyList(string name, string code);
+        static string makePropertyList(const Player& player);
+
+        static string buyProperty(const Player& player, const LandPlot& landPlot);
+        static string buySuccess(const Player& player, const LandPlot& landPlot);
+        static string buyFailed();
+        static string buyStation(const StationPlot& station);
+        static string buyUtility(const UtilityPlot& utility);
+
+        static string buildGroupList(const Player& player);
+        static string buildPlotList(const Player& player, const Color& color);
+        static string buildSuccess(const Player& player, const LandPlot& landPlot);
+        static string buildUpgradePrompt(const Player& player, const LandPlot& landPlot);
+        static string buildUpgradeSuccess(const Player& player, const LandPlot& landPlot);
+        static string buildNoEligible();
 
         static string makeRedeemList(const PropertyPlot& property);
         static string successRedeemProperty(const PropertyPlot& property, int money);

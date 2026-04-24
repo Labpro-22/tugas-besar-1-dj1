@@ -34,7 +34,7 @@ string Formatter::statusString(const PropertyStatus& status) {
     if(status == PropertyStatus::BANK) {
         return "BANK";
     } else if (status == PropertyStatus::MORTGAGED) {
-        return "MORTGAGE";
+        return "MORTGAGED";
     } else if (status == PropertyStatus::OWNED) {
         return "OWNED";
     }
@@ -100,12 +100,248 @@ string Formatter::makeDeedTable(const LandPlot& landPlot) {
     return oss.str();
 }
 
-string Formatter::makePropertyList(const PropertyPlot& property) {
-    return "- " + property.getName() + "(" + property.getCode() + ")" + "\n";
+string Formatter::makePropertyList(string name, string code) {
+    return "- " + name + "(" + code + ")" + "\n";
 }
 
-string Formatter::makePropertyList(const PropertyPlot& property) { 
-    return property.getName() + "(" + property.getCode() + ")" +  " [" + colorString(property.getColor()) + "] ";
+string Formatter::makePropertyList(const Player& player) {
+    std::ostringstream oss;
+    
+    oss << "=== Properti Milik: " << player.getUsername() << " ===" << endl;
+
+    const auto& ownedProperties = player.getOwnedProperties();
+
+    if (ownedProperties.empty()) {
+        oss << "Kamu belum memiliki properti apapun." << endl;
+        return oss.str();
+    }
+
+    Color lastColor = Color::DEFAULT;
+    int totalWealth = 0;
+
+    for (const std::reference_wrapper<Plot>& plotRef : ownedProperties) {
+        const Plot& plot = plotRef.get();
+        const auto* land = dynamic_cast<const LandPlot*>(&plot);
+        if (!land) continue;
+
+        if (land->getColor() != lastColor) {
+            lastColor = land->getColor();
+            oss << "[" << colorString(lastColor) << "]" << endl;
+        }
+
+        int level = land->getLevel();
+        int value = land->getBuyPrice();
+        PropertyStatus stat = land->getPropertyStatus();
+        totalWealth += value;
+
+        oss << "  - ";
+        oss << left << setw(35) << (land->getName() + " (" + land->getCode() + ")");
+
+        if (level == 5) {
+            oss << left << setw(10) << "Hotel";
+        } else if (level > 0) {
+            oss << left << setw(10) << (to_string(level) + " rumah");
+        } else {
+            oss << left << setw(10) << "";
+        }
+
+        oss << left << setw(8) << moneyString(value);
+
+        if (stat == PropertyStatus::MORTGAGED) {
+            oss << "MORTGAGED [M]";
+        } else {
+            oss << statusString(stat);
+        }
+
+        oss << endl;
+
+        // Festival info per plot
+        if (land->getFestivalDuration() > 0) {
+            oss << "    [FESTIVAL AKTIF] Multiplier: x" << land->getFestivalMultiplier()
+                << " | Sewa saat ini: " << moneyString(land->calculateRentPrice())
+                << " | Sisa durasi: " << land->getFestivalDuration() << " giliran" << endl;
+        }
+    }
+
+    oss << "Total kekayaan properti: " + moneyString(player.getTotalWealth()) << endl;
+
+    return oss.str();
+}
+
+string Formatter::buyProperty(const Player& player, const LandPlot& landPlot) {
+    std::ostringstream oss;
+
+    oss << "Kamu mendarat di " << landPlot.getName() << " (" << landPlot.getCode() << ")!" << endl;
+    oss << "+================================+" << endl;
+    oss << "| [" << colorString(landPlot.getColor()) << "] "
+        << landPlot.getName() << " (" << landPlot.getCode() << ")" << " |" << endl;
+    oss << "+================================+" << endl;
+    oss << "| Harga Beli    : " << moneyString(landPlot.getBuyPrice()) << " |" << endl;
+    oss << "+--------------------------------+" << endl;
+    oss << "| Sewa dasar    : " << moneyString(landPlot.getRentPrice(0)) << " |" << endl;
+    oss << "| Sewa 1 rumah  : " << moneyString(landPlot.getRentPrice(1)) << " |" << endl;
+    oss << "| Sewa 2 rumah  : " << moneyString(landPlot.getRentPrice(2)) << " |" << endl;
+    oss << "| Sewa 3 rumah  : " << moneyString(landPlot.getRentPrice(3)) << " |" << endl;
+    oss << "| Sewa 4 rumah  : " << moneyString(landPlot.getRentPrice(4)) << " |" << endl;
+    oss << "| Sewa hotel    : " << moneyString(landPlot.getRentPrice(5)) << " |" << endl;
+    oss << "+================================+" << endl;
+    oss << "Uang kamu saat ini: " << moneyString(player.getCash()) << endl;
+    oss << "Apakah kamu ingin membeli properti ini seharga "
+        << moneyString(landPlot.getBuyPrice()) << "? (y/n): ";
+
+    return oss.str();
+}
+
+string Formatter::buySuccess(const Player& player, const LandPlot& landPlot) {
+    std::ostringstream oss;
+    oss << landPlot.getName() << " kini menjadi milikmu!" << endl;
+    oss << "Uang tersisa: " << moneyString(player.getCash() - landPlot.getBuyPrice()) << endl;
+    return oss.str();
+}
+
+string Formatter::buyFailed() {
+    std::ostringstream oss;
+    oss << "Properti ini akan masuk ke sistem lelang..." << endl;
+    return oss.str();
+}
+
+string Formatter::buyStation(const StationPlot& station) {
+    std::ostringstream oss;
+    oss << "Kamu mendarat di " << station.getName() << " (" << station.getCode() << ")!" << endl;
+    oss << "Belum ada yang menginjaknya duluan, stasiun ini kini menjadi milikmu!" << endl;
+    return oss.str();
+}
+
+string Formatter::buyUtility(const UtilityPlot& utility) {
+    std::ostringstream oss;
+    oss << "Kamu mendarat di " << utility.getName() << "!" << endl;
+    oss << "Belum ada yang menginjaknya duluan, " << utility.getName()
+        << " kini menjadi milikmu!" << endl;
+    return oss.str();
+}
+
+string Formatter::buildGroupList(const Player& player) {
+    std::ostringstream oss;
+    
+    oss << "=== Color Group yang Memenuhi Syarat ===" << endl;
+
+    const auto& ownedProperties = player.getOwnedProperties();
+
+    // Group by color
+    map<Color, vector<const LandPlot*>> colorGroups;
+    for (const auto& plotRef : ownedProperties) {
+        const Plot& plot = plotRef.get();
+        const auto* land = dynamic_cast<const LandPlot*>(&plot);
+        if (!land) continue;
+        colorGroups[land->getColor()].push_back(land);
+    }
+
+    // Filter only eligible groups (all plots in group owned by player)
+    map<Color, vector<const LandPlot*>> eligibleGroups;
+    for (const auto& [color, plots] : colorGroups) {
+        bool allOwned = all_of(plots.begin(), plots.end(),
+            [](const LandPlot* p) { return p->getPropertyStatus() == PropertyStatus::OWNED; });
+        if (allOwned) eligibleGroups[color] = plots;
+    }
+
+    if (eligibleGroups.empty()) {
+        oss << buildNoEligible();
+        return oss.str();
+    }
+
+    int idx = 1;
+    for (const auto& [color, plots] : eligibleGroups) {
+        oss << idx++ << ". [" << colorString(color) << "]" << endl;
+        for (const LandPlot* land : plots) {
+            int level = land->getLevel();
+            string levelStr = (level == 5) ? "Hotel" : (to_string(level) + " rumah");
+            oss << "   - ";
+            oss << left << setw(30) << (land->getName() + " (" + land->getCode() + ")");
+            oss << ": " << levelStr;
+            oss << " (Harga rumah: " << moneyString(land->getUpgHousePrice()) << ")" << endl;
+        }
+    }
+
+    oss << "Uang kamu saat ini : " << moneyString(player.getCash()) << endl;
+    oss << "Pilih nomor color group (0 untuk batal): ";
+    return oss.str();
+}
+
+string Formatter::buildPlotList(const Player& player, const Color& color) {
+    std::ostringstream oss;
+
+    const auto& ownedProperties = player.getOwnedProperties();
+
+    vector<const LandPlot*> plots;
+    for (const auto& plotRef : ownedProperties) {
+        const Plot& plot = plotRef.get();
+        const auto* land = dynamic_cast<const LandPlot*>(&plot);
+        if (land && land->getColor() == color) plots.push_back(land);
+    }
+
+    bool allFourHouses = true;
+    for (const LandPlot* land : plots) {
+        if (land->getLevel() != 4) {
+            allFourHouses = false;
+            break;
+        }
+    }
+
+    oss << "Color group [" << colorString(color) << "]:" << endl;
+
+    for (const LandPlot* land : plots) {
+        int level = land->getLevel();
+        string levelStr = (level == 5) ? "Hotel" : (to_string(level) + " rumah");
+
+        oss << "- ";
+        oss << left << setw(35) << (land->getName() + " (" + land->getCode() + ")");
+        oss << ": " << levelStr;
+
+        if (level == 5) {
+            oss << "  <- sudah maksimal, tidak dapat dibangun";
+        } else if (level == 4) {
+            oss << "  <- siap upgrade ke hotel";
+        } else {
+            oss << "  <- dapat dibangun";
+        }
+
+        oss << endl;
+    }
+
+    if (allFourHouses) {
+        oss << "Seluruh color group [" << colorString(color) << "] sudah memiliki 4 rumah. Siap di-upgrade ke hotel!" << endl;
+    }
+
+    oss << "Pilih petak (0 untuk batal): ";
+    return oss.str();
+}
+
+string Formatter::buildSuccess(const Player& player, const LandPlot& landPlot) {
+    std::ostringstream oss;
+    oss << "Kamu membangun 1 rumah di " << landPlot.getName()
+        << ". Biaya: " << moneyString(landPlot.getUpgHousePrice()) << endl;
+    oss << "Uang tersisa: " << moneyString(player.getCash() - landPlot.getUpgHousePrice()) << endl;
+    return oss.str();
+}
+
+string Formatter::buildUpgradePrompt(const Player& player, const LandPlot& landPlot) {
+    std::ostringstream oss;
+    oss << "Upgrade ke hotel? Biaya: " << moneyString(landPlot.getUpgHotelPrice()) << " (y/n): ";
+    return oss.str();
+}
+
+string Formatter::buildUpgradeSuccess(const Player& player, const LandPlot& landPlot) {
+    std::ostringstream oss;
+    oss << landPlot.getName() << " di-upgrade ke Hotel!" << endl;
+    oss << "Uang tersisa: " << moneyString(player.getCash() - landPlot.getUpgHotelPrice()) << endl;
+    return oss.str();
+}
+
+string Formatter::buildNoEligible() {
+    std::ostringstream oss;
+    oss << "Tidak ada color group yang memenuhi syarat untuk dibangun." << endl;
+    oss << "Kamu harus memiliki seluruh petak dalam satu color group terlebih dahulu." << endl;
+    return oss.str();
 }
 
 string Formatter::makeRedeemList(const PropertyPlot& property) { 
