@@ -1,23 +1,9 @@
 #include "models/Plot/ActionPlot/ChanceCardPlot.hpp"
-#include <iostream>
 
-ChanceCardPlot::ChanceCardPlot(std::string name, std::string code, CardDeck<std::string>& deck)
-    : CardPlot(name, code, deck), lastDrawnCard("") {}
+ChanceCardPlot::ChanceCardPlot(std::string name, std::string code, Color color)
+    : CardPlot(name, code, color){}
 
-std::string ChanceCardPlot::getType() const {
-    return "Petak Kesempatan";
-}
-
-void ChanceCardPlot::startEvent() {
-    std::cout << "Kamu mendarat di Petak Kesempatan!" << std::endl;
-    std::cout << "Mengambil kartu..." << std::endl;
-
-    lastDrawnCard = drawCard();
-    deck.discard(lastDrawnCard);
-
-    std::cout << "Kartu: \"" << lastDrawnCard << "\"" << std::endl;
-}
-
-std::string ChanceCardPlot::getLastDrawnCard() const {
-    return lastDrawnCard;
+void ChanceCardPlot::startEvent(PlotContext& ctx) {
+    ChanceCard* card = ctx.getBoard().drawChanceCard();
+    card->activate(SkillContext(ctx));
 }

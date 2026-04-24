@@ -1,8 +1,9 @@
 #include "models/Plot/PropertyPlot/StationPlot.hpp"
 
-StationPlot::StationPlot(std::string name, std::string code, Color color, int mortgageValue,
-                        std::map<int, int> rentPriceTable, PropertyStatus propertyStatus = PropertyStatus::BANK):
-    PropertyPlot(name, code, color, mortgageValue, propertyStatus) {}
+StationPlot::StationPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
+                         Player* owner, PropertyStatus propertyStatus,
+                         int festivalDuration, int festivalMultiplier):
+    PropertyPlot(name, code, color, buyPrice, mortgageValue, owner, propertyStatus, festivalDuration, festivalMultiplier) {}
 
 std::map<int, int> StationPlot::getRentPriceTable() const {
     return rentPriceTable;
@@ -13,14 +14,18 @@ int StationPlot::getRentPrice(int level) const {
 }
 
 void StationPlot::setRentPriceTable(std::map<int, int> rentPriceTable){
-    this->rentPriceTable = rentPriceTable;
+    rentPriceTable = rentPriceTable;
 }
 
-int StationPlot::calculateRentPrice() const {
-    int ownedStation = 0; //TODO: dummy
+int StationPlot::getLevel() const {
+    return owner->countOwnedStation();
+}
+
+int StationPlot::calculateRentPrice(PlotContext& ctx) const {
+    int ownedStation = owner->countOwnedStation();
     return rentPriceTable.at(ownedStation)*festivalMultiplier;
 }
 
-std::string StationPlot::getType() const {
-    return "Petak Stasiun";
+PlotType StationPlot::getType() const {
+    return PlotType::STATIONPLOT;
 }

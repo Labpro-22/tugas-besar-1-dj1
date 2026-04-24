@@ -1,8 +1,9 @@
 #include "models/Plot/PropertyPlot/UtilityPlot.hpp"
 
-UtilityPlot::UtilityPlot(std::string name, std::string code, Color color, int mortgageValue,
-                        std::map<int, int> rentPriceTable, PropertyStatus propertyStatus = PropertyStatus::BANK):
-    PropertyPlot(name, code, color, mortgageValue, propertyStatus) {}
+UtilityPlot::UtilityPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
+                         Player* owner, PropertyStatus propertyStatus,
+                         int festivalDuration, int festivalMultiplier):
+    PropertyPlot(name, code, color, buyPrice, mortgageValue, owner, propertyStatus, festivalDuration, festivalMultiplier) {}
 
 std::map<int, int> UtilityPlot::getRentPriceTable() const {
     return rentPriceTable;
@@ -13,15 +14,19 @@ int UtilityPlot::getRentPrice(int level) const {
 }
 
 void UtilityPlot::setRentPriceTable(std::map<int, int> rentPriceTable){
-    this->rentPriceTable = rentPriceTable;
+    rentPriceTable = rentPriceTable;
 }
 
-int UtilityPlot::calculateRentPrice() const {
-    int ownedUtility = 0; //TODO: dummy
-    int diceTotal = 6; //TODO: dummy
+int UtilityPlot::getLevel() const {
+    return owner->countOwnedUtility();
+}
+
+int UtilityPlot::calculateRentPrice(PlotContext& ctx) const {
+    int ownedUtility = owner->countOwnedUtility();
+    int diceTotal = ctx.getDice().getTotal();
     return rentPriceTable.at(ownedUtility)*diceTotal*festivalMultiplier;
 }
 
-std::string UtilityPlot::getType() const {
-    return "Petak Utilitas";
+PlotType UtilityPlot::getType() const {
+    return PlotType::UTILITYPLOT;
 }

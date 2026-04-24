@@ -5,11 +5,14 @@
 
 enum class GameErrorID{
     INVALIDINPUTEXCEPTION,
+    INVALIDSTATEEXCEPTION,
+    OUTOFRANGEEXCEPTION,
     FILENOTFOUNDEXCEPTION,
     INVALIDFILEDATAEXCEPTION,
     UNKNOWNTYPEEXCEPTION,
     UNKNOWNCOLOREXCEPTION,
     INSUFFICIENTFUNDEXCEPTION,
+    INVALIDPLOTTYPEEXCEPTION,
     BUILDINGISFULLEXCEPTION,
     BUILDINGISEMPTYEXCEPTION,
     COLORSETNOTOWNEDEXCEPTION,
@@ -39,6 +42,27 @@ class InvalidInputException : public GameException{
 public:
     InvalidInputException(): GameException(GameErrorID::INVALIDINPUTEXCEPTION,
         "Input tidak valid.") {}
+
+    explicit InvalidInputException(const std::string& msg): GameException(
+        GameErrorID::INVALIDINPUTEXCEPTION, msg) {}
+};
+
+class InvalidStateException : public GameException{
+public:
+    InvalidStateException(): GameException(GameErrorID::INVALIDSTATEEXCEPTION,
+        "State permainan tidak valid.") {}
+
+    explicit InvalidStateException(const std::string& msg): GameException(
+        GameErrorID::INVALIDSTATEEXCEPTION, msg) {}
+};
+
+class OutOfRangeException : public GameException{
+public:
+    OutOfRangeException(): GameException(GameErrorID::OUTOFRANGEEXCEPTION,
+        "Nilai berada di luar rentang yang valid.") {}
+
+    explicit OutOfRangeException(const std::string& msg): GameException(
+        GameErrorID::OUTOFRANGEEXCEPTION, msg) {}
 };
 
 class FileNotFoundException : public GameException{
@@ -69,6 +93,12 @@ class InsufficientFundException : public GameException{
 public:
     InsufficientFundException(): GameException(GameErrorID::INSUFFICIENTFUNDEXCEPTION,
         "Uang tidak cukup untuk melakukan aksi ini.") {}
+};
+
+class InvalidPlotTypeException: public GameException{
+public:
+    InvalidPlotTypeException(): GameException(GameErrorID::INVALIDPLOTTYPEEXCEPTION,
+        "Tidak bisa melakukan aksi pada jenis plot ini.") {}
 };
 
 class BuildingIsFullException : public GameException{

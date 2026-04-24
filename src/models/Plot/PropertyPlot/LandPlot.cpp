@@ -2,14 +2,11 @@
 
 LandPlot::LandPlot(std::string name, std::string code, Color color,
             int mortgageValue, int buyPrice, int upgHousePrice, int upgHotelPrice,
-            std::map<int, int> rentPriceTable, PropertyStatus propertyStatus = PropertyStatus::BANK):
-    PropertyPlot(name, code, color, mortgageValue, propertyStatus),
+            std::map<int, int> rentPriceTable, Player* owner, PropertyStatus propertyStatus,
+            int festivalDuration, int festivalMultiplier):
+    PropertyPlot(name, code, color, buyPrice, mortgageValue, owner, propertyStatus, festivalDuration, festivalMultiplier),
     upgHousePrice(upgHousePrice), upgHotelPrice(upgHotelPrice),
-    rentPriceTable(rentPriceTable) {}
-
-int LandPlot::getBuyPrice() const {
-    return buyPrice;
-}
+    rentPriceTable(rentPriceTable){}
 
 int LandPlot::getUpgHousePrice() const {
     return upgHotelPrice;
@@ -31,52 +28,118 @@ int LandPlot::getLevel() const {
     return level;
 }
 
-void LandPlot::build(){
-    if (!canBuild) return;
-
+void LandPlot::build(PlotContext& ctx){
+    canBuild(ctx);
+    
     if (level == 4){
-        //money -= upgHotelPrice;
+        owner->pay(upgHotelPrice);
     }
     else{
-        //money -= upgHousePrice;
+        owner->pay(upgHousePrice);
     }
 }
 
-void LandPlot::sellBuildings(){ //TODO:
+void LandPlot::sellBuildings(){
     if (level <= 0){
-        //throw exception level kurang
+        throw BuildingIsEmptyException();
     }
 
     level--;
     //tambah uang tergantung level
     if (level == 5){
-        //tambah 
+        owner->receive(upgHotelPrice);
     }
     else{
-
+        owner->receive(upgHousePrice);
     }
 }
 
-bool LandPlot::canBuild() const { //TODO:
-    //TODO: check uang
-    //if uang cukup &&
-    if (level >= 5){
-        //std::cout << "Tidak bisa menambah bangunan. << std::endl;
-        //std::cout << "Tanah sudah mencapai level maximum" << std::endl;
-        // atau throw exception
+bool LandPlot::canBuild(PlotContext& ctx) const {
+    int buildCost = getBuildCost();
+    if (!isStreetOwned(ctx, &ctx.getCurrentPlayer())){
+        throw ColorSetNotOwnedException();
     }
+    if (owner->getCash() < getBuildCost()){
+        throw InsufficientFundException();
+    }
+    if (level >= 5){
+        throw BuildingIsFullException();
+
+
+    }
+    return true;
 } 
 
-int LandPlot::calculateRentPrice() const {
+int LandPlot::getBuildCost() const {
+    if (level < 4){
+        return upgHousePrice;
+    }
+    else if (level == 4){
+        return upgHotelPrice;
+    } else {
+        return 0;
+    }
+}
+
+bool LandPlot::isStreetOwned(PlotContext& ctx, Player* player) const {
+    if (owner == NULL) return false;
+    return ctx.getBoard().isPlayerOwnAllColor(color, player);
+}
+
+std::string LandPlot::getBuildingType() const {
+    if (level == 5) return "hotel";
+    else if (level == 0) return "kosong";
+    else return "rumah";
+}
+
+int LandPlot::getBuildingCount() const{
+    if (level == 5) return 1;
+    else return level;
+}
+
+int LandPlot::calculateBuildingValue() const{
+    int value = 0;
+    if (level == 5){
+        value += upgHotelPrice;
+    }
+    value += upgHousePrice * std::min(level, 4);
+    return value;
+}
+
+int LandPlot::calculateTotalValue() const{
+    int value = isMortgaged() ? 0 : buyPrice; //TODO cek bagaimana harga dihitung atau tidak jika mortgaged
+    value += calculateBuildingValue();
+    return value;
+}
+
+int LandPlot::calculateRentPrice(PlotContext& ctx) const {
     int rentPrice = rentPriceTable.at(level);
 
-    if (level == 0){
-        //TODO: return 2 kali harga dasar jika street ownedBy Player
+    if (level == 0 && isStreetOwned(ctx, owner)){
+        rentPrice *= 2;
     }
 
     return rentPrice*festivalMultiplier;
 }
 
-std::string LandPlot::getType() const {
-    return "Petak Lahan";
+PlotType LandPlot::getType() const {
+    return PlotType::LANDPLOT;
+}
+
+void LandPlot::startEvent(PlotContext& ctx){
+    if (!isOwned()){
+        if (ctx.getCurrentPlayer().getCash() >= getBuyPrice()
+            && CommandHandler::promptYesNo("Apakah anda ingin membeli petak ini (harga: M" + std::to_string(getBuyPrice()) + ")?")){
+            ctx.getCurrentPlayer().buyProperty(*this);
+        }
+        else{
+            // ctx.getAuctionService().startAuction(); //TODO: perbaiki auction service
+        }
+    }
+    else{
+        if (owner != &ctx.getCurrentPlayer()){
+            int rentPrice = calculateRentPrice(ctx);
+            ctx.getCurrentPlayer().payRent(rentPrice, owner);
+        }
+    }
 }

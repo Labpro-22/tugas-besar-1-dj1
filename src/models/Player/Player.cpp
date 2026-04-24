@@ -1,7 +1,6 @@
 #include "models/Player/Player.hpp"
 
 #include <algorithm>
-#include <stdexcept>
 #include <utility>
 #include "core/GameException.hpp"
 #include "core/SkillContext.hpp"
@@ -21,7 +20,8 @@ Player::Player()
       usedSkillThisTurn(false),
       shieldTurnLeft(0),
       discountTurnLeft(0),
-      discountValue(0) {}
+      discountValue(0),
+      consecutiveDoubles(0) {}
 
 Player::Player(std::string username, int startingCash, int startPosition)
     : username(std::move(username)),
@@ -34,9 +34,10 @@ Player::Player(std::string username, int startingCash, int startPosition)
       usedSkillThisTurn(false),
       shieldTurnLeft(0),
       discountTurnLeft(0),
-      discountValue(0) {
+      discountValue(0),
+      consecutiveDoubles(0) {
     if (startingCash < 0) {
-        throw std::invalid_argument("startingCash tidak boleh negatif.");
+        throw InvalidInputException("startingCash tidak boleh negatif.");
     }
 }
 
@@ -60,7 +61,7 @@ int Player::getJailTurns() const {
     return jailTurns;
 }
 
-const std::vector<std::reference_wrapper<Plot>>& Player::getOwnedProperties() const {
+const std::vector<std::reference_wrapper<PropertyPlot>>& Player::getOwnedProperties() const {
     return ownedProperties;
 }
 
@@ -92,29 +93,26 @@ int Player::getDiscountValue() const {
     return discountValue;
 }
 
+int Player::getConsecutiveDoubles() const {
+    return consecutiveDoubles;
+}
+
 int Player::getTotalWealth() const {
     int wealth = cash;
-    for (const std::reference_wrapper<Plot>& propertyRef : ownedProperties) {
-        const Plot& property = propertyRef.get();
-        if (const auto* land = dynamic_cast<const LandPlot*>(&property)) {
-            wealth += land->getBuyPrice();
-            continue;
-        }
-
-        if (const auto* genericProperty = dynamic_cast<const PropertyPlot*>(&property)) {
-            wealth += genericProperty->getMortgageValue();
-        }
+    for (const std::reference_wrapper<PropertyPlot>& propertyRef : ownedProperties) {
+        const PropertyPlot& property = propertyRef.get();
+        wealth += property.calculateTotalValue();
     }
     return wealth;
 }
 
 void Player::move() {
-    move(1, 40);
+    move(1, 40); //TODO: Sesuaikan dengan dynamic board
 }
 
 void Player::move(int steps, int boardSize) {
     if (boardSize <= 0) {
-        throw std::invalid_argument("boardSize harus lebih dari 0.");
+        throw InvalidInputException("boardSize harus lebih dari 0.");
     }
 
     int next = (position + steps) % boardSize;
@@ -125,11 +123,11 @@ void Player::move(int steps, int boardSize) {
 }
 
 void Player::moveTo(int index, int boardSize) {
-    if (boardSize <= 0) {
-        throw std::invalid_argument("boardSize harus lebih dari 0.");
+    if (boardSize <= 0) { 
+        throw InvalidInputException("boardSize harus lebih dari 0.");
     }
     if (index < 0 || index >= boardSize) {
-        throw std::out_of_range("Posisi tujuan di luar board.");
+        throw OutOfRangeException("Posisi tujuan di luar board.");
     }
 
     position = index;
@@ -137,7 +135,7 @@ void Player::moveTo(int index, int boardSize) {
 
 void Player::pay(int amount) {
     if (amount < 0) {
-        throw std::invalid_argument("Nilai pembayaran tidak boleh negatif.");
+        throw InvalidInputException("Nilai pembayaran tidak boleh negatif.");
     }
     if (cash < amount) {
         throw InsufficientFundException();
@@ -145,38 +143,69 @@ void Player::pay(int amount) {
     cash -= amount;
 }
 
-void Player::payTaxes() {
+void Player::payTaxes(int amount) {
     if (shieldActive) {
         shieldActive = false;
         return;
     }
-    pay(cash / 10);
+    try{
+        pay(amount);
+    }
+    catch (InsufficientFundException e){
+        //TODO: serviceBankrupt
+    }
 }
 
-bool Player::buyProperty(Plot& property) {
-    const auto alreadyOwned = std::find_if(
-        ownedProperties.begin(),
-        ownedProperties.end(),
-        [&](const std::reference_wrapper<Plot>& ownedProperty) {
-            return ownedProperty.get().getCode() == property.getCode();
-        }
-    );
-    if (alreadyOwned != ownedProperties.end()) {
-        return false;
+void Player::payRent(int amount, Player* targetPlayer){
+    if (shieldActive) {
+        shieldActive = false;
+        return;
+    }
+    try{
+        pay(amount);
+    }
+    catch (InsufficientFundException e){
+        //TODO: serviceBankrupt
+    }
+    targetPlayer->receive(amount);
+}
+
+void Player::buyProperty(PropertyPlot& property) {
+    if (property.getOwner() != NULL) {
+        throw NoAccessToPropertyException();
     }
 
-    int price = 0;
-    if (const auto* land = dynamic_cast<const LandPlot*>(&property)) {
-        price = land->getBuyPrice();
-    } else if (const auto* genericProperty = dynamic_cast<const PropertyPlot*>(&property)) {
-        price = genericProperty->getMortgageValue() * 2;
-    } else {
-        throw std::invalid_argument("Plot yang dibeli harus berupa properti.");
-    }
+    int price = property.getBuyPrice();
 
     pay(price);
     ownedProperties.push_back(property);
-    return true;
+    property.setOwner(this);
+}
+
+void Player::tradeProperty(PropertyPlot& property, Player* targetPlayer, int price){
+    pay(price);
+    targetPlayer->receive(price);
+    transferProperty(property, targetPlayer);
+}
+
+void Player::transferProperty(PropertyPlot& property, Player* targetPlayer){
+    if (property.getOwner() != this) {
+        throw NoAccessToPropertyException();
+    }
+
+    auto it = std::find_if(ownedProperties.begin(), ownedProperties.end(),
+        [&](const std::reference_wrapper<PropertyPlot>& propertyRef){
+            return &propertyRef.get() == &property;
+        }
+    );
+    if (it == ownedProperties.end()) {
+        return throw std::runtime_error("Terjadi kesalahan pada pengecekan property yang dimiliki"); //TODO: hapus jika sudah aman
+    }
+    ownedProperties.erase(it);
+
+    //Ubah kepemilikan
+    targetPlayer->ownedProperties.push_back(property);
+    property.setOwner(targetPlayer);
 }
 
 bool Player::useCards(std::size_t cardIndex, SkillContext& ctx) {
@@ -213,7 +242,7 @@ bool Player::dropCard(std::size_t cardIndex) {
 
 void Player::receive(int amount) {
     if (amount < 0) {
-        throw std::invalid_argument("Nilai penerimaan tidak boleh negatif.");
+        throw InvalidInputException("Nilai penerimaan tidak boleh negatif.");
     }
     cash += amount;
 }
@@ -247,6 +276,7 @@ void Player::setStatus(PlayerStatus newStatus) {
         shieldTurnLeft = 0;
         discountTurnLeft = 0;
         discountValue = 0;
+        consecutiveDoubles = 0;
         ownedCards.clear();
         ownedProperties.clear();
     }
@@ -254,7 +284,7 @@ void Player::setStatus(PlayerStatus newStatus) {
 
 void Player::setJailTurns(int turns) {
     if (turns < 0) {
-        throw std::invalid_argument("Jumlah giliran penjara tidak boleh negatif.");
+        throw InvalidInputException("Jumlah giliran penjara tidak boleh negatif.");
     }
     jailTurns = turns;
 }
@@ -269,21 +299,21 @@ void Player::setShieldActive(bool value) {
 
 void Player::setShieldTurnLeft(int turns) {
     if (turns < 0) {
-        throw std::invalid_argument("shieldTurnLeft tidak boleh negatif.");
+        throw InvalidInputException("shieldTurnLeft tidak boleh negatif.");
     }
     shieldTurnLeft = turns;
 }
 
 void Player::setDiscountTurnLeft(int turns) {
     if (turns < 0) {
-        throw std::invalid_argument("discountTurnLeft tidak boleh negatif.");
+        throw InvalidInputException("discountTurnLeft tidak boleh negatif.");
     }
     discountTurnLeft = turns;
 }
 
 void Player::setDiscountValue(int value) {
     if (value < 0) {
-        throw std::invalid_argument("discountValue tidak boleh negatif.");
+        throw InvalidInputException("discountValue tidak boleh negatif.");
     }
     discountValue = value;
 }
@@ -309,9 +339,17 @@ void Player::decrementDiscountTurn() {
     }
 }
 
+void Player::incrementConsecutiveDoubles() {
+    ++consecutiveDoubles;
+}
+
+void Player::resetConsecutiveDoubles() {
+    consecutiveDoubles = 0;
+}
+
 void Player::addOwnedCard(const std::shared_ptr<SkillCard>& card) {
     if (!card) {
-        throw std::invalid_argument("Card tidak boleh null.");
+        throw InvalidInputException("Card tidak boleh null.");
     }
     ownedCards.push_back(card);
 }
@@ -324,6 +362,40 @@ void Player::resetTurnFlags() {
     usedSkillThisTurn = false;
     hasRolled = false;
     shieldActive = false;
+}
+
+int Player::countOwnedStation() const {
+    int count;
+    for (auto property : ownedProperties){
+        if (property.get().getType() == PlotType::STATIONPLOT){
+            count++;
+        }
+    }
+    return count;
+}
+
+int Player::countOwnedUtility() const {
+    int count;
+    for (auto property : ownedProperties){
+        if (property.get().getType() == PlotType::UTILITYPLOT){
+            count++;
+        }
+    }
+    return count;
+}
+
+void Player::updateOwnedProperties(){
+    for (auto propertyRef : ownedProperties){
+        propertyRef.get().updateFestival();
+    }
+}
+
+void Player::updateStatus(){
+    updateOwnedProperties();
+    decrementDiscountTurn();
+    decrementJailTurns();
+    decrementShieldTurn();
+    //TODO: tambah lagi
 }
 
 bool Player::isBankrupt() const {

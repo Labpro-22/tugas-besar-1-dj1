@@ -4,18 +4,19 @@
 
 class UtilityPlot: public PropertyPlot{
 private:
-    static std::map<int, int> rentPriceTable;
+    static std::map<int, int> rentPriceTable; //TODO: consider move this to gamestate
 
 public:
-    UtilityPlot(std::string name, std::string code, Color color, int mortgageValue,
-            PropertyStatus propertyStatus = PropertyStatus::BANK);
+    UtilityPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
+            Player* owner = NULL, PropertyStatus propertyStatus = PropertyStatus::BANK,
+            int festivalDuration = 0, int festivalMultiplier = 1);
     ~UtilityPlot() = default;
     
     std::map<int, int> getRentPriceTable() const override;
-    void setRentPriceTable(std::map<int, int> rentPriceTable);
+    static void setRentPriceTable(std::map<int, int> rentPriceTable);
     int getRentPrice(int level) const override;
 
-    int calculateRentPrice() const override;
-    std::string getType() const override;
-    void startEvent() override;
+    int getLevel() const override;
+    int calculateRentPrice(PlotContext& ctx) const override;
+    PlotType getType() const override;
 };

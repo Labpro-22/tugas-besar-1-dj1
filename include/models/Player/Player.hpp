@@ -5,10 +5,10 @@
 #include <string>
 #include <vector>
 #include "models/Player/PlayerStatus.hpp"
+#include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
-class Plot;
 class SkillCard;
-struct SkillContext;
+class SkillContext;
 
 class Player {
 private:
@@ -17,7 +17,7 @@ private:
     int position;
     PlayerStatus status;
     int jailTurns;
-    std::vector<std::reference_wrapper<Plot>> ownedProperties;
+    std::vector<std::reference_wrapper<PropertyPlot>> ownedProperties;
     std::vector<std::shared_ptr<SkillCard>> ownedCards;
     bool hasRolled;
     bool shieldActive;
@@ -25,6 +25,7 @@ private:
     int shieldTurnLeft;
     int discountTurnLeft;
     int discountValue;
+    int consecutiveDoubles; 
 
 public:
     Player();
@@ -35,7 +36,7 @@ public:
     int getPosition() const;
     PlayerStatus getStatus() const;
     int getJailTurns() const;
-    const std::vector<std::reference_wrapper<Plot>>& getOwnedProperties() const;
+    const std::vector<std::reference_wrapper<PropertyPlot>>& getOwnedProperties() const;
     const std::vector<std::shared_ptr<SkillCard>>& getOwnedCards() const;
     bool getHasRolled() const;
     bool isShieldActive() const;
@@ -43,14 +44,18 @@ public:
     int getShieldTurnLeft() const;
     int getDiscountTurnLeft() const;
     int getDiscountValue() const;
+    int getConsecutiveDoubles() const;
     int getTotalWealth() const;
 
     void move();
     void move(int steps, int boardSize = 40);
     void moveTo(int index, int boardSize = 40);
     void pay(int amount);
-    void payTaxes();
-    bool buyProperty(Plot& property);
+    void payTaxes(int amount);
+    void payRent(int amount, Player* targetPlayer);
+    void buyProperty(PropertyPlot& property);
+    void tradeProperty(PropertyPlot& property, Player* targetPlayer, int price); //TODO: cek apakah aman untuk trade banyak properti sekaligus
+    void transferProperty(PropertyPlot& property, Player* targetPlayer);
     bool useCards(std::size_t cardIndex, SkillContext& ctx);
     bool dropCard();
     bool dropCard(std::size_t cardIndex);
@@ -71,9 +76,17 @@ public:
     void decrementJailTurns();
     void decrementShieldTurn();
     void decrementDiscountTurn();
+    void incrementConsecutiveDoubles();
+    void resetConsecutiveDoubles();
     void addOwnedCard(const std::shared_ptr<SkillCard>& card);
     void setUsedSkillThisTurn(bool used);
     void resetTurnFlags();
+
+    int countOwnedStation() const;
+    int countOwnedUtility() const;
+
+    void updateOwnedProperties();
+    void updateStatus();
 
     bool isBankrupt() const;
 };

@@ -1,13 +1,16 @@
 #include "models/Plot/ActionPlot/FestivalPlot.hpp"
-#include <iostream>
 
-FestivalPlot::FestivalPlot(std::string name, std::string code)
-    : ActionPlot(name, code) {}
+FestivalPlot::FestivalPlot(std::string name, std::string code, Color color)
+    : ActionPlot(name, code, color) {}
 
-std::string FestivalPlot::getType() const {
-    return "Petak Festival";
+PlotType FestivalPlot::getType() const {
+    return PlotType::FESTIVALPLOT;
 }
 
-void FestivalPlot::startEvent() {
-    std::cout << "Kamu mendarat di petak Festival!" << std::endl;
+void FestivalPlot::startEvent(PlotContext& ctx) {
+    //TODO: tampilkan pesan festival plot
+    std::string answer = CommandHandler::promptInput("Masukkan nomor petak yang ingin diberi efek festival"); //TODO: perbaiki prompt input dengan lambda function untuk validasi input
+    //Note: asumsi answer sudah valid
+    int idx = std::stoi(answer);
+    ctx.getBoard().getPlots().at(idx).get()->applyFestival(); //TODO perbaiki dengan menambah getPlotByIndex di board 
 }
