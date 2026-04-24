@@ -1,7 +1,10 @@
 #include "core/GameEngine.hpp"
 #include "models/Plot/PropertyPlot/LandPlot.hpp"
+#include "models/Plot/PropertyPlot/StationPlot.hpp"
+#include "models/Plot/PropertyPlot/UtilityPlot.hpp"
 #include "models/Card/CommunityChestCard/CommunityChestCard.hpp"
 #include "sstream"
+#include <iomanip>
 
 class Formatter {
     public:
@@ -17,7 +20,20 @@ class Formatter {
         static string makeDeedTable(const LandPlot& landPlot);
 
         static string makePropertyList(string name, string code);
-        static string makePropertyList(Color& color, string name, string code); // TODO:
+        static string makePropertyList(const Player& player);
+
+        static string buyProperty(const Player& player, const LandPlot& landPlot);
+        static string buySuccess(const Player& player, const LandPlot& landPlot);
+        static string buyFailed();
+        static string buyStation(const StationPlot& station);
+        static string buyUtility(const UtilityPlot& utility);
+
+        static string buildGroupList(const Player& player);
+        static string buildPlotList(const Player& player, const Color& color);
+        static string buildSuccess(const Player& player, const LandPlot& landPlot);
+        static string buildUpgradePrompt(const Player& player, const LandPlot& landPlot);
+        static string buildUpgradeSuccess(const Player& player, const LandPlot& landPlot);
+        static string buildNoEligible();
 
         static string makeMortgagedList(string name, string code, Color& color, int money);
         static string successRedeemProperty(string name, int cost, int playerMoney);
@@ -38,7 +54,7 @@ class Formatter {
         static string payIncomeTax();
         static string payLuxuryTax(int startMoney, int finalMoney);
         static string failPayTax(int money);
-        static string makeWealthList(const Player& player);  // TODO: Total kekayaan di property dan bangunan
+        static string makeWealthList(const Player& player); // TODO: Total kekayaan di property dan bangunan
 
         static string applyFestival(int startMoney, int finalMoney, int turn);
         static string enhanceFestival(int startMoney, int finalMoney, int turn);
