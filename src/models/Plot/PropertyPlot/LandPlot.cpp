@@ -139,8 +139,7 @@ void LandPlot::startEvent(PlotContext& ctx){
     else{
         if (owner != &ctx.getCurrentPlayer()){
             int rentPrice = calculateRentPrice(ctx);
-            ctx.getCurrentPlayer().pay(rentPrice); //TODO: handle bankrupt
-            owner->receive(rentPrice);
+            ctx.getCurrentPlayer().payRent(rentPrice, owner);
         }
     }
 }

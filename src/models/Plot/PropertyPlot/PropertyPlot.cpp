@@ -65,3 +65,14 @@ int PropertyPlot::calculateTotalValue() const{
     return buyPrice;
 }
 
+void PropertyPlot::startEvent(PlotContext& ctx) {
+    if (!isOwned()){
+        ctx.getCurrentPlayer().buyProperty(*this);
+    }
+    else{
+        if (owner != &ctx.getCurrentPlayer()){
+            int rentPrice = calculateRentPrice(ctx);
+            ctx.getCurrentPlayer().payRent(rentPrice, owner);
+        }
+    }
+}
