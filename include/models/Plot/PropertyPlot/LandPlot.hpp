@@ -29,6 +29,8 @@ public:
 
     void build(PlotContext& ctx);
     void sellBuildings();
+    void destroyBuilding();
+    void downgradeBuilding();
     int getSellBuildingPrice() const;
     bool canBuild(PlotContext& ctx) const;
     int getBuildCost() const;
