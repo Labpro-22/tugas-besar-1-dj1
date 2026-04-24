@@ -12,11 +12,11 @@ class Formatter {
         static string colorString(const Color& color);
         static string statusString(const PropertyStatus& status);
 
-        static string onLand(string name, string description);
+        static string onLand(string& name, string description);
         static string playerMoney(int money);
 
-        static string showDiceRoll(string username, const Dice& dice, string position);
-        static string showControlDice(string username, const Dice& dice, string position); 
+        static string showDiceRoll(const Player& player, const Dice& dice, string& position);
+        static string showControlDice(const Player& player, const Dice& dice, string& position); 
         static string makeDeedTable(const LandPlot& landPlot);
 
         static string makePropertyList(string name, string code);
@@ -35,43 +35,51 @@ class Formatter {
         static string buildUpgradeSuccess(const Player& player, const LandPlot& landPlot);
         static string buildNoEligible();
 
-        static string makeMortgagedList(string name, string code, Color& color, int money);
-        static string successRedeemProperty(string name, int cost, int playerMoney);
-        static string failedRedeemProperty(string name, int cost, int playerMoney);
+        static string makeRedeemList(const PropertyPlot& property);
+        static string successRedeemProperty(const PropertyPlot& property, int money);
+        static string failedRedeemProperty(const PropertyPlot& property, int money);
 
-        static string auctionTurn(string username);
-        static string auctionResult(string name, int cost, string plotName, string code);
+        static string auctionTurn(string& username);
+        static string auctionResult(const PropertyPlot& property, string& username, int cost);
 
-        static string makeCanMortgagedList(string name, string code, Color& color, int money);
-        static string successMortgage(string name, int moneyRecieved, int moneyTotal);
-        static string failedMortgage(const LandPlot& landplot); //TODO:
-        static string makeSellBuildingOption(int idx, string name, string code, int buildCount, string buildType, int buildValue);
-        static string sellProperty(string name, int cost);
+        static string makeCanMortgagedList(const PropertyPlot& property, int money);
+        static string successMortgage(string name, int moneyRecieved, int moneyTotal); // TODO: Revisi nanti
+        static string failedMortgage(const LandPlot& landplot); 
+        static string makeSellBuildingOption(int idx, string name, string code, int buildCount, string buildType, int buildValue); // TODO: tunggu fungsi getBuildType 
+        static string sellProperty(string& name, int cost);
         
-        static string makePayRent(const Player& visitor, const Player& owner, int level, int rentValue, string code); 
-        static string mortgagedPlot(string ownerName, string plotName, string code);
+        static string makePayRent(const Player& visitor, const Player& owner, const LandPlot& land); // TODO: LandPlot atau PropertyPlot ??
+        static string mortgagedPlot(const PropertyPlot& property); // TODO: pakai getOwner()
 
-        static string payIncomeTax();
+        static string payIncomeTax(int flat, int percentage);
         static string payLuxuryTax(int startMoney, int finalMoney);
         static string failPayTax(int money);
-        static string makeWealthList(const Player& player); // TODO: Total kekayaan di property dan bangunan
 
-        static string applyFestival(int startMoney, int finalMoney, int turn);
-        static string enhanceFestival(int startMoney, int finalMoney, int turn);
+        static string applyFestival(int earlyRent, int currRent, int turn);
+        static string enhanceFestival(int earlyRent, int currRent, int turn);
         static string maximumFestival(int turn);
 
-        static string makePlayerList(string name, int money, int totalProperty, int totalCard);
+        static string makePlayerList(const Player& player);
         static string winner(string username);
         static string finalPlayer(string username);
 
         static string communityChestPlot(const CommunityChestCard& card, int cost, int playerMoney);
 
-        static string showLogger(int turn, string username, string actionType, string detail);
+        static string showLogger(const LogEntry& log);
         
         static string makeCardList(int idx, string name, string description);
         static string usedSkillCard(bool isUsed);
         static string activateSkillCard(string name, string description);
         static string effectSkillCard(string label, string description);
+
+        static string makeDebtSummary(int playerMoney, int debt);
+        static string potentialLiquidation(string& status, const PropertyPlot& property);
+        static string maxPotentialValue(int maxValue);
+        static string makeLiquidationStatus(int playerMoney, int debt);
+        static string sellPropertyList(int idx, const PropertyPlot& property);
+        static string mortgagedList(int idx, const PropertyPlot& property);
+        static string sellPropertyToBank(string& name, int money, int moneyrRecieve);
+        static string payDebtSuccess(int debt, const Player& visitor, const Player& owner);
 
         static string dropCardWarning(string name);
         static string dropCardAction(string name);
