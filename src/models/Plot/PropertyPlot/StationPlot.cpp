@@ -17,6 +17,10 @@ void StationPlot::setRentPriceTable(std::map<int, int> rentPriceTable){
     rentPriceTable = rentPriceTable;
 }
 
+int StationPlot::getLevel() const {
+    return owner->countOwnedStation();
+}
+
 int StationPlot::calculateRentPrice(PlotContext& ctx) const {
     int ownedStation = owner->countOwnedStation();
     return rentPriceTable.at(ownedStation)*festivalMultiplier;
@@ -24,17 +28,4 @@ int StationPlot::calculateRentPrice(PlotContext& ctx) const {
 
 PlotType StationPlot::getType() const {
     return PlotType::STATIONPLOT;
-}
-
-void StationPlot::startEvent(PlotContext& ctx) {
-    if (!isOwned()){
-        ctx.getCurrentPlayer().buyProperty(*this);
-    }
-    else{
-        if (owner != &ctx.getCurrentPlayer()){
-            int rentPrice = calculateRentPrice(ctx);
-            ctx.getCurrentPlayer().pay(rentPrice); //TODO: handle bankrupt
-            owner->receive(rentPrice);
-        }
-    }
 }

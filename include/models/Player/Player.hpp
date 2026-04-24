@@ -51,8 +51,11 @@ public:
     void move(int steps, int boardSize = 40);
     void moveTo(int index, int boardSize = 40);
     void pay(int amount);
-    void payTaxes();
-    bool buyProperty(PropertyPlot& property);
+    void payTaxes(int amount);
+    void payRent(int amount, Player* targetPlayer);
+    void buyProperty(PropertyPlot& property);
+    void tradeProperty(PropertyPlot& property, Player* targetPlayer, int price); //TODO: cek apakah aman untuk trade banyak properti sekaligus
+    void transferProperty(PropertyPlot& property, Player* targetPlayer);
     bool useCards(std::size_t cardIndex, SkillContext& ctx);
     bool dropCard();
     bool dropCard(std::size_t cardIndex);
@@ -84,7 +87,7 @@ public:
     int countOwnedUtility() const;
 
     void updateOwnedProperties();
-    void updateStatus(); //TODO: gunakan fungsi ini untuk update state player di setiap turn
+    void updateStatus();
 
     bool isBankrupt() const;
 };

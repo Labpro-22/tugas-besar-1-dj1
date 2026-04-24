@@ -8,6 +8,9 @@ PlotType FestivalPlot::getType() const {
 }
 
 void FestivalPlot::startEvent(PlotContext& ctx) {
-    //TODO: update durasi festival setiap turn
-    //TODO: lebih baik durasi fest dihitung setiap turn atau jika plot itu di akses?
+    //TODO: tampilkan pesan festival plot
+    std::string answer = CommandHandler::promptInput("Masukkan nomor petak yang ingin diberi efek festival"); //TODO: perbaiki prompt input dengan lambda function untuk validasi input
+    //Note: asumsi answer sudah valid
+    int idx = std::stoi(answer);
+    ctx.getBoard().getPlots().at(idx).get()->applyFestival(); //TODO perbaiki dengan menambah getPlotByIndex di board 
 }

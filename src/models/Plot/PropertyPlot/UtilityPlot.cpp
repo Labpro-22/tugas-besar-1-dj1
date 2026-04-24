@@ -17,6 +17,10 @@ void UtilityPlot::setRentPriceTable(std::map<int, int> rentPriceTable){
     rentPriceTable = rentPriceTable;
 }
 
+int UtilityPlot::getLevel() const {
+    return owner->countOwnedUtility();
+}
+
 int UtilityPlot::calculateRentPrice(PlotContext& ctx) const {
     int ownedUtility = owner->countOwnedUtility();
     int diceTotal = ctx.getDice().getTotal();
@@ -25,17 +29,4 @@ int UtilityPlot::calculateRentPrice(PlotContext& ctx) const {
 
 PlotType UtilityPlot::getType() const {
     return PlotType::UTILITYPLOT;
-}
-
-void UtilityPlot::startEvent(PlotContext& ctx) {
-    if (!isOwned()){
-        ctx.getCurrentPlayer().buyProperty(*this);
-    }
-    else{
-        if (owner != &ctx.getCurrentPlayer()){
-            int rentPrice = calculateRentPrice(ctx);
-            ctx.getCurrentPlayer().pay(rentPrice); //TODO: handle bankrupt
-            owner->receive(rentPrice);
-        }
-    }
 }
