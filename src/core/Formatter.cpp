@@ -100,8 +100,12 @@ string Formatter::makeDeedTable(const LandPlot& landPlot) {
     return oss.str();
 }
 
-string Formatter::makePropertyList(string name, string code) {
-    return "- " + name + "(" + code + ")" + "\n";
+string Formatter::makePropertyList(const PropertyPlot& property) {
+    return "- " + property.getName() + "(" + property.getCode() + ")" + "\n";
+}
+
+string Formatter::makePropertyList(const PropertyPlot& property, const Color& color) {
+    return property.getName() + "(" + property.getCode() + ")" +  " [" + colorString(color) + "] ";
 }
 
 string Formatter::makePropertyList(const Player& player) {

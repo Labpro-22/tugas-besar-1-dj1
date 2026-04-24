@@ -19,7 +19,8 @@ class Formatter {
         static string showControlDice(const Player& player, const Dice& dice, string& position); 
         static string makeDeedTable(const LandPlot& landPlot);
 
-        static string makePropertyList(string name, string code);
+        static string makePropertyList(const PropertyPlot& property);
+        static string makePropertyList(const PropertyPlot& property, const Color& color);
         static string makePropertyList(const Player& player);
 
         static string buyProperty(const Player& player, const LandPlot& landPlot);
