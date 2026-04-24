@@ -1,4 +1,5 @@
 #include "utils/ConfigSaver.hpp"
+using namespace std; 
 
 const string ConfigSaver::savePath            = "data/";
 const string ConfigSaver::defaultSaveFileName = "save.txt";

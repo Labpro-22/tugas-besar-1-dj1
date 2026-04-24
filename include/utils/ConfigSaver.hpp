@@ -8,6 +8,12 @@
 #include "models/Plot/PropertyPlot/PropertyStatus.hpp"
 #include "models/Plot/PlotType.hpp"
  
+#include "models/Card/SkillCard/MoveCard.hpp"
+#include "models/Card/SkillCard/DiscountCard.hpp"
+#include "models/Card/SkillCard/TeleportCard.hpp"
+#include "models/Plot/PropertyPlot/LandPlot.hpp"
+#include "models/Plot/PropertyPlot/PropertyPlot.hpp"
+
 class SkillCard;
 class Player;
 
