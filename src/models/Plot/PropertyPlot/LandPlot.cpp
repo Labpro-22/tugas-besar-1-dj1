@@ -45,13 +45,21 @@ void LandPlot::sellBuildings(){
     }
 
     level--;
-    //tambah uang tergantung level
-    if (level == 5){
-        owner->receive(upgHotelPrice);
-    }
-    else{
-        owner->receive(upgHousePrice);
-    }
+    owner->receive(getSellBuildingPrice());
+}
+
+void LandPlot::destroyBuilding(){
+    level = 0;
+}
+
+void LandPlot::downgradeBuilding(){
+    if (level > 0) level--;
+}
+
+int LandPlot::getSellBuildingPrice() const {
+    if (level == 5) return upgHotelPrice;
+    else if (level == 0) return 0;
+    else return upgHousePrice;
 }
 
 bool LandPlot::canBuild(PlotContext& ctx) const {
