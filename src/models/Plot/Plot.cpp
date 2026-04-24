@@ -17,3 +17,7 @@ Color Plot::getColor() const {
 Player* Plot::getOwner() const {
     return NULL;
 }
+
+void Plot::applyFestival(){
+    throw InvalidPlotTypeException();
+}
