@@ -20,6 +20,7 @@ public:
     virtual ~PropertyPlot() = default;
 
     int getBuyPrice() const;
+    int getSellPrice() const;
     int getMortgageValue() const;
     PropertyStatus getPropertyStatus() const;
     int getFestivalDuration() const;

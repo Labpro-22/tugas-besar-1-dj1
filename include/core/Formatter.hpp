@@ -21,7 +21,7 @@ class Formatter {
 
         static string makePropertyList(const PropertyPlot& property);
         static string makePropertyList(const PropertyPlot& property, const Color& color);
-        static string makePropertyList(const Player& player);
+        static string makePropertyList(PlotContext& ctx, const Player& player);
 
         static string buyProperty(const Player& player, const LandPlot& landPlot);
         static string buySuccess(const Player& player, const LandPlot& landPlot);
@@ -46,11 +46,11 @@ class Formatter {
         static string makeCanMortgagedList(const PropertyPlot& property, int money);
         static string successMortgage(string name, int moneyRecieved, int moneyTotal); // TODO: Revisi nanti
         static string failedMortgage(const LandPlot& landplot); 
-        static string makeSellBuildingOption(int idx, string name, string code, int buildCount, string buildType, int buildValue); // TODO: tunggu fungsi getBuildType 
+        static string makeSellBuildingOption(int idx, const LandPlot& landPlot); 
         static string sellProperty(string& name, int cost);
         
-        static string makePayRent(const Player& visitor, const Player& owner, const LandPlot& land); // TODO: LandPlot atau PropertyPlot ??
-        static string mortgagedPlot(const PropertyPlot& property); // TODO: pakai getOwner()
+        static string makePayRent(PlotContext& ctx, const PropertyPlot& property); // TODO: calculate pakai const
+        static string mortgagedPlot(const PropertyPlot& property); 
 
         static string payIncomeTax(int flat, int percentage);
         static string payLuxuryTax(int startMoney, int finalMoney);
@@ -64,7 +64,7 @@ class Formatter {
         static string winner(string username);
         static string finalPlayer(string username);
 
-        static string communityChestPlot(const CommunityChestCard& card, int cost, int playerMoney);
+        static string communityChestPlot(CommunityChestCard& card, int cost, int playerMoney);
 
         static string showLogger(const LogEntry& log);
         
