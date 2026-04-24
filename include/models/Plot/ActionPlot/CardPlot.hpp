@@ -1,5 +1,6 @@
 #pragma once
 
+#include "core/SkillContext.hpp"
 #include "models/Plot/ActionPlot/ActionPlot.hpp"
 
 

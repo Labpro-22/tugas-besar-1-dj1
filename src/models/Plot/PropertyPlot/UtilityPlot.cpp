@@ -14,12 +14,12 @@ int UtilityPlot::getRentPrice(int level) const {
 }
 
 void UtilityPlot::setRentPriceTable(std::map<int, int> rentPriceTable){
-    this->rentPriceTable = rentPriceTable;
+    rentPriceTable = rentPriceTable;
 }
 
-int UtilityPlot::calculateRentPrice() const {
-    int ownedUtility = 0; //TODO: need helper function
-    int diceTotal = 6; //TODO: need helper function
+int UtilityPlot::calculateRentPrice(PlotContext& ctx) const {
+    int ownedUtility = owner->countOwnedUtility();
+    int diceTotal = ctx.getDice().getTotal();
     return rentPriceTable.at(ownedUtility)*diceTotal*festivalMultiplier;
 }
 
@@ -32,6 +32,10 @@ void UtilityPlot::startEvent(PlotContext& ctx) {
         ctx.getCurrentPlayer().buyProperty(*this);
     }
     else{
-        //TODO: bayar
+        if (owner != &ctx.getCurrentPlayer()){
+            int rentPrice = calculateRentPrice(ctx);
+            ctx.getCurrentPlayer().pay(rentPrice); //TODO: handle bankrupt
+            owner->receive(rentPrice);
+        }
     }
 }

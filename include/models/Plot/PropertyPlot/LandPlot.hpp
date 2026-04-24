@@ -1,6 +1,8 @@
 #pragma once
 
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
+#include "core/services/AuctionService.hpp"
+#include "models/Board/Board.hpp"
 
 class LandPlot: public PropertyPlot{
 private:
@@ -24,12 +26,12 @@ public:
     int getRentPrice(int level) const override;
     int getLevel() const;
 
-    void build();
+    void build(PlotContext& ctx);
     void sellBuildings();
-    bool canBuild() const;
+    bool canBuild(PlotContext& ctx) const;
     int getBuildCost() const;
-    bool isStreetOwned() const;
-    int calculateRentPrice() const override;
+    bool isStreetOwned(PlotContext& ctx, Player* player) const;
+    int calculateRentPrice(PlotContext& ctx) const override;
     PlotType getType() const override;
     void startEvent(PlotContext& ctx) override;
 };

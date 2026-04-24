@@ -4,7 +4,7 @@
 
 class TaxPlot : public ActionPlot {
 protected:
-    static int FLAT, PPH, PBM;
+    static int FLAT, PPH, PBM; //TODO: consider simpan di game state
 
 public:
     TaxPlot(std::string name, std::string code, Color color);

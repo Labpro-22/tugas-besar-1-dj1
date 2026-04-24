@@ -4,5 +4,6 @@ ChanceCardPlot::ChanceCardPlot(std::string name, std::string code, Color color)
     : CardPlot(name, code, color){}
 
 void ChanceCardPlot::startEvent(PlotContext& ctx) {
-    //TODO (PlotContext)
+    ChanceCard* card = ctx.getBoard().drawChanceCard();
+    card->activate(SkillContext(ctx));
 }
