@@ -40,12 +40,20 @@ string Formatter::statusString(const PropertyStatus& status) {
     }
 }
 
+string Formatter::onLand(string name, string description) {
+    return "Kamu mendarat di " + name + " " + description + '\n';
+}
+
+string Formatter::playerMoney(int money) {
+    return "Uang kamu sekarang : " + moneyString(money) + '\n';
+}
+
 string Formatter::showDiceRoll(string username, const Dice& dice, string position) {
     std::ostringstream oss;
     oss << "Mengocok dadu..." << endl;
     oss << "Hasil: " << dice.getDice1() << " + " << dice.getDice2() << " = " << dice.getTotal() << endl;
     oss << "Memajukan Bidak " << username << " sebanyak " << dice.getTotal() << "petak..." << endl;
-    oss << username << " mendarat di : " << position << endl;
+    oss << onLand(position, "");
 
     return oss.str();
 };
@@ -54,7 +62,7 @@ string Formatter::showControlDice(string username, const Dice& dice, string posi
     std::ostringstream oss;
     oss << "Hasil: " << dice.getDice1() << " + " << dice.getDice2() << " = " << dice.getTotal() << endl;
     oss << "Memajukan Bidak " << username << " sebanyak " << dice.getTotal() << "petak..." << endl;
-    oss << username << " mendarat di : " << position << endl;
+    oss << onLand(position, "");
 
     return oss.str();
 };
@@ -92,26 +100,6 @@ string Formatter::makeDeedTable(const LandPlot& landPlot) {
     return oss.str();
 }
 
-
-string showLogger(int turn, string username, string actionType, string detail) {
-    return "[" + to_string(turn) + "] " + username + " | " + actionType + " | " + detail + "\n";
-};
-
-string Formatter::makeCardList(string name, string description) {
-    return "- " + name + "---" + description + "\n";
-}
-
-string Formatter::makePlayerList(string name, int money, int totalProperty, int totalCard) {
-    std::ostringstream oss;
-    oss << "Player " << name << " ----------" << endl;
-    oss << "Money    : " << money << endl;
-    oss << "Property : " << totalProperty << endl;
-    oss << "Cards    : " << totalCard << endl;
-    oss << endl;
-
-    return oss.str();
-}
-
 string Formatter::makePropertyList(string name, string code) {
     return "- " + code + "(" + name + ")" + "\n";
 }
@@ -123,13 +111,6 @@ string Formatter::makePropertyList(Color& color, string code, string name) {
     oss << "   - " << name << " (" << code << ")";
 }
 
-string Formatter::makeCanMortgagedList(string name, string code, Color& color, int money) {
-    std::ostringstream oss;
-    oss << name << " (" << code << ") " << "[" << colorString(color) << "] " << "Nilai Gadai : " << moneyString(money) << endl;
-
-    return oss.str();
-}
-
 string Formatter::makeMortgagedList(string name, string code, Color& color, int money) {
     std::ostringstream oss;
     oss << name << " (" << code << ") " << "[" << colorString(color) << "] " << "[M] " << "Harga Tebus : " << moneyString(money) << endl;
@@ -137,11 +118,54 @@ string Formatter::makeMortgagedList(string name, string code, Color& color, int 
     return oss.str();
 }
 
+string Formatter::successRedeemProperty(string name, int cost, int money) {
+    std::ostringstream oss;
+    oss << name << " berhasil ditebus!" << endl;
+    oss << "Kamu membayar " << moneyString(cost) << " ke Bank" << endl;
+    oss << playerMoney(money);
+
+    return oss.str();
+}
+
+string Formatter::failedRedeemProperty(string name, int cost, int money) {
+    std::ostringstream oss;
+    oss << "Uang kamu tidak cukup untuk menebus " << name << endl;
+    oss << "Harga tebus : " << moneyString(cost) << " | " << "Uang kamu : " << moneyString(money) << endl;
+
+    return oss.str();
+}
+
+string Formatter::auctionTurn(string username) {
+    std::ostringstream oss;
+    oss << "Giliran : " << username << endl;
+    oss << "Aksi (PASS / BID <jumlah>)" << endl;
+
+    return oss.str();
+};
+
+string Formatter::auctionResult(string username, int cost, string plotName, string code) {
+    std::ostringstream oss;
+    oss << "Lelang selesai!" << endl;
+    oss << "Pemenang    : " << username << endl;
+    oss << "Harga akhir : " << moneyString(cost) << endl;
+    oss << endl;
+    oss << "Properti " << plotName << " (" << code << ") " << "dimiliki " << username << endl;
+
+    return oss.str();    
+}
+
+string Formatter::makeCanMortgagedList(string name, string code, Color& color, int money) {
+    std::ostringstream oss;
+    oss << name << " (" << code << ") " << "[" << colorString(color) << "] " << "Nilai Gadai : " << moneyString(money) << endl;
+
+    return oss.str();
+}
+
 string Formatter::successMortgage(string name, int moneyRecieved, int moneyTotal) {
     std::ostringstream oss;
     oss << name << "berhasil digadaikan." << endl;
     oss << "Kamu menerima " << moneyString(moneyRecieved) << " dari Bank" << endl;
-    oss << "Uang kamu sekarang : " << moneyString(moneyTotal) << endl;
+    oss << playerMoney(moneyTotal);
     oss << "Catatan : Sewa tidak dapat dipungut dari properti yang digadaikan" << endl;
 
     return oss.str();
@@ -156,6 +180,10 @@ string Formatter::failedMortgage(const LandPlot& landplot) {
     oss << "Daftar bangunan di color group [" << colorString(landplot.getColor()) << "] :" << endl;
     
     // TODO: Daftar bangunan di warna yang sama
+}
+
+string Formatter::sellProperty(string name, int cost) {
+    return "Bangunan " + name + " terjual. " + "Kamu menerima " + moneyString(cost) + "\n";
 }
 
 string Formatter::makePayRent(const Player& visitor, const Player& owner, int level, int rentValue, string code) {
@@ -175,6 +203,144 @@ string Formatter::makePayRent(const Player& visitor, const Player& owner, int le
 
     return oss.str();
 }
+
+string Formatter::mortgagedPlot(string ownerName, string plotName, string code) {
+    std::ostringstream oss;
+    oss << "Kamu mendarat di " << plotName << " (" << code << ")," << " milik " << ownerName << endl;
+    oss << "Properti ini sedang digadaikan [M]. Tidak ada sewa yang dikenakan." << endl; 
+
+    return oss.str();
+}
+
+string Formatter::payIncomeTax() {
+    std::ostringstream oss;
+    oss << "Kamu mendarat di Pajak Penghasilan (PPH) !" << endl;
+    oss << "Pilih opsi pembayaran pajak :" << endl;
+    oss << "1. Bayar flat M150" << endl;
+    oss << "2. Bayar 10% dari total kekayaan" << endl;
+    oss << "(Pilih sebelum menghitung kekayaan!)" << endl;
+
+    return oss.str();
+}
+
+string Formatter::payLuxuryTax(int startMoney, int finalMoney) {
+    std::ostringstream oss;
+    oss << "Kamu mendarat di Pajak Barang Mewah (PBM) !" << endl;
+    oss << "Pajak sebesar M150 langsung dipotong" << endl;
+    oss << "Uang kamu: " << moneyString(startMoney) << " -> " << moneyString(finalMoney) << endl;
+
+    return oss.str();    
+}
+
+string Formatter::applyFestival(int startMoney, int finalMoney, int turn) {
+    std::ostringstream oss;
+    oss << "Efek Festival aktif !" << endl;
+    oss << "Sewa awal      : " << moneyString(startMoney) << endl;
+    oss << "Sewa sekarang  : " << moneyString(finalMoney) << endl;
+    oss << "Durasi         : " << turn << " giliran" << endl;
+
+    return oss.str();
+}
+
+string Formatter::enhanceFestival(int startMoney, int finalMoney, int turn) {
+    std::ostringstream oss;
+    oss << "Efek Festival Diperkuat !" << endl;
+    oss << "Sewa awal               : " << moneyString(startMoney) << endl;
+    oss << "Sewa sekarang           : " << moneyString(finalMoney) << endl;
+    oss << "Durasi di-reset menjadi : " << turn << " giliran" << endl;
+
+    return oss.str();    
+}
+
+string Formatter::maximumFestival(int turn) {
+    std::ostringstream oss;
+    oss << "Efek sudah maksimum (harga sewa sudah digandakan tiga kali)" << endl;
+    oss << "Durasi di-reset menjadi : " << turn << " giliran" << endl;
+
+    return oss.str();   
+}
+
+string Formatter::winner(string username) {
+    return "Pemenang : " + username + "\n";
+}
+
+string Formatter::makePlayerList(string name, int money, int totalProperty, int totalCard) {
+    std::ostringstream oss;
+    oss << "Player " << name << " ----------" << endl;
+    oss << "Money    : " << money << endl;
+    oss << "Property : " << totalProperty << endl;
+    oss << "Cards    : " << totalCard << endl;
+    oss << endl;
+
+    return oss.str();
+}
+
+string Formatter::finalPlayer(string username) {
+    std::ostringstream oss;
+    oss << "Pemain tersisa : " << endl;
+    oss << "- " << username << endl;
+
+    return oss.str();    
+}
+
+string Formatter::communityChestPlot(CommunityChestCard& card, int cost, int currMoney) {
+    std::ostringstream oss;
+    oss << "Mengambil kartu..." << endl;
+    oss << "Kartu : " << card.getName() << endl;
+    oss << "\"" << card.getDescription() << "\"" << endl;
+
+    if(currMoney >= cost) {
+        oss << "Kamu membayar " << moneyString(cost) << " ke Bank. Sisa Uang = " << moneyString(currMoney - cost) << endl;
+    } else {
+        oss << "Kamu tidak mampu bayar (" << moneyString(cost) << ") " << endl;
+        oss << playerMoney(currMoney);
+    }
+
+    return oss.str();
+}
+
+string showLogger(int turn, string username, string actionType, string detail) {
+    return "[" + to_string(turn) + "] " + username + " | " + actionType + " | " + detail + "\n";
+};
+
+string Formatter::makeCardList(int idx, string name, string description) {
+    return to_string(idx + 1) + ". " + name + "---" + description + "\n";
+}
+
+string Formatter::usedSkillCard(bool isUsed) {
+    if(isUsed) {
+        return "Kamu sudah menggunakan kartu kemampuan pada giliran ini!\nPenggunaan kartu dibatasi maksimal 1 kali dalam 1 giliran.\n";   
+    }
+
+    return "Kartu kemampuan hanya bisa digunakan SEBELUM melempar dadu.\n";
+}
+
+string Formatter::activateSkillCard(string name, string description) {
+    return name + "diaktifkan! " + description + "\n";
+}
+
+string Formatter::effectSkillCard(string label, string description) {
+    return "[" + label + "] " + description;
+}
+
+string Formatter::dropCardWarning(string name) {
+    std::ostringstream oss;
+    oss << "Kartu yang didapat : " << name << endl;
+    oss << "PERINGATAN: Kamu sudah memiliki 3 kartu di tangan (Maksimal 3)!" << endl;
+    oss << "Kamu diwajibkan membuang 1 kartu." << endl;
+
+    return oss.str();
+}
+
+string Formatter::dropCardAction(string name) {
+    return name + "telah dibuang. Sekarang kamu memiliki 3 kartu di tangan.\n";
+}
+string Formatter::throwException(GameException e) {
+    return e.what();
+}
+
+
+
 
  
 
