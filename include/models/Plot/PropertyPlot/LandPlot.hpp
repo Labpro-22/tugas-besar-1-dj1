@@ -24,14 +24,19 @@ public:
     int getUpgHotelPrice() const;
     std::map<int, int> getRentPriceTable() const override;
     int getRentPrice(int level) const override;
-    int getLevel() const;
+    int getLevel() const override;
 
     void build(PlotContext& ctx);
     void sellBuildings();
     bool canBuild(PlotContext& ctx) const;
     int getBuildCost() const;
     bool isStreetOwned(PlotContext& ctx, Player* player) const;
+
+    std::string getBuildingType() const;
+    int getBuildingCount() const;
+    int calculateBuildingValue() const;
     int calculateRentPrice(PlotContext& ctx) const override;
+
     PlotType getType() const override;
     void startEvent(PlotContext& ctx) override;
 };

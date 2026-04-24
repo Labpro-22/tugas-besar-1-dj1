@@ -34,5 +34,8 @@ public:
     void applyFestival();
     void updateFestival();
     void endFestival();
+
+    virtual int getLevel() const = 0;
+    virtual int calculateBuildingValue() const;
     virtual int calculateRentPrice(PlotContext& ctx) const = 0;
 };
