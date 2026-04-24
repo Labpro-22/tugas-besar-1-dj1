@@ -52,9 +52,10 @@ string ConfigSaver::cardValueString(const shared_ptr<SkillCard>& card,
         return to_string(move->getMoveNumber());
     }
  
-    if (dynamic_cast<DiscountCard*>(card.get())) {
-        return to_string(player.getDiscountValue()) + " "
-             + to_string(player.getDiscountTurnLeft());
+    DiscountCard* discount = dynamic_cast<DiscountCard*>(card.get());
+    if (discount) {
+    return to_string(discount->getDiscountValue()) + " "
+         + to_string(player.getDiscountTurnLeft());
     }
  
     TeleportCard* teleport = dynamic_cast<TeleportCard*>(card.get());
