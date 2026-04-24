@@ -1,7 +1,7 @@
 #include "models/Card/SkillCard/DemolitionCard.hpp"
 
 void DemolitionCard::activate(SkillContext& ctx) {
-    // TODO: 
+    
 }
 
 const string DemolitionCard::getName() const {

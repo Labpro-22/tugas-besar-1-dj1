@@ -79,7 +79,7 @@ class Formatter {
         static string makeLiquidationStatus(int playerMoney, int debt);
         static string sellPropertyList(int idx, const PropertyPlot& property);
         static string mortgagedList(int idx, const PropertyPlot& property);
-        static string sellPropertyToBank(string& name, int money, int moneyrRecieve);
+        static string sellPropertyToBank(const PropertyPlot& property, int money);
         static string payDebtSuccess(int debt, const Player& visitor, const Player& owner);
 
         static string dropCardWarning(string name);
