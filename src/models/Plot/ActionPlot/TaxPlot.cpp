@@ -3,8 +3,8 @@
 TaxPlot::TaxPlot(std::string name, std::string code, Color color)
     : ActionPlot(name, code, color) {}
 
-std::string TaxPlot::getType() const {
-    return "Petak Pajak";
+PlotType TaxPlot::getType() const {
+    return PlotType::TAXPLOT;
 }
 
 int TaxPlot::getFlatAmount(PlotContext& ctx) const {

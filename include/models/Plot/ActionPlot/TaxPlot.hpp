@@ -10,7 +10,7 @@ public:
     TaxPlot(std::string name, std::string code, Color color);
     virtual ~TaxPlot() = default;
 
-    std::string getType() const override;
+    PlotType getType() const override;
     int getFlatAmount(PlotContext& ctx) const;
     static void setFlatAmount(int amount);
     static void setPPH(int amount);
