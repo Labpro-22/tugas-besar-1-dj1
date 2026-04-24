@@ -29,16 +29,3 @@ int StationPlot::calculateRentPrice(PlotContext& ctx) const {
 PlotType StationPlot::getType() const {
     return PlotType::STATIONPLOT;
 }
-
-void StationPlot::startEvent(PlotContext& ctx) {
-    if (!isOwned()){
-        ctx.getCurrentPlayer().buyProperty(*this);
-    }
-    else{
-        if (owner != &ctx.getCurrentPlayer()){
-            int rentPrice = calculateRentPrice(ctx);
-            ctx.getCurrentPlayer().pay(rentPrice); //TODO: handle bankrupt
-            owner->receive(rentPrice);
-        }
-    }
-}

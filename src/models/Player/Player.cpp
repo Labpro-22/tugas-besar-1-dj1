@@ -99,7 +99,7 @@ int Player::getConsecutiveDoubles() const {
 
 int Player::getTotalWealth() const {
     int wealth = cash;
-    for (const std::reference_wrapper<PropertyPlot>& propertyRef : ownedProperties) {//FIXME
+    for (const std::reference_wrapper<PropertyPlot>& propertyRef : ownedProperties) {
         const PropertyPlot& property = propertyRef.get();
         wealth += property.calculateTotalValue();
     }
@@ -143,17 +143,36 @@ void Player::pay(int amount) {
     cash -= amount;
 }
 
-void Player::payTaxes() {
+void Player::payTaxes(int amount) {
     if (shieldActive) {
         shieldActive = false;
         return;
     }
-    pay(cash / 10); //FIXME
+    try{
+        pay(amount);
+    }
+    catch (InsufficientFundException e){
+        //TODO: serviceBankrupt
+    }
 }
 
-bool Player::buyProperty(PropertyPlot& property) { //FIXME
-    if (property.getOwner() == this) {
-        return false; //TODO: throw exception
+void Player::payRent(int amount, Player* targetPlayer){
+    if (shieldActive) {
+        shieldActive = false;
+        return;
+    }
+    try{
+        pay(amount);
+    }
+    catch (InsufficientFundException e){
+        //TODO: serviceBankrupt
+    }
+    targetPlayer->receive(amount);
+}
+
+void Player::buyProperty(PropertyPlot& property) {
+    if (property.getOwner() != NULL) {
+        throw NoAccessToPropertyException();
     }
 
     int price = property.getBuyPrice();
@@ -161,7 +180,32 @@ bool Player::buyProperty(PropertyPlot& property) { //FIXME
     pay(price);
     ownedProperties.push_back(property);
     property.setOwner(this);
-    return true; //TODO: hapus jika return void
+}
+
+void Player::tradeProperty(PropertyPlot& property, Player* targetPlayer, int price){
+    pay(price);
+    targetPlayer->receive(price);
+    transferProperty(property, targetPlayer);
+}
+
+void Player::transferProperty(PropertyPlot& property, Player* targetPlayer){
+    if (property.getOwner() != this) {
+        throw NoAccessToPropertyException();
+    }
+
+    auto it = std::find_if(ownedProperties.begin(), ownedProperties.end(),
+        [&](const std::reference_wrapper<PropertyPlot>& propertyRef){
+            return &propertyRef.get() == &property;
+        }
+    );
+    if (it == ownedProperties.end()) {
+        return throw std::runtime_error("Terjadi kesalahan pada pengecekan property yang dimiliki"); //TODO: hapus jika sudah aman
+    }
+    ownedProperties.erase(it);
+
+    //Ubah kepemilikan
+    targetPlayer->ownedProperties.push_back(property);
+    property.setOwner(targetPlayer);
 }
 
 bool Player::useCards(std::size_t cardIndex, SkillContext& ctx) {
