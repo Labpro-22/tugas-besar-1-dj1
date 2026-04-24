@@ -1,6 +1,7 @@
 #pragma once
 
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
+#include "core/services/AuctionService.hpp"
 #include "models/Board/Board.hpp"
 
 class LandPlot: public PropertyPlot{

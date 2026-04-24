@@ -8,5 +8,6 @@ PlotType FestivalPlot::getType() const {
 }
 
 void FestivalPlot::startEvent(PlotContext& ctx) {
-    //TODO (PlotContext)
+    //TODO: update durasi festival setiap turn
+    //TODO: lebih baik durasi fest dihitung setiap turn atau jika plot itu di akses?
 }

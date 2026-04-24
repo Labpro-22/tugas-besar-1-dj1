@@ -4,5 +4,6 @@ CommunityChestCardPlot::CommunityChestCardPlot(std::string name, std::string cod
     : CardPlot(name, code, color) {}
 
 void CommunityChestCardPlot::startEvent(PlotContext& ctx) {
-    //TODO (PlotContext)
+    CommunityChestCard* card = ctx.getBoard().drawCommunityChestCard();
+    card->activate(SkillContext(ctx));
 }
