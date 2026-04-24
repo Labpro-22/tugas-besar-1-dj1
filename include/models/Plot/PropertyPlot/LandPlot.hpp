@@ -24,14 +24,10 @@ public:
     int getUpgHotelPrice() const;
     std::map<int, int> getRentPriceTable() const override;
     int getRentPrice(int level) const override;
-<<<<<<< HEAD
-    int getLevel() const;
     void setLevel(int level);
-=======
     int getLevel() const override;
     int getSellPrice() const;
 
->>>>>>> origin/main
     void build(PlotContext& ctx);
     void sellBuildings();
     void destroyBuilding();
