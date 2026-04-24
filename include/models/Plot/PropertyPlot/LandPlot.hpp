@@ -29,8 +29,6 @@ public:
 
     void build(PlotContext& ctx);
     void sellBuildings();
-    void destroyBuilding();
-    void downgradeBuilding();
     int getSellBuildingPrice() const;
     bool canBuild(PlotContext& ctx) const;
     int getBuildCost() const;
@@ -44,4 +42,6 @@ public:
 
     PlotType getType() const override;
     void startEvent(PlotContext& ctx) override;
+    
+    void demolish() override;
 };

@@ -9,8 +9,18 @@ PlotType FestivalPlot::getType() const {
 
 void FestivalPlot::startEvent(PlotContext& ctx) {
     //TODO: tampilkan pesan festival plot
-    std::string answer = CommandHandler::promptInput("Masukkan nomor petak yang ingin diberi efek festival"); //TODO: perbaiki prompt input dengan lambda function untuk validasi input
-    //Note: asumsi answer sudah valid
+    std::string answer;
+    while (true){
+        answer = CommandHandler::promptInput("Masukkan nomor petak yang ingin diberi efek festival");
+        try{
+            int idx = std::stoi(answer);
+            if (idx > 0 && idx <= ctx.getBoard().getSize()){
+                break;
+            }
+        }
+        catch (std::exception e){}
+    }
+
     int idx = std::stoi(answer);
     ctx.getBoard().getPlots().at(idx).get()->applyFestival(); //TODO perbaiki dengan menambah getPlotByIndex di board 
 }

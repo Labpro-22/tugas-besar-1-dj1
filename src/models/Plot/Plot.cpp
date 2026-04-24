@@ -21,3 +21,7 @@ Player* Plot::getOwner() const {
 void Plot::applyFestival(){
     throw InvalidPlotTypeException();
 }
+
+void Plot::demolish(){
+    throw InvalidPlotTypeException();
+}
