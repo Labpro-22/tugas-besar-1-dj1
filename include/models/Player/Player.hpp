@@ -7,9 +7,8 @@
 #include "models/Player/PlayerStatus.hpp"
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
-class Plot;
 class SkillCard;
-struct SkillContext;
+class SkillContext;
 
 class Player {
 private:
@@ -18,7 +17,7 @@ private:
     int position;
     PlayerStatus status;
     int jailTurns;
-    std::vector<std::reference_wrapper<Plot>> ownedProperties;
+    std::vector<std::reference_wrapper<PropertyPlot>> ownedProperties;
     std::vector<std::shared_ptr<SkillCard>> ownedCards;
     bool hasRolled;
     bool shieldActive;
@@ -37,7 +36,7 @@ public:
     int getPosition() const;
     PlayerStatus getStatus() const;
     int getJailTurns() const;
-    const std::vector<std::reference_wrapper<Plot>>& getOwnedProperties() const;
+    const std::vector<std::reference_wrapper<PropertyPlot>>& getOwnedProperties() const;
     const std::vector<std::shared_ptr<SkillCard>>& getOwnedCards() const;
     bool getHasRolled() const;
     bool isShieldActive() const;
@@ -82,6 +81,9 @@ public:
 
     int countOwnedStation() const;
     int countOwnedUtility() const;
+
+    void updateOwnedProperties();
+    void updateStatus(); //TODO: gunakan fungsi ini untuk update state player di setiap turn
 
     bool isBankrupt() const;
 };

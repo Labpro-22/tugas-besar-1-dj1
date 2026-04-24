@@ -32,6 +32,7 @@ public:
     bool isOwned() const;
     bool isMortgaged() const;
     void applyFestival();
+    void updateFestival();
     void endFestival();
     virtual int calculateRentPrice(PlotContext& ctx) const = 0;
 };
