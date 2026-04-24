@@ -23,10 +23,10 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
     }
 
     if (answer.compare("1")){
-        ctx.getCurrentPlayer().pay(FLAT); //TODO: gunakan payTaxes atau tangani bankrupt
+        ctx.getCurrentPlayer().payTaxes(FLAT);
     }
 
     else if (answer.compare("2")){
-        ctx.getCurrentPlayer().pay(ctx.getCurrentPlayer().getTotalWealth() * PPH/100);//TODO: gunakan payTaxes atau tangani bankrupt
+        ctx.getCurrentPlayer().payTaxes(ctx.getCurrentPlayer().getTotalWealth() * PPH/100);
     }
 }

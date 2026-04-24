@@ -7,9 +7,8 @@
 #include "models/Player/PlayerStatus.hpp"
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
-class Plot;
 class SkillCard;
-struct SkillContext;
+class SkillContext;
 
 class Player {
 private:
@@ -18,7 +17,7 @@ private:
     int position;
     PlayerStatus status;
     int jailTurns;
-    std::vector<std::reference_wrapper<Plot>> ownedProperties;
+    std::vector<std::reference_wrapper<PropertyPlot>> ownedProperties;
     std::vector<std::shared_ptr<SkillCard>> ownedCards;
     bool hasRolled;
     bool shieldActive;
@@ -37,7 +36,7 @@ public:
     int getPosition() const;
     PlayerStatus getStatus() const;
     int getJailTurns() const;
-    const std::vector<std::reference_wrapper<Plot>>& getOwnedProperties() const;
+    const std::vector<std::reference_wrapper<PropertyPlot>>& getOwnedProperties() const;
     const std::vector<std::shared_ptr<SkillCard>>& getOwnedCards() const;
     bool getHasRolled() const;
     bool isShieldActive() const;
@@ -52,8 +51,11 @@ public:
     void move(int steps, int boardSize = 40);
     void moveTo(int index, int boardSize = 40);
     void pay(int amount);
-    void payTaxes();
-    bool buyProperty(PropertyPlot& property);
+    void payTaxes(int amount);
+    void payRent(int amount, Player* targetPlayer);
+    void buyProperty(PropertyPlot& property);
+    void tradeProperty(PropertyPlot& property, Player* targetPlayer, int price); //TODO: cek apakah aman untuk trade banyak properti sekaligus
+    void transferProperty(PropertyPlot& property, Player* targetPlayer);
     bool useCards(std::size_t cardIndex, SkillContext& ctx);
     bool dropCard();
     bool dropCard(std::size_t cardIndex);
@@ -83,6 +85,9 @@ public:
 
     int countOwnedStation() const;
     int countOwnedUtility() const;
+
+    void updateOwnedProperties();
+    void updateStatus();
 
     bool isBankrupt() const;
 };

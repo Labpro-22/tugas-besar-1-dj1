@@ -20,6 +20,7 @@ public:
     virtual ~PropertyPlot() = default;
 
     int getBuyPrice() const;
+    int getSellPrice() const;
     int getMortgageValue() const;
     PropertyStatus getPropertyStatus() const;
     int getFestivalDuration() const;
@@ -34,6 +35,12 @@ public:
     bool isOwned() const;
     bool isMortgaged() const;
     void applyFestival();
+    void updateFestival();
     void endFestival();
+
+    virtual int getLevel() const = 0;
+    virtual int calculateBuildingValue() const;
+    virtual int calculateTotalValue() const;
     virtual int calculateRentPrice(PlotContext& ctx) const = 0;
+    void startEvent(PlotContext& ctx) override;
 };

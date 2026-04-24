@@ -45,13 +45,21 @@ void LandPlot::sellBuildings(){
     }
 
     level--;
-    //tambah uang tergantung level
-    if (level == 5){
-        owner->receive(upgHotelPrice);
-    }
-    else{
-        owner->receive(upgHousePrice);
-    }
+    owner->receive(getSellBuildingPrice());
+}
+
+void LandPlot::destroyBuilding(){
+    level = 0;
+}
+
+void LandPlot::downgradeBuilding(){
+    if (level > 0) level--;
+}
+
+int LandPlot::getSellBuildingPrice() const {
+    if (level == 5) return upgHotelPrice;
+    else if (level == 0) return 0;
+    else return upgHousePrice;
 }
 
 bool LandPlot::canBuild(PlotContext& ctx) const {
@@ -86,6 +94,32 @@ bool LandPlot::isStreetOwned(PlotContext& ctx, Player* player) const {
     return ctx.getBoard().isPlayerOwnAllColor(color, player);
 }
 
+std::string LandPlot::getBuildingType() const {
+    if (level == 5) return "hotel";
+    else if (level == 0) return "kosong";
+    else return "rumah";
+}
+
+int LandPlot::getBuildingCount() const{
+    if (level == 5) return 1;
+    else return level;
+}
+
+int LandPlot::calculateBuildingValue() const{
+    int value = 0;
+    if (level == 5){
+        value += upgHotelPrice;
+    }
+    value += upgHousePrice * std::min(level, 4);
+    return value;
+}
+
+int LandPlot::calculateTotalValue() const{
+    int value = isMortgaged() ? 0 : buyPrice; //TODO cek bagaimana harga dihitung atau tidak jika mortgaged
+    value += calculateBuildingValue();
+    return value;
+}
+
 int LandPlot::calculateRentPrice(PlotContext& ctx) const {
     int rentPrice = rentPriceTable.at(level);
 
@@ -113,8 +147,7 @@ void LandPlot::startEvent(PlotContext& ctx){
     else{
         if (owner != &ctx.getCurrentPlayer()){
             int rentPrice = calculateRentPrice(ctx);
-            ctx.getCurrentPlayer().pay(rentPrice); //TODO: handle bankrupt
-            owner->receive(rentPrice);
+            ctx.getCurrentPlayer().payRent(rentPrice, owner);
         }
     }
 }

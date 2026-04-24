@@ -12,6 +12,7 @@ enum class GameErrorID{
     UNKNOWNTYPEEXCEPTION,
     UNKNOWNCOLOREXCEPTION,
     INSUFFICIENTFUNDEXCEPTION,
+    INVALIDPLOTTYPEEXCEPTION,
     BUILDINGISFULLEXCEPTION,
     BUILDINGISEMPTYEXCEPTION,
     COLORSETNOTOWNEDEXCEPTION,
@@ -92,6 +93,12 @@ class InsufficientFundException : public GameException{
 public:
     InsufficientFundException(): GameException(GameErrorID::INSUFFICIENTFUNDEXCEPTION,
         "Uang tidak cukup untuk melakukan aksi ini.") {}
+};
+
+class InvalidPlotTypeException: public GameException{
+public:
+    InvalidPlotTypeException(): GameException(GameErrorID::INVALIDPLOTTYPEEXCEPTION,
+        "Tidak bisa melakukan aksi pada jenis plot ini.") {}
 };
 
 class BuildingIsFullException : public GameException{

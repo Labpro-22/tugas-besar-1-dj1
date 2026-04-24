@@ -61,7 +61,7 @@ int Player::getJailTurns() const {
     return jailTurns;
 }
 
-const std::vector<std::reference_wrapper<Plot>>& Player::getOwnedProperties() const {
+const std::vector<std::reference_wrapper<PropertyPlot>>& Player::getOwnedProperties() const {
     return ownedProperties;
 }
 
@@ -99,16 +99,9 @@ int Player::getConsecutiveDoubles() const {
 
 int Player::getTotalWealth() const {
     int wealth = cash;
-    for (const std::reference_wrapper<Plot>& propertyRef : ownedProperties) {
-        const Plot& property = propertyRef.get();
-        if (const auto* land = dynamic_cast<const LandPlot*>(&property)) {
-            wealth += land->getBuyPrice(); //TODO: hindari penggunaan dynamic cast dan hitung harga bangunan
-            continue;
-        }
-
-        if (const auto* genericProperty = dynamic_cast<const PropertyPlot*>(&property)) {
-            wealth += genericProperty->getMortgageValue();
-        }
+    for (const std::reference_wrapper<PropertyPlot>& propertyRef : ownedProperties) {
+        const PropertyPlot& property = propertyRef.get();
+        wealth += property.calculateTotalValue();
     }
     return wealth;
 }
@@ -150,17 +143,36 @@ void Player::pay(int amount) {
     cash -= amount;
 }
 
-void Player::payTaxes() {
+void Player::payTaxes(int amount) {
     if (shieldActive) {
         shieldActive = false;
         return;
     }
-    pay(cash / 10); //FIXME
+    try{
+        pay(amount);
+    }
+    catch (InsufficientFundException e){
+        //TODO: serviceBankrupt
+    }
 }
 
-bool Player::buyProperty(PropertyPlot& property) { //TODO: ubah jadi void
-    if (property.getOwner() == this) {
-        return false; //TODO: throw exception
+void Player::payRent(int amount, Player* targetPlayer){
+    if (shieldActive) {
+        shieldActive = false;
+        return;
+    }
+    try{
+        pay(amount);
+    }
+    catch (InsufficientFundException e){
+        //TODO: serviceBankrupt
+    }
+    targetPlayer->receive(amount);
+}
+
+void Player::buyProperty(PropertyPlot& property) {
+    if (property.getOwner() != NULL) {
+        throw NoAccessToPropertyException();
     }
 
     int price = property.getBuyPrice();
@@ -168,7 +180,32 @@ bool Player::buyProperty(PropertyPlot& property) { //TODO: ubah jadi void
     pay(price);
     ownedProperties.push_back(property);
     property.setOwner(this);
-    return true; //TODO: hapus jika return void
+}
+
+void Player::tradeProperty(PropertyPlot& property, Player* targetPlayer, int price){
+    pay(price);
+    targetPlayer->receive(price);
+    transferProperty(property, targetPlayer);
+}
+
+void Player::transferProperty(PropertyPlot& property, Player* targetPlayer){
+    if (property.getOwner() != this) {
+        throw NoAccessToPropertyException();
+    }
+
+    auto it = std::find_if(ownedProperties.begin(), ownedProperties.end(),
+        [&](const std::reference_wrapper<PropertyPlot>& propertyRef){
+            return &propertyRef.get() == &property;
+        }
+    );
+    if (it == ownedProperties.end()) {
+        return throw std::runtime_error("Terjadi kesalahan pada pengecekan property yang dimiliki"); //TODO: hapus jika sudah aman
+    }
+    ownedProperties.erase(it);
+
+    //Ubah kepemilikan
+    targetPlayer->ownedProperties.push_back(property);
+    property.setOwner(targetPlayer);
 }
 
 bool Player::useCards(std::size_t cardIndex, SkillContext& ctx) {
@@ -345,6 +382,20 @@ int Player::countOwnedUtility() const {
         }
     }
     return count;
+}
+
+void Player::updateOwnedProperties(){
+    for (auto propertyRef : ownedProperties){
+        propertyRef.get().updateFestival();
+    }
+}
+
+void Player::updateStatus(){
+    updateOwnedProperties();
+    decrementDiscountTurn();
+    decrementJailTurns();
+    decrementShieldTurn();
+    //TODO: tambah lagi
 }
 
 bool Player::isBankrupt() const {

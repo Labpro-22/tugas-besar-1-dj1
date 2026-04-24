@@ -28,4 +28,5 @@ public:
     virtual PlotType getType() const = 0;
     virtual Player* getOwner() const;
     virtual void startEvent(PlotContext& ctx) = 0;
+    virtual void applyFestival();
 };
