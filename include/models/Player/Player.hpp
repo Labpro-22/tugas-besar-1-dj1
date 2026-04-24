@@ -77,6 +77,7 @@ public:
     void incrementConsecutiveDoubles();
     void resetConsecutiveDoubles();
     void addOwnedCard(const std::shared_ptr<SkillCard>& card);
+    void addOwnedProperty(Plot& plot);
     void setUsedSkillThisTurn(bool used);
     void resetTurnFlags();
 
