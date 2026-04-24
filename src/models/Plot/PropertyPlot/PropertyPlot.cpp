@@ -50,3 +50,21 @@ void PropertyPlot::endFestival(){
     festivalDuration = 0;
     festivalMultiplier = 1;
 }
+
+void PropertyPlot::setFestivalMultiplier(int mult) {
+    if (mult < 1 || mult > 8) {
+        throw InvalidInputException("Festival multiplier harus bernilai antara 1 dan 8.");
+    }
+    festivalMultiplier = mult;
+}
+ 
+void PropertyPlot::setFestivalDuration(int dur) {
+    if (dur < 0) {
+        throw InvalidInputException("Festival duration tidak boleh negatif.");
+    }
+    festivalDuration = dur;
+}
+ 
+void PropertyPlot::setPropertyStatus(PropertyStatus status) {
+    propertyStatus = status;
+}

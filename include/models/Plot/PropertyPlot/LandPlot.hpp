@@ -25,7 +25,7 @@ public:
     std::map<int, int> getRentPriceTable() const override;
     int getRentPrice(int level) const override;
     int getLevel() const;
-
+    void setLevel(int level);
     void build(PlotContext& ctx);
     void sellBuildings();
     bool canBuild(PlotContext& ctx) const;
