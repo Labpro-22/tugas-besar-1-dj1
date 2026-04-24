@@ -7,6 +7,8 @@ MoveCard::MoveCard() {
     uniform_int_distribution<> number(1, 12);
     moveNumber = number(g);
 }
+
+MoveCard::MoveCard(int moveNumber) : moveNumber(moveNumber) {}
  
 void MoveCard::activate(SkillContext& ctx) {
     Player& currPlayer = ctx.getCurrentPlayer();

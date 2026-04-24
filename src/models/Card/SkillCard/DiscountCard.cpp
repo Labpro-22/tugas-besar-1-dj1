@@ -7,6 +7,8 @@ DiscountCard::DiscountCard() {
     discountValue = dist(g);
 }
 
+DiscountCard::DiscountCard(int discountValue) : discountValue(discountValue) {}
+
 void DiscountCard::activate(SkillContext& ctx) {
     ctx.getCurrentPlayer().setDiscountValue(discountValue);
     ctx.getCurrentPlayer().setDiscountTurnLeft(1);
