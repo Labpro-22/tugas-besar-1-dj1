@@ -24,6 +24,6 @@ class CardDeck {
         int drawPileSize();
         int discardPileSize();
 
-        vector<T> getAllCards();
+        vector<T> getAllCards() const;
 };
 
