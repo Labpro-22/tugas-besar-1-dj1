@@ -178,8 +178,13 @@ string Formatter::failedMortgage(const LandPlot& landplot) {
     oss << "Bangunan harus dijual terlebih dahulu." << endl;
     oss << endl;
     oss << "Daftar bangunan di color group [" << colorString(landplot.getColor()) << "] :" << endl;
-    
-    // TODO: Daftar bangunan di warna yang sama
+}
+
+string Formatter::makeSellBuildingOption(int idx, string name, string code, int buildCount, string buildType, int buildValue) {
+    std::ostringstream oss;
+    oss << idx << ". " << name << " (" << code << ") " << "- " << buildCount << " " << buildType << " -> " << "Nilai jual bangunan : " << moneyString(buildValue) << endl;
+
+    return oss.str();
 }
 
 string Formatter::sellProperty(string name, int cost) {
@@ -230,6 +235,14 @@ string Formatter::payLuxuryTax(int startMoney, int finalMoney) {
     oss << "Uang kamu: " << moneyString(startMoney) << " -> " << moneyString(finalMoney) << endl;
 
     return oss.str();    
+}
+
+string Formatter::failPayTax(int money) {
+    std::ostringstream oss;
+    oss << "Kamu tidak mampu bayar pajak flat M150 !" << endl;
+    oss << playerMoney(money);
+
+    return oss.str();
 }
 
 string Formatter::applyFestival(int startMoney, int finalMoney, int turn) {
@@ -283,7 +296,7 @@ string Formatter::finalPlayer(string username) {
     return oss.str();    
 }
 
-string Formatter::communityChestPlot(CommunityChestCard& card, int cost, int currMoney) {
+string Formatter::communityChestPlot(const CommunityChestCard& card, int cost, int currMoney) {
     std::ostringstream oss;
     oss << "Mengambil kartu..." << endl;
     oss << "Kartu : " << card.getName() << endl;
@@ -316,7 +329,7 @@ string Formatter::usedSkillCard(bool isUsed) {
 }
 
 string Formatter::activateSkillCard(string name, string description) {
-    return name + "diaktifkan! " + description + "\n";
+    return name + " diaktifkan! " + description + "\n";
 }
 
 string Formatter::effectSkillCard(string label, string description) {
@@ -335,6 +348,7 @@ string Formatter::dropCardWarning(string name) {
 string Formatter::dropCardAction(string name) {
     return name + "telah dibuang. Sekarang kamu memiliki 3 kartu di tangan.\n";
 }
+
 string Formatter::throwException(GameException e) {
     return e.what();
 }

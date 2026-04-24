@@ -29,6 +29,7 @@ class Formatter {
         static string makeCanMortgagedList(string name, string code, Color& color, int money);
         static string successMortgage(string name, int moneyRecieved, int moneyTotal);
         static string failedMortgage(const LandPlot& landplot); //TODO:
+        static string makeSellBuildingOption(int idx, string name, string code, int buildCount, string buildType, int buildValue);
         static string sellProperty(string name, int cost);
         
         static string makePayRent(const Player& visitor, const Player& owner, int level, int rentValue, string code); 
@@ -36,6 +37,7 @@ class Formatter {
 
         static string payIncomeTax();
         static string payLuxuryTax(int startMoney, int finalMoney);
+        static string failPayTax(int money);
         static string makeWealthList(const Player& player);  // TODO: Total kekayaan di property dan bangunan
 
         static string applyFestival(int startMoney, int finalMoney, int turn);
@@ -46,7 +48,7 @@ class Formatter {
         static string winner(string username);
         static string finalPlayer(string username);
 
-        static string communityChestPlot(CommunityChestCard& card, int cost, int playerMoney);
+        static string communityChestPlot(const CommunityChestCard& card, int cost, int playerMoney);
 
         static string showLogger(int turn, string username, string actionType, string detail);
         
@@ -57,7 +59,6 @@ class Formatter {
 
         static string dropCardWarning(string name);
         static string dropCardAction(string name);
-
 
         static string throwException(GameException e);
 };
