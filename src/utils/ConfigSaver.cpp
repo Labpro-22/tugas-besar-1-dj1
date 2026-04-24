@@ -17,10 +17,10 @@ bool ConfigSaver::fileExists(const string& filename) {
     return file.good();
 }
  
-string ConfigSaver::playerStatusToString(PlayerStatus status) {
+std::string ConfigSaver::playerStatusToString(PlayerStatus status, int jailTurns) {
     switch (status) {
         case PlayerStatus::ACTIVE:   return "ACTIVE";
-        case PlayerStatus::JAILED:   return "JAILED";
+        case PlayerStatus::JAILED:   return "JAILED_" + to_string(jailTurns);
         case PlayerStatus::BANKRUPT: return "BANKRUPT";
         default:                     return "ACTIVE";
     }
@@ -82,7 +82,7 @@ void ConfigSaver::savePlayerState(ofstream& file, const GameState& state) {
         file << p.getUsername() << " "
              << p.getCash()     << " "
              << posCode         << " "
-             << playerStatusToString(p.getStatus()) << "\n";
+             << playerStatusToString(p.getStatus(), p.getJailTurns()) << "\n";
  
         const auto& cards = p.getOwnedCards();
         file << cards.size() << "\n";
