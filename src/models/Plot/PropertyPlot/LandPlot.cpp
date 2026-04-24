@@ -86,6 +86,32 @@ bool LandPlot::isStreetOwned(PlotContext& ctx, Player* player) const {
     return ctx.getBoard().isPlayerOwnAllColor(color, player);
 }
 
+std::string LandPlot::getBuildingType() const {
+    if (level == 5) return "hotel";
+    else if (level == 0) return "kosong";
+    else return "rumah";
+}
+
+int LandPlot::getBuildingCount() const{
+    if (level == 5) return 1;
+    else return level;
+}
+
+int LandPlot::calculateBuildingValue() const{
+    int value = 0;
+    if (level == 5){
+        value += upgHotelPrice;
+    }
+    value += upgHousePrice * std::min(level, 4);
+    return value;
+}
+
+int LandPlot::calculateTotalValue() const{
+    int value = isMortgaged() ? 0 : buyPrice; //TODO cek bagaimana harga dihitung atau tidak jika mortgaged
+    value += calculateBuildingValue();
+    return value;
+}
+
 int LandPlot::calculateRentPrice(PlotContext& ctx) const {
     int rentPrice = rentPriceTable.at(level);
 

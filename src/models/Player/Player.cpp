@@ -61,7 +61,7 @@ int Player::getJailTurns() const {
     return jailTurns;
 }
 
-const std::vector<std::reference_wrapper<Plot>>& Player::getOwnedProperties() const {
+const std::vector<std::reference_wrapper<PropertyPlot>>& Player::getOwnedProperties() const {
     return ownedProperties;
 }
 
@@ -99,16 +99,9 @@ int Player::getConsecutiveDoubles() const {
 
 int Player::getTotalWealth() const {
     int wealth = cash;
-    for (const std::reference_wrapper<Plot>& propertyRef : ownedProperties) {
-        const Plot& property = propertyRef.get();
-        if (const auto* land = dynamic_cast<const LandPlot*>(&property)) {
-            wealth += land->getBuyPrice(); //TODO: hindari penggunaan dynamic cast dan hitung harga bangunan
-            continue;
-        }
-
-        if (const auto* genericProperty = dynamic_cast<const PropertyPlot*>(&property)) {
-            wealth += genericProperty->getMortgageValue();
-        }
+    for (const std::reference_wrapper<PropertyPlot>& propertyRef : ownedProperties) {//FIXME
+        const PropertyPlot& property = propertyRef.get();
+        wealth += property.calculateTotalValue();
     }
     return wealth;
 }
@@ -158,7 +151,7 @@ void Player::payTaxes() {
     pay(cash / 10); //FIXME
 }
 
-bool Player::buyProperty(PropertyPlot& property) { //TODO: ubah jadi void
+bool Player::buyProperty(PropertyPlot& property) { //FIXME
     if (property.getOwner() == this) {
         return false; //TODO: throw exception
     }
@@ -345,6 +338,20 @@ int Player::countOwnedUtility() const {
         }
     }
     return count;
+}
+
+void Player::updateOwnedProperties(){
+    for (auto propertyRef : ownedProperties){
+        propertyRef.get().updateFestival();
+    }
+}
+
+void Player::updateStatus(){
+    updateOwnedProperties();
+    decrementDiscountTurn();
+    decrementJailTurns();
+    decrementShieldTurn();
+    //TODO: tambah lagi
 }
 
 bool Player::isBankrupt() const {

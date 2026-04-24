@@ -46,7 +46,22 @@ void PropertyPlot::applyFestival(){
     festivalDuration = 3;
 }
 
+void PropertyPlot::updateFestival(){
+    if (festivalDuration == 0) return;
+    else festivalDuration--;
+    if (festivalDuration == 0) endFestival();
+}
+
 void PropertyPlot::endFestival(){
     festivalDuration = 0;
     festivalMultiplier = 1;
 }
+
+int PropertyPlot::calculateBuildingValue() const{
+    return 0;
+}
+
+int PropertyPlot::calculateTotalValue() const{
+    return buyPrice;
+}
+

@@ -17,6 +17,10 @@ void StationPlot::setRentPriceTable(std::map<int, int> rentPriceTable){
     rentPriceTable = rentPriceTable;
 }
 
+int StationPlot::getLevel() const {
+    return owner->countOwnedStation();
+}
+
 int StationPlot::calculateRentPrice(PlotContext& ctx) const {
     int ownedStation = owner->countOwnedStation();
     return rentPriceTable.at(ownedStation)*festivalMultiplier;
