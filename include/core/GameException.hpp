@@ -16,6 +16,7 @@ enum class GameErrorID{
     INVALIDPLOTTYPEEXCEPTION,
     BUILDINGISFULLEXCEPTION,
     BUILDINGISEMPTYEXCEPTION,
+    BUILDINGLEVELINSUFFICIENTEXCEPTION,
     COLORSETNOTOWNEDEXCEPTION,
     NOACCESSTOPROPERTYEXCEPTION,
     POSITIONNOTINBOARDEXCEPTION,
@@ -121,6 +122,12 @@ class BuildingIsEmptyException : public GameException{
 public:
     BuildingIsEmptyException(): GameException(GameErrorID::BUILDINGISEMPTYEXCEPTION,
         "Tidak ada bangunan yang bisa dijual pada petak ini.") {}
+};
+
+class BuildingLevelInsufficientException : public GameException{
+public:
+    BuildingLevelInsufficientException(): GameException(GameErrorID::BUILDINGLEVELINSUFFICIENTEXCEPTION,
+        "Perbedaan level bangunan dalam color group maksimal 1.") {}
 };
 
 class ColorSetNotOwnedException : public GameException{

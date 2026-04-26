@@ -14,6 +14,11 @@ Color Plot::getColor() const {
     return color;
 }
 
+int Plot::getLevel() const {
+    return 0;
+}
+
+
 Player* Plot::getOwner() const {
     return NULL;
 }

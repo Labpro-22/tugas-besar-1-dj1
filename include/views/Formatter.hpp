@@ -136,6 +136,6 @@ class Formatter {
         static string landOnPrisonJailed(int jailTurnsLeft);
 
     // ── Exception ──────────────────────────────────────────────────────────────
-        static string throwException(const GameException e);
+        static string throwException(const GameException& e);
 };
 

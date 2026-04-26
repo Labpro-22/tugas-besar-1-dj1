@@ -845,6 +845,6 @@ string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
 }
 
 // ── Exception ──────────────────────────────────────────────────────────────
-string Formatter::throwException(GameException e) {
+std::string Formatter::throwException(const GameException& e) {
     return e.what();
 }

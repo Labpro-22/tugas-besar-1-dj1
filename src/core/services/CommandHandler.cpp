@@ -11,6 +11,7 @@
 #include "core/services/EffectResolver.hpp"
 #include "models/Player/Player.hpp"
 #include "models/Card/SkillCard/SkillCard.hpp"
+#include "views/GameRenderer.hpp"
 
 using std::cout;
 using std::cin;
