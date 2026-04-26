@@ -1,5 +1,8 @@
 #include "models/Plot/PropertyPlot/StationPlot.hpp"
 
+#include <utility>
+
+#include "core/GameException.hpp"
 #include "models/Player/Player.hpp"
 #include "views/GameRenderer.hpp"
 
@@ -15,15 +18,19 @@ std::map<int, int> StationPlot::getRentPriceTable() const {
 }
 
 int StationPlot::getRentPrice(int level) const {
-    return rentPriceTable.at(level);
+    auto it = rentPriceTable.find(level);
+    if (it == rentPriceTable.end()) {
+        return 0;
+    }
+    return it->second;
 }
 
-void StationPlot::setRentPriceTable(std::map<int, int> rentPriceTable){
-    rentPriceTable = rentPriceTable;
+void StationPlot::setRentPriceTable(std::map<int, int> newRentPriceTable){
+    rentPriceTable = std::move(newRentPriceTable);
 }
 
 int StationPlot::getLevel() const {
-    return owner->countOwnedStation();
+    return owner == nullptr ? 0 : owner->countOwnedStation();
 }
 
 int StationPlot::calculateRentPrice(PlotContext& ctx) const {
@@ -31,8 +38,13 @@ int StationPlot::calculateRentPrice(PlotContext& ctx) const {
 }
 
 int StationPlot::calculateBaseRentPrice(PlotContext& ctx) const {
-    int ownedStation = owner->countOwnedStation();
-    return rentPriceTable.at(ownedStation);
+    (void)ctx;
+    int ownedStation = owner == nullptr ? 0 : owner->countOwnedStation();
+    auto it = rentPriceTable.find(ownedStation);
+    if (it == rentPriceTable.end()) {
+        return 0;
+    }
+    return it->second;
 }
 
 PlotType StationPlot::getType() const {

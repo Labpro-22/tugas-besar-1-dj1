@@ -363,7 +363,7 @@ void Player::resetTurnFlags() {
 }
 
 int Player::countOwnedStation() const {
-    int count;
+    int count = 0;
     for (auto property : ownedProperties){
         if (property.get().getType() == PlotType::STATIONPLOT){
             count++;
@@ -373,7 +373,7 @@ int Player::countOwnedStation() const {
 }
 
 int Player::countOwnedUtility() const {
-    int count;
+    int count = 0;
     for (auto property : ownedProperties){
         if (property.get().getType() == PlotType::UTILITYPLOT){
             count++;

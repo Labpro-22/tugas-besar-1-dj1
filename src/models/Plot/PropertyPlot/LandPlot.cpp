@@ -26,7 +26,11 @@ std::map<int, int> LandPlot::getRentPriceTable() const {
 }
 
 int LandPlot::getRentPrice(int level) const {
-    return rentPriceTable.at(level);
+    auto it = rentPriceTable.find(level);
+    if (it == rentPriceTable.end()) {
+        return 0;
+    }
+    return it->second;
 }
 
 int LandPlot::getLevel() const {
@@ -130,7 +134,7 @@ int LandPlot::calculateRentPrice(PlotContext& ctx) const {
 }
 
 int LandPlot::calculateBaseRentPrice(PlotContext& ctx) const {
-    int rentPrice = rentPriceTable.at(level);
+    int rentPrice = getRentPrice(level);
 
     if (level == 0 && isStreetOwned(ctx, owner)){
         rentPrice *= 2;
