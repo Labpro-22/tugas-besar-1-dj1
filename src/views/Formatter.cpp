@@ -912,5 +912,5 @@ string Formatter::fatalError(const string& message) {
 
 // ── Exception ──────────────────────────────────────────────────────────────
 std::string Formatter::throwException(const GameException& e) {
-    return e.what();
+    return std::string(e.what()) + "\n";
 }

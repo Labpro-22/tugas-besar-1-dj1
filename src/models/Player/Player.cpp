@@ -219,11 +219,12 @@ void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
     if (usedSkillThisTurn) {
         throw CantDoActionThisTurnException("menggunakan kartu");
     }
-    if (cardIndex > ownedCards.size()){
+    if (cardIndex >= ownedCards.size() || !ownedCards[cardIndex]){
         throw NoCardFoundException();
     }
 
     std::shared_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex]);
+    ownedCards.erase(ownedCards.begin() + cardIndex);
 
     selectedCard->activate(ctx);
     usedSkillThisTurn = true;
@@ -231,7 +232,7 @@ void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
 }
 
 void Player::dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& deck) {
-    if (cardIndex > ownedCards.size()) {
+    if (cardIndex >= ownedCards.size() || !ownedCards[cardIndex]) {
         throw NoCardFoundException();
     }
 
