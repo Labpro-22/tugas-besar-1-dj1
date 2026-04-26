@@ -120,7 +120,7 @@ void GameRenderer::showWinner(string& username) {
 }
 
 // ── Kesempatan dan Dana Umum (command 19 - KESEMPATAN DAN DANA UMUM) ────────────────────────────────────
-void GameRenderer::showOnLandChanceCard(ChanceCard& card, string& description) {
+void GameRenderer::showOnLandChanceCard(ChanceCard& card, string description) {
     cout << Formatter::chanceCardPlot(card, description);
 }
 

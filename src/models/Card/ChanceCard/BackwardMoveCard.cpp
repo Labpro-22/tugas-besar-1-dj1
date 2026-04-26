@@ -9,7 +9,15 @@ const string BackwardMoveCard::getDescription() const {
 }
 
 void BackwardMoveCard::activate(SkillContext& ctx) {
-    Player& currPlayer = ctx.getCurrentPlayer();
-    int boardSize = ctx.getBoard().getSize();
-    currPlayer.move(-3, boardSize);
+    try {
+        Player& currPlayer = ctx.getCurrentPlayer();
+        int boardSize = ctx.getBoard().getSize();
+        currPlayer.move(-3, boardSize);
+        
+        std::ostringstream oss;
+        oss << "Kamu pindah ke " << ctx.getBoard().getPlot(currPlayer.getPosition());
+        GameRenderer::showOnLandChanceCard(*this, oss.str());
+    } catch (const GameException& e) {
+        GameRenderer::throwException(e);
+    }
 }

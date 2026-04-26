@@ -67,7 +67,7 @@ class GameRenderer {
         static void showWinner(string& username);
         
         // ── Kesempatan dan Dana umum (command 19 - (KESEMPATAN DAN DANA UMUM) ────────────────────────────────────
-        static void showOnLandChanceCard(ChanceCard& card, string& description);
+        static void showOnLandChanceCard(ChanceCard& card, string description);
         static void showOnLandCommunityChestCard(CommunityChestCard& card, int cost, int playerMoney);
 
         // ── Gunakan Kemampuan (command 20 - GUNAKAN KEMAMPUAN) ────────────────────────────────────
