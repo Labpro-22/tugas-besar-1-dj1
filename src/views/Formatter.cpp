@@ -854,6 +854,13 @@ string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
     return oss.str();
 }
 
+string Formatter::payPrisonFee(int fee) {
+    std::ostringstream oss;
+    oss << "Kamu membayar denda keluar penjara sebesar " << moneyString(fee) << endl;
+    
+    return oss.str();
+}
+
 // ── Main Setup ─────────────────────────────────────────────────────
 
 string Formatter::invalidIntInput() {

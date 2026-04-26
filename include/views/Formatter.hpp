@@ -135,6 +135,7 @@ class Formatter {
         static string landOnGoPrison();
         static string landOnPrisonVisit();
         static string landOnPrisonJailed(int jailTurnsLeft);
+        static string payPrisonFee(int fee);
 
     // ── Main Setup ─────────────────────────────────────────────────
         static string invalidIntInput();

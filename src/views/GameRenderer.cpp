@@ -337,6 +337,10 @@ void GameRenderer::showLandOnPrisonJailed(int jailTurnsLeft) {
     cout << Formatter::landOnPrisonJailed(jailTurnsLeft);
 }
 
+void GameRenderer::showPayPrisonFee(int fee) {
+    cout << Formatter::payPrisonFee(fee);
+}
+
 // ── Main Setup ─────────────────────────────────────────────────────
 
 void GameRenderer::showInvalidIntInput() {
