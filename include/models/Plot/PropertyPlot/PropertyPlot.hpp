@@ -3,6 +3,8 @@
 #include "models/Plot/Plot.hpp"
 #include "models/Plot/PropertyPlot/PropertyStatus.hpp"
 
+class Player;
+
 class PropertyPlot: public Plot{
 protected:
     int buyPrice;

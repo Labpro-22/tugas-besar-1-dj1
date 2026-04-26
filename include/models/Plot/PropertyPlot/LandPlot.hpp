@@ -27,7 +27,6 @@ public:
     int getRentPrice(int level) const override;
     void setLevel(int level);
     int getLevel() const override;
-    int getSellPrice() const;
 
     void build(PlotContext& ctx);
     void sellBuildings();

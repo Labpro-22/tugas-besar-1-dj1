@@ -6,9 +6,11 @@
 #include <vector>
 #include "models/Player/PlayerStatus.hpp"
 
+class Plot;
 class PropertyPlot;
 class SkillCard;
 class SkillContext;
+template <class T> class CardDeck;
 
 class Player {
 private:
@@ -59,6 +61,7 @@ public:
     bool useCards(std::size_t cardIndex, SkillContext& ctx);
     bool dropCard();
     bool dropCard(std::size_t cardIndex);
+    bool dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& discardPile);
     void receive(int amount);
 
     Player& operator+=(int amount);
@@ -88,6 +91,8 @@ public:
 
     void updateOwnedProperties();
     void updateStatus();
+
+    void goToJail();
 
     bool isBankrupt() const;
 };

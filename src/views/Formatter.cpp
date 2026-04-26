@@ -1,4 +1,4 @@
-#include "core/Formatter.hpp"
+#include "views/Formatter.hpp"
 
 string Formatter::moneyString(int value) {
     return "M" + to_string(value);
@@ -123,8 +123,8 @@ string Formatter::makePropertyList(PlotContext& ctx, const Player& player) {
     Color lastColor = Color::DEFAULT;
     int totalWealth = 0;
 
-    for (const std::reference_wrapper<Plot>& plotRef : ownedProperties) {
-        const Plot& plot = plotRef.get();
+    for (const std::reference_wrapper<PropertyPlot>& plotRef : ownedProperties) {
+        const PropertyPlot& plot = plotRef.get();
         const auto* land = dynamic_cast<const LandPlot*>(&plot);
         if (!land) continue;
 
@@ -242,10 +242,11 @@ string Formatter::buildGroupList(const Player& player) {
 
     // Filter only eligible groups (all plots in group owned by player)
     map<Color, vector<const LandPlot*>> eligibleGroups;
-    for (const auto& [color, plots] : colorGroups) {
+    for (const auto& entry : colorGroups) {
+        const auto& plots = entry.second;
         bool allOwned = all_of(plots.begin(), plots.end(),
             [](const LandPlot* p) { return p->getPropertyStatus() == PropertyStatus::OWNED; });
-        if (allOwned) eligibleGroups[color] = plots;
+        if (allOwned) eligibleGroups[entry.first] = plots;
     }
 
     if (eligibleGroups.empty()) {
@@ -254,7 +255,9 @@ string Formatter::buildGroupList(const Player& player) {
     }
 
     int idx = 1;
-    for (const auto& [color, plots] : eligibleGroups) {
+    for (const auto& entry : eligibleGroups) {
+        const Color& color = entry.first;
+        const auto& plots = entry.second;
         oss << idx++ << ". [" << colorString(color) << "]" << endl;
         for (const LandPlot* land : plots) {
             int level = land->getLevel();

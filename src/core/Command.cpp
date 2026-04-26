@@ -2,7 +2,11 @@
 
 #include <utility>
 #include "core/GameException.hpp"
+#include "core/GameState.hpp"
+#include "core/TurnManager.hpp"
+#include "core/services/EffectResolver.hpp"
 #include "core/SkillContext.hpp"
+#include "models/Player/Player.hpp"
 
 RollDiceCommand::RollDiceCommand(int boardSize) : boardSize(boardSize) {
     if (boardSize <= 0) {

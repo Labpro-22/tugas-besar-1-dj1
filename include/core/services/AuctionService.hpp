@@ -1,7 +1,9 @@
 #pragma once
 
 #include <vector>
-#include "core/GameState.hpp"
+
+class GameState;
+class Player;
 
 class AuctionService {
 public:
