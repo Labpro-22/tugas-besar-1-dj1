@@ -103,12 +103,10 @@ std::unique_ptr<Command> CommandHandler::parse(const std::string& rawCommand) co
         return std::make_unique<RedeemCommand>(code);
     }
 
-    // ── GUNAKAN_KEMAMPUAN <N> ─────────────────────────────────────────────────
+    // ── GUNAKAN_KEMAMPUAN [N] ─────────────────────────────────────────────────
     if (cmd == "GUNAKAN_KEMAMPUAN" || cmd == "USE_SKILL") {
-        if (tokens.size() < 2) {
-            throw InvalidInputException("GUNAKAN_KEMAMPUAN membutuhkan nomor kartu. Contoh: GUNAKAN_KEMAMPUAN 1");
-        }
-        return std::make_unique<UseSkillCardCommand>(parseInt(tokens[1]));
+        const int index = (tokens.size() < 2) ? 0 : parseInt(tokens[1]);
+        return std::make_unique<UseSkillCardCommand>(index);
     }
 
     // ── SIMPAN <NAMA_FILE> ────────────────────────────────────────────────────
