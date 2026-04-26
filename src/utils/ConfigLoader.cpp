@@ -247,3 +247,40 @@ std::tuple<int, int> ConfigLoader::loadSpecial(std::string path){
 std::tuple<int, int> ConfigLoader::loadMisc(std::string path){
     return loadTuple2(path);
 }
+
+std::vector<unique_ptr<ChanceCard>> ConfigLoader::loadChanceCard(){
+    std::vector<unique_ptr<ChanceCard>> cards;
+    cards.push_back(make_unique<ChanceCard>(BackwardMoveCard()));
+    cards.push_back(make_unique<ChanceCard>(PrisonCard()));
+    cards.push_back(make_unique<ChanceCard>(StationCard()));
+}
+
+std::vector<unique_ptr<CommunityChestCard>> ConfigLoader::loadCommunityChestCard(){
+    std::vector<unique_ptr<CommunityChestCard>> cards;
+    cards.push_back(make_unique<CommunityChestCard>(BirthdayCard()));
+    cards.push_back(make_unique<CommunityChestCard>(CampaignCard()));
+    cards.push_back(make_unique<CommunityChestCard>(DoctorCard()));
+}
+
+std::vector<shared_ptr<SkillCard>> ConfigLoader::loadSkillCard(){
+    std::vector<shared_ptr<SkillCard>> cards;
+    // MoveCard (4 lembar): Memungkinkan pemain untuk bergerak maju sekian petak. Nominal langkah pergerakan ditentukan secara acak pada saat pemain pertama kali mendapatkan kartu ini.
+    for (int i = 0; i < 4; ++i) cards.push_back(make_shared<SkillCard>(MoveCard()));
+
+    // DiscountCard (3 lembar): Memberikan diskon dengan persentase acak kepada pemain saat kartu didapatkan. Masa berlaku DiscountCard adalah 1 giliran.
+    for (int i = 0; i < 3; ++i) cards.push_back(make_shared<SkillCard>(DiscountCard()));
+
+    // ShieldCard (2 lembar): Melindungi pemain dari tagihan sewa maupun sanksi apapun yang merugikan selama 1 giliran.
+    for (int i = 0; i < 2; ++i) cards.push_back(make_shared<SkillCard>(ShieldCard()));
+
+    // TeleportCard (2 lembar): Memberikan pemain kebebasan untuk berpindah ke petak manapun di atas papan permainan.
+    for (int i = 0; i < 2; ++i) cards.push_back(make_shared<SkillCard>(TeleportCard()));
+
+    // LassoCard (2 lembar): Menarik satu pemain lawan yang berada di depan posisi pemain saat ini ke petak tempat pemain tersebut berada.
+    for (int i = 0; i < 2; ++i) cards.push_back(make_shared<SkillCard>(LassoCard()));
+
+    // DemolitionCard (2 lembar): Menghancurkan satu properti milik pemain lawan.
+    for (int i = 0; i < 2; ++i) cards.push_back(make_shared<SkillCard>(DemolitionCard()));
+}
+
+
