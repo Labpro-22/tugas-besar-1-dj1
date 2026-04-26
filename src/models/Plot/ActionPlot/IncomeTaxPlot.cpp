@@ -3,6 +3,7 @@
 #include <iostream>
 #include "core/GameException.hpp"
 #include "core/services/CommandHandler.hpp"
+#include "views/GameRenderer.hpp"
 #include "models/Player/Player.hpp"
 
 IncomeTaxPlot::IncomeTaxPlot(std::string name, std::string code, Color color)
@@ -13,8 +14,8 @@ int IncomeTaxPlot::getPercentage() const {
 }
 
 void IncomeTaxPlot::startEvent(PlotContext& ctx) {
-    //TODO: gunakan formatter untuk menampilkan pesan
-    std::string msg = "Pilihan (1/2)"; //dummy
+    GameRenderer::showIncomeTaxPrompt(FLAT, percentage);
+    std::string msg = "Pilihan (1/2)"; 
     std::string answer;
     while (true){
         answer = CommandHandler::promptInput(msg);
@@ -22,8 +23,7 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
             break;
         }
         else{
-            std::cout << InvalidInputException().what();
-            //TODO: gunakan formatter untuk tampilkan pesan error
+            GameRenderer::throwException(InvalidInputException());
         }
     }
 
@@ -32,6 +32,9 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
     }
 
     else if (answer == "2"){
+        int totalWealth = ctx.getCurrentPlayer().getTotalWealth();
+        int cashBefore = ctx.getCurrentPlayer().getCash();
         ctx.getCurrentPlayer().payTaxes(ctx.getCurrentPlayer().getTotalWealth() * PPH/100);
+        GameRenderer::showIncomeTaxResult(totalWealth, cashBefore, percentage);
     }
 }

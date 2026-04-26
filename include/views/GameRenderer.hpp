@@ -35,8 +35,10 @@ class GameRenderer {
         // ── Pay tax (command 8 - BAYAR_PAJAK) ────────────────────────────────
         static void showIncomeTaxPrompt(int flat, int percentage);
         static void showIncomeTaxResult(int totalWealth, int cashBefore, int percentage);
+        static void showPayFlatTax(int flat, int money);
+        static void showFailPayFlatTax(int money);               
         static void showLuxuryTax(int startMoney, int finalMoney);
-        static void showFailPayTax(int money);
+        static void showFailPayLuxuryTax(int money);
 
         // ── Mortgage (command 9 - GADAI) ──────────────────────────────────────
         static void showCanMortgagedList(const PropertyPlot& property, int money);

@@ -11,7 +11,7 @@ PlotType FestivalPlot::getType() const {
 }
 
 void FestivalPlot::startEvent(PlotContext& ctx) {
-    //TODO: tampilkan pesan festival plot
+    GameRenderer::showFestivalLanding(ctx.getCurrentPlayer());
     int targetIdx;
     while (true){
         std::string answer = CommandHandler::promptInput("Masukkan nomor petak yang ingin diberi efek festival");
@@ -23,13 +23,14 @@ void FestivalPlot::startEvent(PlotContext& ctx) {
             targetIdx = idx;
             break;
         }
-        catch (GameException e){
-            // std::cout << e.what(); //TODO: tampilkan dengan renderer
+        catch (const GameException e){
+           GameRenderer::throwException(e);
         }
-        catch (std::exception e){
-            // std::cout << InvalidInputException().what(); //TODO: tampilkan dengan renderer
+        catch (const GameException e){
+            GameRenderer::throwException(e);
         }
     }
 
     ctx.getBoard().getPlots().at(targetIdx).get()->applyFestival();
+    // TODO: Handle festival multiplier for Gamerenderer
 }
