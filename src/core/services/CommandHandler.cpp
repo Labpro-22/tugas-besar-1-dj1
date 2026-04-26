@@ -140,7 +140,7 @@ std::string CommandHandler::promptInput(std::string prompt){
     return answer;
 }
 
-bool CommandHandler::promptYesNo(std::string prompt){\
+bool CommandHandler::promptYesNo(std::string prompt){
     GameRenderer::showYesNoMessage(prompt);
     while(true){
         try{
