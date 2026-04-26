@@ -65,7 +65,7 @@ const std::vector<std::reference_wrapper<PropertyPlot>>& Player::getOwnedPropert
     return ownedProperties;
 }
 
-const std::vector<std::shared_ptr<SkillCard>>& Player::getOwnedCards() const {
+const std::vector<std::unique_ptr<SkillCard>>& Player::getOwnedCards() const {
     return ownedCards;
 }
 
@@ -211,52 +211,31 @@ void Player::transferProperty(PropertyPlot& property, Player* targetPlayer){
     property.setOwner(targetPlayer);
 }
 
-bool Player::useCards(std::size_t cardIndex, SkillContext& ctx) {
-    if (usedSkillThisTurn || cardIndex >= ownedCards.size()) {
-        return false;
+void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
+    if (usedSkillThisTurn) {
+        throw CantDoActionThisTurnException("menggunakan kartu");
+    }
+    if (cardIndex > ownedCards.size()){
+        throw NoCardFoundException();
     }
 
-    std::shared_ptr<SkillCard> selectedCard = ownedCards[cardIndex];
-    ownedCards.erase(ownedCards.begin() + static_cast<std::vector<std::shared_ptr<SkillCard>>::difference_type>(cardIndex));
-    if (!selectedCard) {
-        return false;
-    }
+    std::unique_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
+    ownedCards.erase(ownedCards.begin() + cardIndex-1);
 
     selectedCard->activate(ctx);
     usedSkillThisTurn = true;
-    return true;
+    ctx.getBoard().getSkillCardDeckPile().discard(std::move(selectedCard));
 }
 
-bool Player::dropCard() {
-    if (ownedCards.empty()) {
-        return false;
-    }
-    return dropCard(ownedCards.size() - 1);
-}
-
-bool Player::dropCard(std::size_t cardIndex) {
-    if (cardIndex >= ownedCards.size()) {
-        return false;
+void Player::dropCard(std::size_t cardIndex, CardDeck<std::unique_ptr<SkillCard>>& deck) {
+    if (cardIndex > ownedCards.size()) {
+        throw NoCardFoundException();
     }
 
-    ownedCards.erase(ownedCards.begin() + static_cast<std::vector<std::shared_ptr<SkillCard>>::difference_type>(cardIndex));
-    return true;
-}
+    std::unique_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
+    ownedCards.erase(ownedCards.begin() + cardIndex-1);
 
-bool Player::dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& deck) {
-    if (cardIndex >= ownedCards.size()) {
-        return false;
-    }
-
-    std::shared_ptr<SkillCard>& card = ownedCards[cardIndex];
-
-    ownedCards.erase(ownedCards.begin()
-        + static_cast<std::vector<std::shared_ptr<SkillCard>>::difference_type>(cardIndex));
-
-    // Masuk discard pile
-    deck.discard(card);
-
-    return true;
+    deck.discard(std::move(selectedCard));
 }
 
 void Player::receive(int amount) {
@@ -366,11 +345,8 @@ void Player::resetConsecutiveDoubles() {
     consecutiveDoubles = 0;
 }
 
-void Player::addOwnedCard(const std::shared_ptr<SkillCard>& card) {
-    if (!card) {
-        throw InvalidInputException("Card tidak boleh null.");
-    }
-    ownedCards.push_back(card);
+void Player::addOwnedCard(const std::unique_ptr<SkillCard>& card){ //TODO: pastikan pemanggilannya aman dengan remove card dari carddeck dulu
+    ownedCards.push_back(std::move(card));
 }
 
 void Player::setUsedSkillThisTurn(bool used) {

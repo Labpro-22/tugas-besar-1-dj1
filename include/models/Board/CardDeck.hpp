@@ -14,7 +14,7 @@ class CardDeck {
         deque<T> discardPile;
     public:
         CardDeck();
-        ~CardDeck();
+        ~CardDeck() = default;
 
         void shuffle();
         void initialize(vector<T>);
