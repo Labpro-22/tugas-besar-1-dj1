@@ -21,10 +21,6 @@ private:
     CardDeck<std::unique_ptr<ChanceCard>>         chanceDeckPile;
     CardDeck<std::unique_ptr<CommunityChestCard>> communityChestDeckPile;
     CardDeck<std::shared_ptr<SkillCard>>          skillCardDeckPile;
-
-    vector<std::unique_ptr<ChanceCard>> ownedChanceCards;
-    vector<std::unique_ptr<CommunityChestCard>> ownedCommunityChestCards;
-    vector<std::shared_ptr<SkillCard>> ownedSkillCards;
  
     Board(const Board&)            = delete;
     Board& operator=(const Board&) = delete;

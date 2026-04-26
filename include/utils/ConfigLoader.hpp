@@ -21,6 +21,18 @@
 #include "models/Plot/SpecialPlot/GoPrisonPlot.hpp"
 #include "models/Plot/SpecialPlot/PrisonPlot.hpp"
 #include "models/Plot/SpecialPlot/StartPlot.hpp"
+#include "models/Card/ChanceCard/BackwardMoveCard.hpp"
+#include "models/Card/ChanceCard/PrisonCard.hpp"
+#include "models/Card/ChanceCard/StationCard.hpp"
+#include "models/Card/CommunityChestCard/BirthdayCard.hpp"
+#include "models/Card/CommunityChestCard/CampaignCard.hpp"
+#include "models/Card/CommunityChestCard/DoctorCard.hpp"
+#include "models/Card/SkillCard/DemolitionCard.hpp"
+#include "models/Card/SkillCard/DiscountCard.hpp"
+#include "models/Card/SkillCard/LassoCard.hpp"
+#include "models/Card/SkillCard/MoveCard.hpp"
+#include "models/Card/SkillCard/ShieldCard.hpp"
+#include "models/Card/SkillCard/TeleportCard.hpp"
 
 class ConfigLoader{
 private:
@@ -57,4 +69,10 @@ public:
     static std::tuple<int, int> loadSpecial(std::string path);
 
     static std::tuple<int, int> loadMisc(std::string path);
+
+    static std::vector<unique_ptr<ChanceCard>> loadChanceCard();
+
+    static std::vector<unique_ptr<CommunityChestCard>> loadCommunityChestCard();
+
+    static std::vector<shared_ptr<SkillCard>> loadSkillCard();
 };
