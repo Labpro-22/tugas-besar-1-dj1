@@ -1,12 +1,16 @@
 #include "models/Card/SkillCard/DiscountCard.hpp"
 
-void DiscountCard::activate(SkillContext& ctx) {
-    random_device random;
-    mt19937 g(random());
-    uniform_int_distribution<> number(1,100);
+DiscountCard::DiscountCard() {
+    random_device rd;
+    mt19937 g(rd());
+    uniform_int_distribution<> dist(1, 100);
+    discountValue = dist(g);
+}
 
-    int discountPercent = number(g);
-    ctx.getCurrentPlayer().setDiscountValue(discountPercent);
+DiscountCard::DiscountCard(int discountValue) : discountValue(discountValue) {}
+
+void DiscountCard::activate(SkillContext& ctx) {
+    ctx.getCurrentPlayer().setDiscountValue(discountValue);
     ctx.getCurrentPlayer().setDiscountTurnLeft(1);
 }
 
@@ -16,4 +20,8 @@ const string DiscountCard::getName() const {
 
 const string DiscountCard::getDescription() const {
     return "Memberikan diskon dengan persentase acak kepada pemain saat kartu didapatkan. Masa berlaku DiscountCard adalah 1 giliran.";
+}
+
+int DiscountCard::getDiscountValue() const {
+    return discountValue;
 }

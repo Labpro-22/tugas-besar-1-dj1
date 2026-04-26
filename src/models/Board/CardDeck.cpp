@@ -73,7 +73,7 @@ int CardDeck<T>::discardPileSize() {
 }
 
 template<class T>
-vector<T> CardDeck<T>::getAllCards() {
+vector<T> CardDeck<T>::getAllCards() const {
     vector<T> deck;
     for(auto it = drawPile.begin(); it < drawPile.end(); ++it) {
         deck.push_back(*it);

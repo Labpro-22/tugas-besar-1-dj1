@@ -9,6 +9,7 @@
 #include "core/GameException.hpp"
 #include "utils/Logger.hpp"
 
+class CommandHandler;
 class Player;
 
 class Plot{

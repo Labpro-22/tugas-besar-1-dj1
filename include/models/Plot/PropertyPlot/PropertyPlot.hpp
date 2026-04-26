@@ -31,7 +31,9 @@ public:
     virtual int getRentPrice(int level) const = 0;
     Player* getOwner() const override;
     void setOwner(Player* player);
-
+    void setFestivalMultiplier(int mult);
+    void setFestivalDuration(int dur);
+    void setPropertyStatus(PropertyStatus status);
     bool isOwned() const;
     bool isMortgaged() const;
     void applyFestival();
