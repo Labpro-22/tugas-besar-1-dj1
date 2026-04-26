@@ -136,17 +136,21 @@ bool CommandHandler::execute(const Command& command, GameState& state, EffectRes
 std::string CommandHandler::promptInput(std::string prompt){
     GameRenderer::showInputMessage(prompt);
     std::string answer;
-    std::getline(std::cin >> std::ws, answer);
+    if (!std::getline(std::cin >> std::ws, answer)) {
+        throw InvalidInputException("EOF");
+    }
     return answer;
 }
 
 bool CommandHandler::promptYesNo(std::string prompt){
     while(true){
         GameRenderer::showYesNoMessage(prompt);
-        try{
+        std::string answer;
+        if (!std::getline(std::cin >> std::ws, answer)) {
+            throw InvalidInputException("EOF");
+        }
 
-            std::string answer;
-            std::getline(std::cin >> std::ws, answer);
+        try{
             if (answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" || answer == "YES"){
                 return true;
             }
@@ -169,9 +173,19 @@ std::size_t CommandHandler::promptCardDrop(const Player& player) {
 
     while (true) {
         try {
-            GameRenderer::showDropCardWarning(cards.at(3)->getName());
+            if (cards.empty()) {
+                throw NoCardFoundException();
+            }
+
+            GameRenderer::showDropCardWarning(cards.back() ? cards.back()->getName() : "Kartu kosong");
             for (std::size_t i = 0; i < cards.size(); ++i) {
-                GameRenderer::showCardList(i, cards.at(i)->getName(), cards.at(i)->getDescription());
+                if (cards.at(i)) {
+                    GameRenderer::showCardList(
+                        static_cast<int>(i + 1),
+                        cards.at(i)->getName(),
+                        cards.at(i)->getDescription()
+                    );
+                }
             }
 
             std::string raw = promptInput("Pilih nomor kartu (1-"+ std::to_string(cards.size()) + ")");
@@ -181,8 +195,9 @@ std::size_t CommandHandler::promptCardDrop(const Player& player) {
                 throw InvalidInputException("Nomor tidak valid.");
             }
 
-            GameRenderer::showDropCardAction(cards.at(choice)->getName());
-            return static_cast<std::size_t>(choice - 1);
+            const std::size_t cardIndex = static_cast<std::size_t>(choice - 1);
+            GameRenderer::showDropCardAction(cards.at(cardIndex) ? cards.at(cardIndex)->getName() : "Kartu kosong");
+            return cardIndex;
 
         } catch (const GameException& e) {
             GameRenderer::throwException(e);
