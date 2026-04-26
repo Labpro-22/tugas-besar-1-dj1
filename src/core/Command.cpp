@@ -101,7 +101,19 @@ PrintDeedCommand::PrintDeedCommand(std::string code) : code(std::move(code)) {}
 
 bool PrintDeedCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     state.addLog("Perintah PRINT_DEED untuk properti " + code + " dijalankan.");
-    GameRenderer::showDeed(*dynamic_cast<LandPlot*>(state.getBoard().getPlot(state.getCurrentPlayer().getPosition())));
+    Plot* plot = state.getBoard().getPlotByCode(code);
+    if (!plot) {
+        cout << Formatter::deedNotFound(code);
+        return true;
+    }
+
+    LandPlot* land = dynamic_cast<LandPlot*>(plot);
+    if (!land) {
+        cout << Formatter::deedNotFound(code);
+        return true;
+    }
+
+    GameRenderer::showDeed(*land);
     return true;
 }
 

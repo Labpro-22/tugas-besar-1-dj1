@@ -40,6 +40,7 @@ public:
     bool isReady() const;
  
     Plot* getPlot(int index) const;
+    Plot* getPlotByCode(const std::string& code) const;
     int getSize() const;
     const vector<unique_ptr<Plot>>& getPlots() const;
    const vector<Plot*> getPlots(Color color) const;

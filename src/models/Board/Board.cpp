@@ -32,6 +32,15 @@ Plot* Board::getPlot(int index) const {
     }
     return tiles[index].get(); 
 }
+
+Plot* Board::getPlotByCode(const std::string& code) const {
+    for (const auto& plot : tiles) {
+        if (plot->getCode() == code) {
+            return plot.get();
+        }
+    }
+    return nullptr;
+}
  
 int Board::getSize() const {
     return static_cast<int>(tiles.size());
