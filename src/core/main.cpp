@@ -155,10 +155,6 @@ int main() {
 
             try {
                 engine.run({command});
-                const auto logs = engine.getState().getRecentLogs(1);
-                if (!logs.empty()) {
-                    GameRenderer::showLogger(logs.back());
-                }
 
             } catch (const GameException& e) {
                 GameRenderer::throwException(e);
