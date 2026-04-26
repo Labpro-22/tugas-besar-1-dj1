@@ -126,6 +126,13 @@ class Formatter {
         static string dropCardWarning(const string& name);
         static string dropCardAction(const string& name);
 
+    // ── Special plots ─────────────────────────────────────────────────
+        static string landOnGo();
+        static string landOnFreePark();
+        static string landOnGoPrison();
+        static string landOnPrisonVisit();
+        static string landOnPrisonJailed(int jailTurnsLeft);
+
     // ── Exception ──────────────────────────────────────────────────────────────
         static string throwException(const GameException e);
 };

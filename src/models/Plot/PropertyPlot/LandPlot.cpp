@@ -126,6 +126,50 @@ PlotType LandPlot::getType() const {
     return PlotType::LANDPLOT;
 }
 
+void LandPlot::startEvent(PlotContext& ctx) {
+    Player& currentPlayer = ctx.getCurrentPlayer();
+ 
+    if (!isOwned()) {
+        GameRenderer::showBuyPrompt(currentPlayer, *this);
+ 
+        bool canAfford = currentPlayer.getCash() >= getBuyPrice();
+        bool wantsToBuy = canAfford && CommandHandler::promptYesNo("");
+ 
+        if (wantsToBuy) {
+            try {
+                currentPlayer.buyProperty(*this);
+                GameRenderer::showBuySuccess(currentPlayer, *this);
+            } catch (const GameException& e) {
+                GameRenderer::throwException(e);
+            }
+        } else {
+            GameRenderer::showBuyFailed();
+            std::vector<Player*> bidders;
+            for (Player& p : ctx.getPlayers()) {
+                if (!p.isBankrupt()) {
+                    bidders.push_back(&p);
+                }
+            }
+            ctx.getAuctionService().startAuction(*this, bidders, ctx.getLogger());
+        }
+    } else {
+        if (owner != &currentPlayer) {
+            if (isMortgaged()) {
+                GameRenderer::showMortgagedPlot(*this);
+            } else {
+                int rentPrice = calculateRentPrice(ctx);
+                try {
+                    GameRenderer::showPayRent(ctx, *this);
+                    currentPlayer.payRent(rentPrice, owner);
+                } catch (const InsufficientFundException& e) {
+                    GameRenderer::showCannotPayRent(rentPrice, currentPlayer.getCash());
+                    GameRenderer::throwException(e);
+                }
+            }
+        }
+    }
+}
+
 void LandPlot::setLevel(int level) {
     if (level < 0 || level > 5) {
         throw InvalidInputException("Level bangunan harus bernilai antara 0 dan 5.");

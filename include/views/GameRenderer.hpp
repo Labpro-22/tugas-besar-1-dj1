@@ -118,6 +118,13 @@ class GameRenderer {
         static void showDropCardWarning(const string& name);
         static void showDropCardAction(const string& name);
 
+        // ── Special plots ─────────────────────────────────────────────────
+        static void showLandOnGo();
+        static void showLandOnFreePark();
+        static void showLandOnGoPrison();
+        static void showLandOnPrisonVisit();
+        static void showLandOnPrisonJailed(int jailTurnsLeft);
+
         // ── GAME EXCEPTION ────────────────────────────────────
         static void throwException(const GameException& ex);
 

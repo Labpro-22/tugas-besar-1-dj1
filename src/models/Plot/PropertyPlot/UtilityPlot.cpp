@@ -2,6 +2,7 @@
 
 #include "models/Board/Dice.hpp"
 #include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
 
 std::map<int, int> UtilityPlot::rentPriceTable;
 
@@ -34,4 +35,32 @@ int UtilityPlot::calculateRentPrice(PlotContext& ctx) const {
 
 PlotType UtilityPlot::getType() const {
     return PlotType::UTILITYPLOT;
+}
+
+void UtilityPlot::startEvent(PlotContext& ctx) {
+    Player& currentPlayer = ctx.getCurrentPlayer();
+ 
+    if (!isOwned()) {
+        try {
+            currentPlayer.buyProperty(*this);
+            GameRenderer::showBuyUtility(*this);
+        } catch (const GameException& e) {
+            GameRenderer::throwException(e);
+        }
+    } else {
+        if (owner != &currentPlayer) {
+            if (isMortgaged()) {
+                GameRenderer::showMortgagedPlot(*this);
+            } else {
+                int rentPrice = calculateRentPrice(ctx);
+                try {
+                    GameRenderer::showPayRent(ctx, *this);
+                    currentPlayer.payRent(rentPrice, owner);
+                } catch (const InsufficientFundException& e) {
+                    GameRenderer::showCannotPayRent(rentPrice, currentPlayer.getCash());
+                    GameRenderer::throwException(e);
+                }
+            }
+        }
+    }
 }
