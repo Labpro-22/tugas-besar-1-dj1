@@ -795,6 +795,46 @@ string Formatter::dropCardAction(string& name) {
     return name + "telah dibuang. Sekarang kamu memiliki 3 kartu di tangan.\n";
 }
 
+// ── Special plots ─────────────────────────────────────────────────
+string Formatter::landOnGo() {
+    std::ostringstream oss;
+    oss << onLand("Petak Mulai (GO)", "!");
+    return oss.str();
+}
+ 
+string Formatter::landOnFreePark() {
+    std::ostringstream oss;
+    oss << onLand("Petak Bebas Parkir", "!");
+    return oss.str();
+}
+ 
+string Formatter::landOnGoPrison() {
+    std::ostringstream oss;
+    oss << onLand("Petak Pergi ke Penjara", "!");
+    oss << "Kamu masuk penjara." << endl;
+    return oss.str();
+}
+ 
+string Formatter::landOnPrisonVisit() {
+    std::ostringstream oss;
+    oss << onLand("Petak Penjara", " - Hanya Berkunjung");
+    return oss.str();
+}
+ 
+string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
+    std::ostringstream oss;
+    oss << "Kamu sedang di dalam Penjara." << endl;
+    oss << "Sisa giliran percobaan: " << jailTurnsLeft << endl;
+    oss << "Pilihan untuk keluar:" << endl;
+    oss << "  1. Bayar denda ke Bank sebelum melempar dadu." << endl;
+    oss << "  2. Gunakan kartu 'Bebas dari Penjara' (jika punya)." << endl;
+    oss << "  3. Lempar dadu dan harapkan angka double." << endl;
+    if (jailTurnsLeft <= 0) {
+        oss << "Batas percobaan habis! Kamu WAJIB membayar denda." << endl;
+    }
+    return oss.str();
+}
+
 // ── Exception ──────────────────────────────────────────────────────────────
 string Formatter::throwException(GameException e) {
     return e.what();

@@ -1,6 +1,7 @@
 #include "models/Plot/PropertyPlot/StationPlot.hpp"
 
 #include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
 
 std::map<int, int> StationPlot::rentPriceTable;
 
@@ -32,4 +33,32 @@ int StationPlot::calculateRentPrice(PlotContext& ctx) const {
 
 PlotType StationPlot::getType() const {
     return PlotType::STATIONPLOT;
+}
+
+void StationPlot::startEvent(PlotContext& ctx) {
+    Player& currentPlayer = ctx.getCurrentPlayer();
+
+    if (!isOwned()) {
+        try {
+            currentPlayer.buyProperty(*this);
+            GameRenderer::showBuyStation(*this);
+        } catch (const GameException& e) {
+            GameRenderer::throwException(e);
+        }
+    } else {
+        if (owner != &currentPlayer) {
+            if (isMortgaged()) {
+                GameRenderer::showMortgagedPlot(*this);
+            } else {
+                int rentPrice = calculateRentPrice(ctx);
+                try {
+                    GameRenderer::showPayRent(ctx, *this);
+                    currentPlayer.payRent(rentPrice, owner);
+                } catch (const InsufficientFundException& e) {
+                    GameRenderer::showCannotPayRent(rentPrice, currentPlayer.getCash());
+                    GameRenderer::throwException(e);
+                }
+            }
+        }
+    }
 }

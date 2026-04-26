@@ -1,6 +1,6 @@
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
-
 #include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
 
 PropertyPlot::PropertyPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
                             Player* owner, PropertyStatus propertyStatus,
@@ -77,18 +77,6 @@ int PropertyPlot::calculateBuildingValue() const{
 
 int PropertyPlot::calculateTotalValue() const{
     return buyPrice;
-}
-
-void PropertyPlot::startEvent(PlotContext& ctx) {
-    if (!isOwned()){
-        ctx.getCurrentPlayer().buyProperty(*this);
-    }
-    else{
-        if (owner != &ctx.getCurrentPlayer()){
-            int rentPrice = calculateRentPrice(ctx);
-            ctx.getCurrentPlayer().payRent(rentPrice, owner);
-        }
-    }
 }
 
 void PropertyPlot::setFestivalMultiplier(int mult) {

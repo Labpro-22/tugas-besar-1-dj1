@@ -42,6 +42,6 @@ public:
     int calculateRentPrice(PlotContext& ctx) const override;
 
     PlotType getType() const override;
-
+    void startEvent(PlotContext& ctx) override;
     void demolish() override;
 };
