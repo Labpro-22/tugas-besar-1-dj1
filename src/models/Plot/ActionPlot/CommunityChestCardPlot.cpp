@@ -7,9 +7,14 @@ CommunityChestCardPlot::CommunityChestCardPlot(std::string name, std::string cod
     : CardPlot(name, code, color) {}
 
 void CommunityChestCardPlot::startEvent(PlotContext& ctx) {
+    Board& board = ctx.getBoard();
     std::unique_ptr<CommunityChestCard> card = ctx.getBoard().drawCommunityChestCard();
     SkillContext skillCtx(ctx);
     if (card) {
         card->activate(skillCtx);
     }
+
+    //Kembalikan kartu
+    board.getCommunityChestDeckPile().discard(std::move(card));
+    board.getCommunityChestDeckPile().reshuffleFromDiscard();
 }

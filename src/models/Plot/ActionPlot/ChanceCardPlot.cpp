@@ -9,19 +9,16 @@ ChanceCardPlot::ChanceCardPlot(std::string name, std::string code, Color color)
     : CardPlot(name, code, color){}
 
 void ChanceCardPlot::startEvent(PlotContext& ctx) {
-    std::unique_ptr<ChanceCard> card = ctx.getBoard().drawChanceCard();
-    if (!card) {
-        return;
-    }
-
-    Player& currentPlayer = ctx.getCurrentPlayer();
-    const int oldPosition = currentPlayer.getPosition();
+    Board& board = ctx.getBoard();
+    std::unique_ptr<ChanceCard> card = board.drawChanceCard();
 
     SkillContext skillCtx(ctx);
     card->activate(skillCtx);
 
-    const int newPosition = currentPlayer.getPosition();
-    if (newPosition != oldPosition && currentPlayer.getStatus() != PlayerStatus::JAILED) {
-        ctx.getBoard().getPlot(newPosition)->startEvent(ctx);
-    }
+    //Kembalikan kartu
+    board.getChanceDeckPile().discard(std::move(card));
+    board.getChanceDeckPile().reshuffleFromDiscard();
+
+    //Aktifkan efek land di plot yang baru
+    board.getPlot(ctx.getCurrentPlayer().getPosition())->startEvent(ctx);
 }
