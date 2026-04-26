@@ -17,16 +17,4 @@ public:
     static bool promptYesNo(std::string prompt);
     std::size_t promptCardDrop(const Player& player);
     static std::string promptInput(std::string prompt);
-    template <typename Validator>
-    std::string promptInput(std::string prompt, Validator isValid){
-        std::string answer;
-        while (true){
-            std::cout << prompt << ": ";
-            std::cin >> answer;
-
-            if (isValid(answer)){
-                return answer;
-            }
-        }
-    }
 };

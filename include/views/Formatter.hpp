@@ -17,6 +17,10 @@ class Formatter {
         static string onLand(string name, string description);
         static string playerMoney(int money);
 
+    // ── Input Handler ───────────────────────────────────────────────────────
+        static string promptInputMessage(string prompt);
+        static string promptYesNoMessage(string prompt);
+
     // ── Dice (command 2 & 3) ─────────────────────────────────────────────
         static string showDiceRoll(const Player& player, const Dice& dice, string& position);
         static string showControlDice(const Player& player, const Dice& dice, string& position); 
@@ -58,6 +62,8 @@ class Formatter {
         static string sellProperty(string& name, int cost);
 
     // ── Redeem (command 10 - TEBUS) ───────────────────────────────────────────────
+        static string redeemListHeader(int playerCash);
+        static string redeemListFooter();    
         static string makeRedeemList(const PropertyPlot& property);
         static string redeemNoEligible();                                                                //TAMBAHAN
         static string successRedeemProperty(const PropertyPlot& property, int money);
@@ -115,14 +121,14 @@ class Formatter {
         static string communityChestPlot(CommunityChestCard& card, int cost, int playerMoney);
     
     // ── Skill cards (command 20 - GUNAKAN_KEMAMPUAN) ─────────────────────
-        static string makeCardList(int idx, string& name, string& description);
+        static string makeCardList(int idx, const string& name, const string& description);
         static string usedSkillCard(bool isUsed);
         static string activateSkillCard(string& name, string& description);
         static string effectSkillCard(string& label, string& description);
 
     // ── Drop card (command 21 - DROP KARTU) ──────────────────────────────
-        static string dropCardWarning(string& name);
-        static string dropCardAction(string& name);
+        static string dropCardWarning(const string& name);
+        static string dropCardAction(const string& name);
 
     // ── Special plots ─────────────────────────────────────────────────
         static string landOnGo();
@@ -131,7 +137,22 @@ class Formatter {
         static string landOnPrisonVisit();
         static string landOnPrisonJailed(int jailTurnsLeft);
 
+    // ── Main Setup ─────────────────────────────────────────────────
+        static string invalidIntInput();
+        static string promptPlayerName(int n);
+        static string playerNameEmpty();
+        static string playerNameDuplicate();
+        static string promptPlayerCount();
+        static string gameTitle();
+        static string gameStartHint();
+        static string turnHeader(int turn, int maxTurn, const string& username);
+        static string commandPrompt();
+        static string inputStopped();
+        static string noWinner();
+        static string drawResult(const vector<Player>& winners);
+        static string fatalError(const string& message);
+
     // ── Exception ──────────────────────────────────────────────────────────────
-        static string throwException(const GameException e);
+        static string throwException(const GameException& e);
 };
 

@@ -49,6 +49,15 @@ string Formatter::playerMoney(int money) {
     return "Uang kamu sekarang : " + moneyString(money);
 }
 
+// ── Input Handler ───────────────────────────────────────────────────────
+string Formatter::promptInputMessage(string prompt){
+    return prompt + ": ";
+}
+
+string Formatter::promptYesNoMessage(string prompt) {
+    return prompt + " (y/n): ";
+}
+
  // ── Dice (command 2 & 3) ─────────────────────────────────────────────
 string Formatter::showDiceRoll(const Player& player, const Dice& dice, string& position) {
     std::ostringstream oss;
@@ -373,6 +382,17 @@ string Formatter::sellProperty(string& name, int cost) {
 }
 
 // ── Redeem (command 10 - TEBUS) ───────────────────────────────────────────────
+string Formatter::redeemListHeader(int playerCash) {
+    ostringstream oss;
+    oss << "=== Properti yang Sedang Digadaikan ===" << endl;
+    oss << "Uang kamu saat ini: " << moneyString(playerCash) << endl;
+    return oss.str();
+}
+
+string Formatter::redeemListFooter() {
+    return "Pilih nomor properti (0 untuk batal): ";
+}
+
 string Formatter::makeRedeemList(const PropertyPlot& property) { 
     std::ostringstream oss;
     oss << makePropertyList(property, property.getColor()) << "[M] " << "Harga Tebus : " << moneyString(property.getMortgageValue()) << endl;
@@ -760,7 +780,7 @@ string Formatter::communityChestPlot(CommunityChestCard& card, int cost, int cur
 }
 
 // ── Skill cards (command 20 - GUNAKAN_KEMAMPUAN) ─────────────────────
-string Formatter::makeCardList(int idx, string& name, string& description) { 
+string Formatter::makeCardList(int idx, const string& name, const string& description) { 
     return to_string(idx + 1) + ". " + name + "---" + description + "\n";
 }
 
@@ -781,7 +801,7 @@ string Formatter::effectSkillCard(string& label, string& description) {
 }
 
 // ── Drop card (command 21 - DROP KARTU) ──────────────────────────────
-string Formatter::dropCardWarning(string& name) {
+string Formatter::dropCardWarning(const string& name) {
     std::ostringstream oss;
     oss << "Kamu mendapatkan 1 kartu acak baru !" << endl;
     oss << "Kartu yang didapat : " << name << endl;
@@ -791,7 +811,7 @@ string Formatter::dropCardWarning(string& name) {
     return oss.str();
 }
 
-string Formatter::dropCardAction(string& name) {
+string Formatter::dropCardAction(const string& name) {
     return name + "telah dibuang. Sekarang kamu memiliki 3 kartu di tangan.\n";
 }
 
@@ -835,7 +855,69 @@ string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
     return oss.str();
 }
 
+// ── Main Setup ─────────────────────────────────────────────────────
+
+string Formatter::invalidIntInput() {
+    return "Masukkan bilangan bulat positif.\n";
+}
+
+string Formatter::promptPlayerName(int n) {
+    return "Nama pemain " + std::to_string(n) + ": ";
+}
+
+string Formatter::playerNameEmpty() {
+    return "Nama pemain tidak boleh kosong.\n";
+}
+
+string Formatter::playerNameDuplicate() {
+    return "Nama pemain harus unik.\n";
+}
+
+string Formatter::gameTitle() {
+    return "=== NIMONSPOLI ===\n";
+}
+
+string Formatter::gameStartHint() {
+    return "Ketik EXIT untuk keluar.\n";
+}
+
+string Formatter::promptPlayerCount() {
+    return "Jumlah pemain: ";
+}
+
+string Formatter::turnHeader(int turn, int maxTurn, const string& username) {
+    return "Giliran " + std::to_string(turn) + "/" + std::to_string(maxTurn)
+         + " - " + username + "\n";
+}
+
+string Formatter::commandPrompt() {
+    return "Perintah: ";
+}
+
+string Formatter::inputStopped() {
+    return "\nInput dihentikan.\n";
+}
+
+string Formatter::noWinner() {
+    return "Permainan selesai tanpa pemenang.\n";
+}
+
+string Formatter::drawResult(const vector<Player>& winners) {
+    std::ostringstream oss;
+    oss << "Permainan seri antara: ";
+    for (std::size_t i = 0; i < winners.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << winners[i].getUsername();
+    }
+    oss << "\n";
+    return oss.str();
+}
+
+string Formatter::fatalError(const string& message) {
+    return "Error: " + message + "\n";
+}
+
 // ── Exception ──────────────────────────────────────────────────────────────
-string Formatter::throwException(GameException e) {
+std::string Formatter::throwException(const GameException& e) {
     return e.what();
 }

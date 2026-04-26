@@ -6,9 +6,11 @@
 #include "core/TurnManager.hpp"
 #include "core/services/EffectResolver.hpp"
 #include "core/SkillContext.hpp"
+#include "views/GameRenderer.hpp"
 #include "models/Player/Player.hpp"
 #include "utils/ConfigSaver.hpp"
 
+// ── LEMPAR_DADU (command 2) ──────────────────────────────────────────
 RollDiceCommand::RollDiceCommand(int boardSize) : boardSize(boardSize) {
     if (boardSize <= 0) {
         throw InvalidInputException("boardSize harus lebih dari 0.");
@@ -39,9 +41,13 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
     if (player.getStatus() == PlayerStatus::JAILED) {
         const bool released = turnManager.handleJailedRoll(player, isDouble, state);
         if (!released) {
+            std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+            GameRenderer::showDiceRoll(player, state.getDice(), position);
             return true;
         }
         player.move(steps, effectiveBoardSize);
+        std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+        GameRenderer::showDiceRoll(player, state.getDice(), position);
         effectResolver.resolveLanding(player, player.getPosition(), state);
         return true;
     }
@@ -51,6 +57,8 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
             state.addLog(player.getUsername() +
                 " melempar double tiga kali berturut-turut dan langsung masuk penjara.");
             turnManager.sendToJail(player, state);
+            std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+            GameRenderer::showDiceRoll(player, state.getDice(), position);
             return true;
         }
         player.incrementConsecutiveDoubles();
@@ -59,6 +67,10 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
     }
 
     player.move(steps, effectiveBoardSize);
+ 
+    std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+    GameRenderer::showDiceRoll(player, state.getDice(), position);
+ 
     effectResolver.resolveLanding(player, player.getPosition(), state);
 
     if (player.getStatus() != PlayerStatus::JAILED) {
@@ -113,7 +125,46 @@ bool MortgageCommand::execute(GameState& state, EffectResolver&, TurnManager&) c
 RedeemCommand::RedeemCommand(std::string propertyCode) : propertyCode(std::move(propertyCode)) {}
 
 bool RedeemCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
-    state.addLog("Perintah REDEEM untuk properti " + propertyCode + " dijalankan.");
+    Player& player = state.getCurrentPlayer();
+    const auto& ownedProps = player.getOwnedProperties();
+
+    std::vector<std::reference_wrapper<PropertyPlot>> mortgaged;
+    for (const auto& ref : ownedProps) {
+        if (ref.get().getPropertyStatus() == PropertyStatus::MORTGAGED) {
+            mortgaged.push_back(ref.get());
+        }
+    }
+
+    if (mortgaged.empty()) {
+        GameRenderer::showRedeemNoEligible();
+        return false;
+    }
+
+    GameRenderer::showRedeemListHeader(player.getCash());
+    for (const auto& ref : mortgaged) {
+        GameRenderer::showRedeemList(ref.get());
+    }
+    GameRenderer::showRedeemListFooter();
+
+    std::string rawChoice = CommandHandler::promptInput("");
+    int choice = 0;
+    try { choice = std::stoi(rawChoice); } catch (...) { return false; }
+    if (choice == 0) return false;
+    if (choice < 1 || static_cast<std::size_t>(choice) > mortgaged.size()) return false;
+
+    PropertyPlot& chosen = mortgaged[static_cast<std::size_t>(choice) - 1].get();
+    int redeemPrice = chosen.getBuyPrice();
+
+    if (player.getCash() < redeemPrice) {
+        GameRenderer::showRedeemFailed(chosen, player.getCash());
+        return false;
+    }
+
+    player.pay(redeemPrice);
+    chosen.setPropertyStatus(PropertyStatus::OWNED);
+    GameRenderer::showRedeemSuccess(chosen, player.getCash());
+    state.addLog(player.getUsername(), "TEBUS",
+        "Tebus " + chosen.getName() + " seharga M" + std::to_string(redeemPrice));
     return true;
 }
 
@@ -125,22 +176,71 @@ UseSkillCardCommand::UseSkillCardCommand(int cardIndex) : cardIndex(cardIndex) {
 
 bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     Player& player = state.getCurrentPlayer();
+ 
+    if (player.hasUsedSkillThisTurn()) {
+        GameRenderer::showHaveUsedSkillCard(true);
+        return false;
+    }
+ 
+    if (player.getHasRolled()) {
+        GameRenderer::showHaveUsedSkillCard(false);
+        return false;
+    }
+ 
+    const auto& cards = player.getOwnedCards();
+    if (cards.empty()) {
+        state.addLog(player.getUsername() + " tidak memiliki kartu kemampuan.");
+        return false;
+    }
+ 
+    GameRenderer::showCardList(0, "", ""); 
+    for (std::size_t i = 0; i < cards.size(); ++i) {
+        GameRenderer::showCardList(static_cast<int>(i) + 1,
+            cards[i]->getName(), cards[i]->getDescription());
+    }
+ 
+    if (cardIndex < 1 || static_cast<std::size_t>(cardIndex) > cards.size()) {
+        throw InvalidInputException("Index kartu tidak valid.");
+    }
+ 
+    const std::string name = cards[static_cast<std::size_t>(cardIndex) - 1]->getName();
+    const std::string desc = cards[static_cast<std::size_t>(cardIndex) - 1]->getDescription();
+ 
     SkillContext ctx{player, state.getPlayers(), state.getBoard(), state.getLogger()};
-    player.useCards(cardIndex, ctx);
-
-    state.addLog(player.getUsername() + " menggunakan skill card index " + std::to_string(cardIndex) + ".");
+    player.useCards(static_cast<std::size_t>(cardIndex) - 1, ctx);
+    player.setUsedSkillThisTurn(true);
+ 
+    GameRenderer::showActivateSkillCard(name, desc);
+    state.addLog(player.getUsername(), "KARTU",
+        "Pakai " + name + " → " + desc);
     return true;
 }
 
 SaveCommand::SaveCommand(std::string filename) : filename(std::move(filename)) {}
 
 bool SaveCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
-    if (ConfigSaver::fileExists(filename)) {
-        // TODO: overwrite confirmation dialog
+    if (state.getCurrentPlayer().getHasRolled()) {
+        state.addLog("SIMPAN hanya bisa dilakukan sebelum melempar dadu.");
+        return false;
     }
-    ConfigSaver::save(state, filename);
-    state.addLog(state.getCurrentPlayer().getUsername(), "SIMPAN", "Permainan disimpan ke " + filename);
-    return true;
+ 
+    if (ConfigSaver::fileExists(filename)) {
+        std::string prompt = "File \"" + filename + "\" sudah ada. Timpa file lama?";
+        if (!CommandHandler::promptYesNo(prompt)) {
+            return false;
+        }
+    }
+ 
+    try {
+        ConfigSaver::save(state, filename);
+        GameRenderer::successSaveFile(const_cast<std::string&>(filename));
+        state.addLog(state.getCurrentPlayer().getUsername(), "SIMPAN",
+            "Permainan disimpan ke " + filename);
+        return true;
+    } catch (const std::exception&) {
+        GameRenderer::failSaveFile(const_cast<std::string&>(filename));
+        return false;
+    }
 }
 
 TaxCommand::TaxCommand(int amount) : amount(amount) {

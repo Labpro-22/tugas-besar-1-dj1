@@ -44,9 +44,15 @@ void LandPlot::build(PlotContext& ctx){
     }
 }
 
-void LandPlot::sellBuildings(){
+void LandPlot::sellBuildings(PlotContext& ctx){
     if (level <= 0){
         throw BuildingIsEmptyException();
+    }
+
+    for (auto plot : ctx.getBoard().getPlots(color)){
+        if (plot->getLevel() > level){
+            throw BuildingLevelInsufficientException();
+        }
     }
 
     level--;
@@ -60,7 +66,6 @@ int LandPlot::getSellBuildingPrice() const {
 }
 
 bool LandPlot::canBuild(PlotContext& ctx) const {
-    int buildCost = getBuildCost();
     if (!isStreetOwned(ctx, &ctx.getCurrentPlayer())){
         throw ColorSetNotOwnedException();
     }
@@ -69,6 +74,11 @@ bool LandPlot::canBuild(PlotContext& ctx) const {
     }
     if (level >= 5){
         throw BuildingIsFullException();
+    }
+    for (auto plot : ctx.getBoard().getPlots(color)){
+        if (plot->getLevel() < level){
+            throw BuildingLevelInsufficientException();
+        }
     }
     return true;
 } 
@@ -110,19 +120,23 @@ int LandPlot::calculateBuildingValue() const{
 }
 
 int LandPlot::calculateTotalValue() const{
-    int value = isMortgaged() ? 0 : buyPrice; //TODO cek bagaimana harga dihitung atau tidak jika mortgaged
+    int value = isMortgaged() ? 0 : buyPrice;
     value += calculateBuildingValue();
     return value;
 }
 
 int LandPlot::calculateRentPrice(PlotContext& ctx) const {
+    return calculateBaseRentPrice(ctx)*festivalMultiplier;
+}
+
+int LandPlot::calculateBaseRentPrice(PlotContext& ctx) const {
     int rentPrice = rentPriceTable.at(level);
 
     if (level == 0 && isStreetOwned(ctx, owner)){
         rentPrice *= 2;
     }
 
-    return rentPrice*festivalMultiplier;
+    return rentPrice;
 }
 
 PlotType LandPlot::getType() const {

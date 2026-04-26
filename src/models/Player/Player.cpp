@@ -223,8 +223,7 @@ void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
         throw NoCardFoundException();
     }
 
-    std::shared_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
-    ownedCards.erase(ownedCards.begin() + cardIndex-1);
+    std::shared_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex]);
 
     selectedCard->activate(ctx);
     usedSkillThisTurn = true;
@@ -236,8 +235,8 @@ void Player::dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>
         throw NoCardFoundException();
     }
 
-    std::shared_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
-    ownedCards.erase(ownedCards.begin() + cardIndex-1);
+    std::shared_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex]);
+    ownedCards.erase(ownedCards.begin() + cardIndex);
 
     deck.discard(std::move(selectedCard));
 }
