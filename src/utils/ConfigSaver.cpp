@@ -54,8 +54,7 @@ string ConfigSaver::cardValueString(const shared_ptr<SkillCard>& card,
 
     DiscountCard* discount = dynamic_cast<DiscountCard*>(card.get());
     if (discount) {
-    return to_string(discount->getDiscountValue()) + " "
-         + to_string(player.getDiscountTurnLeft());
+    return to_string(discount->getDiscountValue());
     }
 
     return "";

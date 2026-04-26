@@ -3,8 +3,8 @@
  
 class DoctorCard : public CommunityChestCard {
     public:
-        DoctorCard();
-        ~DoctorCard();
+        DoctorCard() = default;
+        ~DoctorCard() = default;
         string getName();
         string getDescription();
         void activate(SkillContext& ctx);

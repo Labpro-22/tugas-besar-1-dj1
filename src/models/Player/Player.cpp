@@ -180,6 +180,7 @@ void Player::buyProperty(PropertyPlot& property, int price) {
         throw NoAccessToPropertyException();
     }
 
+    price -= price*discountValue/100;
     pay(price);
     ownedProperties.push_back(property);
     property.setOwner(this);
@@ -219,11 +220,12 @@ void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
     if (usedSkillThisTurn) {
         throw CantDoActionThisTurnException("menggunakan kartu");
     }
-    if (cardIndex > ownedCards.size()){
+    if (cardIndex >= ownedCards.size() || !ownedCards[cardIndex]){
         throw NoCardFoundException();
     }
 
     std::shared_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex]);
+    ownedCards.erase(ownedCards.begin() + cardIndex);
 
     selectedCard->activate(ctx);
     usedSkillThisTurn = true;
@@ -231,7 +233,7 @@ void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
 }
 
 void Player::dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& deck) {
-    if (cardIndex > ownedCards.size()) {
+    if (cardIndex >= ownedCards.size() || !ownedCards[cardIndex]) {
         throw NoCardFoundException();
     }
 
@@ -315,6 +317,9 @@ void Player::setDiscountTurnLeft(int turns) {
 void Player::setDiscountValue(int value) {
     if (value < 0) {
         throw InvalidInputException("discountValue tidak boleh negatif.");
+    }
+    if (value > 100){
+        value = std::max(100, value);
     }
     discountValue = value;
 }
