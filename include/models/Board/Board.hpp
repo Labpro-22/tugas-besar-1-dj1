@@ -43,7 +43,10 @@ public:
     int getSize() const;
     const vector<unique_ptr<Plot>>& getPlots() const;
     
-    int findPlotIndex(const string& code) const;
+    int findPlotIndex(const PlotType type) const;
+    PlotType getPlotType(int idx) const;
+    bool isIndexValid(int idx) const;
+    bool isPropertyPlot(int idx) const;
     bool isPlayerOwnAllColor(Color color, const Player* player) const;
 
     void initializeChanceDeck(std::vector<ChanceCard*> cards);

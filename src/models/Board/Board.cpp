@@ -47,13 +47,35 @@ const vector<unique_ptr<Plot>>& Board::getPlots() const {
     return tiles;
 }
  
-int Board::findPlotIndex(const string& code) const {
-    for (int i = 0; i < static_cast<int>(tiles.size()); ++i) {
-        if (tiles[i] && tiles[i]->getCode() == code) {
+int Board::findPlotIndex(const PlotType type) const {
+    for (int i = 0; i < tiles.size(); ++i) {
+        if (tiles[i]->getType() == type) {
             return i;
         }
     }
     return -1;
+}
+
+PlotType Board::getPlotType(int idx) const {
+    if (!isIndexValid(idx)) throw PositionNotInBoardException(idx);
+    return tiles[idx]->getType();
+}
+
+bool Board::isIndexValid(int idx) const {
+    if (idx <= 0 || idx > getSize()){
+        return false;
+    }
+    return true;
+}
+
+bool Board::isPropertyPlot(int idx) const{
+    PlotType type = getPlotType(idx);
+    if (type == PlotType::LANDPLOT ||
+        type == PlotType::STATIONPLOT ||
+        type == PlotType::UTILITYPLOT){
+        return true;
+    }
+    return false;
 }
 
 bool Board::isPlayerOwnAllColor(Color color, const Player* player) const {

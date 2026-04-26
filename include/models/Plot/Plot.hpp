@@ -29,5 +29,8 @@ public:
     virtual PlotType getType() const = 0;
     virtual Player* getOwner() const;
     virtual void startEvent(PlotContext& ctx) = 0;
+
+    //Interface
     virtual void applyFestival();
+    virtual void demolish();
 };
