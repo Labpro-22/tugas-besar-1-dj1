@@ -1,5 +1,7 @@
 #include "core/Command.hpp"
 
+#include <iomanip>
+#include <iostream>
 #include <utility>
 #include "core/GameException.hpp"
 #include "core/GameState.hpp"
@@ -82,7 +84,13 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
     return true;
 }
 
-SetDiceCommand::SetDiceCommand(int dice1, int dice2) : dice1(dice1), dice2(dice2) {}
+SetDiceCommand::SetDiceCommand(int dice1, int dice2) : dice1(dice1), dice2(dice2) {
+    if (dice1 < 1 || dice1 > 6 || dice2 < 1 || dice2 > 6) {
+        throw InvalidInputException(
+            "Nilai dadu harus antara 1 dan 6. Diterima: " +
+            std::to_string(dice1) + " dan " + std::to_string(dice2) + ".");
+    }
+}
 
 bool SetDiceCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     state.getDice().setDiceManual(dice1, dice2);
@@ -114,7 +122,8 @@ bool PrintDeedCommand::execute(GameState& state, EffectResolver&, TurnManager&) 
         cout << Formatter::deedNotFound(code);
         return true;
     }
-
+    
+    state.addLog("Perintah CETAK_AKTA untuk properti " + code + " dijalankan.");
     GameRenderer::showDeed(*land);
     return true;
 }
@@ -391,7 +400,7 @@ bool RedeemCommand::execute(GameState& state, EffectResolver&, TurnManager&) con
 
     if (mortgaged.empty()) {
         GameRenderer::showRedeemNoEligible();
-        return false;
+        throw InvalidStateException("Tidak ada properti yang sedang digadaikan.");
     }
 
     GameRenderer::showRedeemListHeader(player.getCash());
@@ -402,16 +411,25 @@ bool RedeemCommand::execute(GameState& state, EffectResolver&, TurnManager&) con
 
     std::string rawChoice = CommandHandler::promptInput("");
     int choice = 0;
-    try { choice = std::stoi(rawChoice); } catch (...) { return false; }
+    try {
+        choice = std::stoi(rawChoice);
+    } catch (...) {
+        throw InvalidInputException("Input tidak valid: \"" + rawChoice + "\". Masukkan angka.");
+    }
+
     if (choice == 0) return false;
-    if (choice < 1 || static_cast<std::size_t>(choice) > mortgaged.size()) return false;
+
+    if (choice < 1 || static_cast<std::size_t>(choice) > mortgaged.size()) {
+        throw OutOfRangeException("Pilihan " + std::to_string(choice) +
+            " tidak valid. Masukkan angka 1-" + std::to_string(mortgaged.size()) + ".");
+    }
 
     PropertyPlot& chosen = mortgaged[static_cast<std::size_t>(choice) - 1].get();
     int redeemPrice = chosen.getBuyPrice();
 
     if (player.getCash() < redeemPrice) {
         GameRenderer::showRedeemFailed(chosen, player.getCash());
-        return false;
+        throw InsufficientFundException();
     }
 
     player.pay(redeemPrice);
@@ -430,21 +448,20 @@ UseSkillCardCommand::UseSkillCardCommand(int cardIndex) : cardIndex(cardIndex) {
 
 bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     Player& player = state.getCurrentPlayer();
- 
+
     if (player.hasUsedSkillThisTurn()) {
         GameRenderer::showHaveUsedSkillCard(true);
-        return false;
+        throw CantDoActionThisTurnException("menggunakan kartu kemampuan lagi — sudah digunakan giliran ini");
     }
- 
+
     if (player.getHasRolled()) {
         GameRenderer::showHaveUsedSkillCard(false);
-        return false;
+        throw CantDoActionThisTurnException("menggunakan kartu kemampuan — kartu hanya bisa digunakan sebelum melempar dadu");
     }
- 
+
     const auto& cards = player.getOwnedCards();
     if (cards.empty()) {
-        state.addLog(player.getUsername() + " tidak memiliki kartu kemampuan.");
-        return false;
+        throw NoCardFoundException();
     }
  
     GameRenderer::showCardList(0, "", ""); 
@@ -474,26 +491,24 @@ SaveCommand::SaveCommand(std::string filename) : filename(std::move(filename)) {
 
 bool SaveCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     if (state.getCurrentPlayer().getHasRolled()) {
-        state.addLog("SIMPAN hanya bisa dilakukan sebelum melempar dadu.");
-        return false;
+        throw CantDoActionThisTurnException("menyimpan permainan — SIMPAN hanya bisa dilakukan sebelum melempar dadu");
     }
- 
+
     if (ConfigSaver::fileExists(filename)) {
         std::string prompt = "File \"" + filename + "\" sudah ada. Timpa file lama?";
         if (!CommandHandler::promptYesNo(prompt)) {
             return false;
         }
     }
- 
+
     try {
         ConfigSaver::save(state, filename);
         GameRenderer::successSaveFile(const_cast<std::string&>(filename));
         state.addLog(state.getCurrentPlayer().getUsername(), "SIMPAN",
             "Permainan disimpan ke " + filename);
         return true;
-    } catch (const std::exception&) {
-        GameRenderer::failSaveFile(const_cast<std::string&>(filename));
-        return false;
+    } catch (const std::exception& e) {
+        throw InvalidStateException(std::string("Gagal menyimpan file: ") + e.what());
     }
 }
 
@@ -547,12 +562,122 @@ bool EndTurnCommand::execute(GameState& state, EffectResolver&, TurnManager& tur
 bool PayJailFineCommand::execute(GameState& state, EffectResolver&, TurnManager& turnManager) const {
     Player& player = state.getCurrentPlayer();
     if (player.getStatus() != PlayerStatus::JAILED) {
-        state.addLog(player.getUsername() + " tidak sedang berada di penjara.");
-        return false;
+        throw InvalidStateException(player.getUsername() + " tidak sedang berada di penjara.");
     }
     if (player.getHasRolled()) {
-        state.addLog(player.getUsername() + " harus membayar denda sebelum melempar dadu.");
-        return false;
+        throw CantDoActionThisTurnException("membayar denda — denda harus dibayar sebelum melempar dadu");
     }
     return turnManager.payJailFine(player, state);
+}
+
+PrintLogCommand::PrintLogCommand(int count) : count(count) {}
+
+bool PrintLogCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
+    if (count == 0 || count < -1) {
+        throw InvalidInputException(
+            "Argumen CETAK_LOG tidak valid: " + std::to_string(count) +
+            ". Gunakan bilangan bulat positif, atau tanpa argumen untuk semua log.");
+    }
+
+    const Logger& logger = state.getLogger();
+    const std::vector<LogEntry> entries = (count < 0)
+        ? logger.getAll()
+        : logger.getRecent(count);
+
+    if (count < 0) {
+        std::cout << "=== Log Transaksi Penuh ===\n";
+    } else {
+        std::cout << "=== Log Transaksi (" << count << " Terakhir) ===\n";
+    }
+
+    for (const LogEntry& entry : entries) {
+        GameRenderer::showLogger(entry);
+    }
+    return true;
+}
+
+bool HelpCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
+    const std::string BOLD  = "\033[1m";
+    const std::string CYAN  = "\033[36m";
+    const std::string GREEN = "\033[32m";
+    const std::string DIM   = "\033[2m";
+    const std::string RESET = "\033[0m";
+
+    auto header = [&](const std::string& title) {
+        std::cout << "\n" << CYAN << BOLD << "  ── " << title << " ──" << RESET << "\n";
+    };
+    // entry: primary spec name + optional usage note on second line
+    auto entry = [&](const std::string& cmd, const std::string& desc, const std::string& note = "") {
+        std::cout << "  " << GREEN << BOLD << std::left << std::setw(34) << cmd << RESET
+                  << " " << desc << "\n";
+        if (!note.empty()) {
+            std::cout << "  " << std::string(34, ' ') << " " << DIM << note << RESET << "\n";
+        }
+    };
+
+    std::cout << "\n" << BOLD << CYAN;
+    std::cout << "╔══════════════════════════════════════════════════════════╗\n";
+    std::cout << "║              NIMONSPOLI — DAFTAR PERINTAH                ║\n";
+    std::cout << "╚══════════════════════════════════════════════════════════╝" << RESET << "\n";
+    std::cout << DIM << "  Semua perintah tidak peka huruf besar/kecil.\n" << RESET;
+
+    // ── Tampilan & Info ──────────────────────────────────────────────────────
+    header("Tampilan & Info");
+    entry("CETAK_PAPAN",
+          "Tampilkan papan permainan beserta posisi semua pemain.");
+    entry("CETAK_AKTA <KODE>",
+          "Tampilkan Akta Kepemilikan sebuah properti.",
+          "Contoh: CETAK_AKTA JKT");
+    entry("CETAK_PROPERTI",
+          "Tampilkan semua properti milik pemain aktif.");
+    entry("CETAK_LOG [N]",
+          "Tampilkan log transaksi. Opsional: N entri terakhir.",
+          "Contoh: CETAK_LOG 5  |  Tanpa argumen = semua log");
+    entry("HELP",
+          "Tampilkan daftar perintah ini.");
+
+    // ── Giliran & Dadu ───────────────────────────────────────────────────────
+    header("Giliran & Dadu");
+    entry("LEMPAR_DADU",
+          "Lempar dadu secara acak dan gerakkan bidak.");
+    entry("ATUR_DADU <X> <Y>",
+          "Atur hasil dadu secara manual (X dan Y masing-masing 1–6).",
+          "Contoh: ATUR_DADU 3 4");
+    entry("END",
+          "Akhiri giliran dan lanjut ke pemain berikutnya.");
+
+    // ── Properti ─────────────────────────────────────────────────────────────
+    header("Properti");
+    entry("GADAI",
+          "Gadaikan properti milik pemain ke Bank untuk mendapat uang tunai.");
+    entry("TEBUS",
+          "Tebus properti yang sedang digadaikan dengan harga beli penuh.");
+    entry("BANGUN",
+          "Bangun rumah / upgrade ke hotel pada properti Street.",
+          "Syarat: sudah memonopoli seluruh color group.");
+
+    // ── Kartu Kemampuan ──────────────────────────────────────────────────────
+    header("Kartu Kemampuan Spesial");
+    entry("GUNAKAN_KEMAMPUAN <N>",
+          "Aktifkan Kartu Kemampuan Spesial ke-N dari tangan.",
+          "Hanya bisa digunakan SEBELUM melempar dadu  |  Contoh: GUNAKAN_KEMAMPUAN 2");
+
+    // ── Penjara ──────────────────────────────────────────────────────────────
+    header("Penjara");
+    entry("BAYAR_DENDA",
+          "Bayar denda untuk keluar dari penjara sebelum melempar dadu.");
+
+    // ── Simpan ───────────────────────────────────────────────────────────────
+    header("Simpan");
+    entry("SIMPAN <NAMA_FILE>",
+          "Simpan seluruh state permainan ke file .txt.",
+          "Hanya di awal giliran, sebelum melempar dadu  |  Contoh: SIMPAN sesi1.txt");
+
+    std::cout << "\n" << DIM
+              << "  Perintah otomatis (BELI, BAYAR_SEWA, BAYAR_PAJAK, LELANG,\n"
+              << "  FESTIVAL, BANGKRUT, MENANG, dll.) dipicu oleh engine;\n"
+              << "  tidak perlu diketik secara manual.\n" << RESET << "\n";
+
+    state.addLog("Pemain melihat daftar perintah (HELP).");
+    return true;
 }
