@@ -48,14 +48,6 @@ void LandPlot::sellBuildings(){
     owner->receive(getSellBuildingPrice());
 }
 
-void LandPlot::destroyBuilding(){
-    level = 0;
-}
-
-void LandPlot::downgradeBuilding(){
-    if (level > 0) level--;
-}
-
 int LandPlot::getSellBuildingPrice() const {
     if (level == 5) return upgHotelPrice;
     else if (level == 0) return 0;

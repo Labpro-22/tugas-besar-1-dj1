@@ -26,6 +26,7 @@ private:
     int discountTurnLeft;
     int discountValue;
     int consecutiveDoubles; 
+    const int JAILDURATIION = 3;
 
 public:
     Player();
@@ -48,8 +49,9 @@ public:
     int getTotalWealth() const;
 
     void move();
-    void move(int steps, int boardSize = 40);
+    void move(int steps, int boardSize = 40); //TODO: tangani untuk kasus dynamic board
     void moveTo(int index, int boardSize = 40);
+    void sendToJail(const Board& board);
     void pay(int amount);
     void payTaxes(int amount);
     void payRent(int amount, Player* targetPlayer);
