@@ -3,8 +3,8 @@
  
 class CampaignCard : public CommunityChestCard {
     public:
-        CampaignCard();
-        ~CampaignCard();
+        CampaignCard() = default;
+        ~CampaignCard() = default;
         string getName();
         string getDescription();
         void activate(SkillContext& ctx);
