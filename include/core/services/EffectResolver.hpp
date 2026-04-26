@@ -6,6 +6,7 @@
 
 class GameState;
 class Player;
+class PropertyPlot;
 
 class EffectResolver {
 private:
@@ -16,5 +17,5 @@ public:
     void resolveLanding(Player& player, int tileIndex, GameState& state);
     void resolveBankruptcy(Player& player, Player* creditor, GameState& state) const;
     void resolveTax(Player& player, int taxAmount, GameState& state) const;
-    bool resolveAuction(int basePrice, std::vector<Player*>& bidders, Player*& winner, int& finalPrice, GameState& state) const;
+    bool resolveAuction(PropertyPlot& property, const std::vector<Player*>& bidders, GameState& state) const;
 };

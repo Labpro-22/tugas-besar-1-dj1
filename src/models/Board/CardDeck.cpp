@@ -9,11 +9,6 @@ CardDeck<T>::CardDeck() {
 }
 
 template<class T>
-CardDeck<T>::~CardDeck() {
-
-}
-
-template<class T>
 void CardDeck<T>::shuffle() {
     random_device random;
     mt19937 g(random());
@@ -30,7 +25,7 @@ void CardDeck<T>::reshuffleFromDiscard() {
 
     // Pindahkan semua kartu dari discard pile ke draw pile
     while (!discardPile.empty()) {
-        drawPile.push_back(discardPile.front());
+        drawPile.push_back(std::move(discardPile.front()));
         discardPile.pop_front();
     }
 
@@ -40,8 +35,8 @@ void CardDeck<T>::reshuffleFromDiscard() {
 
 template<class T>
 void CardDeck<T>::initialize(vector<T> card) {
-    for(auto it = card.begin(); it < card.end(); ++it) {
-        drawPile.push_back(*it);
+    for (auto& card : cards) {
+        drawPile.push_back(std::move(card));
     }
 
     discardPile.clear();
@@ -52,14 +47,14 @@ T CardDeck<T>::draw() {
     if (drawPile.empty()) {
         throw InvalidStateException("Draw pile kosong.");
     }
-    T drawCard = drawPile.back();
+    T drawCard = std::move(drawPile.back());
     drawPile.pop_back();
     return drawCard;
 }
 
 template<class T>
 void CardDeck<T>::discard(T card) {
-    discardPile.push_back(card);
+    discardPile.push_back(std::move(card));
 }
 
 template<class T>
@@ -87,8 +82,7 @@ vector<T> CardDeck<T>::getAllCards() const {
 #include "models/Card/CommunityChestCard/CommunityChestCard.hpp"
 #include "models/Card/SkillCard/SkillCard.hpp"
 
-template class CardDeck<ChanceCard*>;
-template class CardDeck<CommunityChestCard*>;
-template class CardDeck<SkillCard*>;
-template class CardDeck<std::shared_ptr<SkillCard>>;
+template class CardDeck<std::unique_ptr<ChanceCard>>;
+template class CardDeck<std::unique_ptr<CommunityChestCard>>;
+template class CardDeck<std::unique_ptr<SkillCard>>;
 

@@ -18,20 +18,20 @@ public:
 private:
     vector<unique_ptr<Plot>> tiles;
  
-    CardDeck<ChanceCard*>         chanceDeckPile;
-    CardDeck<CommunityChestCard*> communityChestDeckPile;
-    CardDeck<SkillCard*>          skillCardDeckPile;
+    CardDeck<std::unique_ptr<ChanceCard>>         chanceDeckPile; //TODO: ganti jadi unique_ptr
+    CardDeck<std::unique_ptr<CommunityChestCard>> communityChestDeckPile;
+    CardDeck<std::unique_ptr<SkillCard>>          skillCardDeckPile;
 
-    vector<ChanceCard*> ownedChanceCards;
-    vector<CommunityChestCard*> ownedCommunityChestCards;
-    vector<SkillCard*> ownedSkillCards;
+    vector<std::unique_ptr<ChanceCard>> ownedChanceCards;
+    vector<std::unique_ptr<CommunityChestCard>> ownedCommunityChestCards;
+    vector<std::unique_ptr<SkillCard>> ownedSkillCards;
  
     Board(const Board&)            = delete;
     Board& operator=(const Board&) = delete;
  
 public:
     Board();
-    ~Board();
+    ~Board() = default;
  
     Board(Board&&) noexcept            = default;
     Board& operator=(Board&&) noexcept = default;
@@ -49,19 +49,19 @@ public:
     bool isPropertyPlot(int idx) const;
     bool isPlayerOwnAllColor(Color color, const Player* player) const;
 
-    void initializeChanceDeck(std::vector<ChanceCard*> cards);
-    void initializeCommunityChestDeck(std::vector<CommunityChestCard*> cards);
-    void initializeSkillDeck(std::vector<SkillCard*> cards);
+    void initializeChanceDeck(std::vector<unique_ptr<ChanceCard>> cards);
+    void initializeCommunityChestDeck(std::vector<unique_ptr<CommunityChestCard>> cards);
+    void initializeSkillDeck(std::vector<unique_ptr<SkillCard>> cards);
  
-    CardDeck<ChanceCard*>& getChanceDeckPile();
-    CardDeck<CommunityChestCard*>& getCommunityChestDeckPile();
-    CardDeck<SkillCard*>& getSkillCardDeckPile();
+    CardDeck<std::unique_ptr<ChanceCard>>& getChanceDeckPile();
+    CardDeck<std::unique_ptr<CommunityChestCard>>& getCommunityChestDeckPile();
+    CardDeck<std::unique_ptr<SkillCard>>& getSkillCardDeckPile();
  
-    const CardDeck<ChanceCard*>& getChanceDeckPile() const;
-    const CardDeck<CommunityChestCard*>& getCommunityChestDeckPile() const;
-    const CardDeck<SkillCard*>& getSkillCardDeckPile() const;
+    const CardDeck<std::unique_ptr<ChanceCard>>& getChanceDeckPile() const;
+    const CardDeck<std::unique_ptr<CommunityChestCard>>& getCommunityChestDeckPile() const;
+    const CardDeck<std::unique_ptr<SkillCard>>& getSkillCardDeckPile() const;
  
-    ChanceCard* drawChanceCard();
-    CommunityChestCard* drawCommunityChestCard();
-    SkillCard* drawSkillCard();
+    std::unique_ptr<ChanceCard> drawChanceCard();
+    std::unique_ptr<CommunityChestCard> drawCommunityChestCard();
+    std::unique_ptr<SkillCard> drawSkillCard();
 };
