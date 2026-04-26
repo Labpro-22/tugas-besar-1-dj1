@@ -28,9 +28,13 @@ int UtilityPlot::getLevel() const {
 }
 
 int UtilityPlot::calculateRentPrice(PlotContext& ctx) const {
+    return calculateBaseRentPrice(ctx)*festivalMultiplier;
+}
+
+int UtilityPlot::calculateBaseRentPrice(PlotContext& ctx) const {
     int ownedUtility = owner->countOwnedUtility();
     int diceTotal = ctx.getDice().getTotal();
-    return rentPriceTable.at(ownedUtility)*diceTotal*festivalMultiplier;
+    return rentPriceTable.at(ownedUtility)*diceTotal;
 }
 
 PlotType UtilityPlot::getType() const {
@@ -42,7 +46,7 @@ void UtilityPlot::startEvent(PlotContext& ctx) {
  
     if (!isOwned()) {
         try {
-            currentPlayer.buyProperty(*this);
+            currentPlayer.buyProperty(*this, 0);
             GameRenderer::showBuyUtility(*this);
         } catch (const GameException& e) {
             GameRenderer::throwException(e);

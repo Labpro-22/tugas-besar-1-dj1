@@ -40,8 +40,8 @@ public:
     void updateFestival();
     void endFestival();
 
-    virtual int getLevel() const = 0;
     virtual int calculateBuildingValue() const;
     virtual int calculateTotalValue() const;
     virtual int calculateRentPrice(PlotContext& ctx) const = 0;
+    virtual int calculateBaseRentPrice(PlotContext& ctx) const = 0;
 };

@@ -153,6 +153,6 @@ class Formatter {
         static string fatalError(const string& message);
 
     // ── Exception ──────────────────────────────────────────────────────────────
-        static string throwException(const GameException e);
+        static string throwException(const GameException& e);
 };
 

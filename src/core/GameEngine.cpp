@@ -1,6 +1,7 @@
 #include "core/GameEngine.hpp"
 
 #include "core/GameException.hpp"
+#include "views/GameRenderer.hpp"
 
 GameEngine::GameEngine() : state() {
     loadGameConfig();
@@ -31,7 +32,7 @@ auto load(Func loader, std::string defaultFileName, std::string type, bool useDe
             return loader(ConfigLoader::configPath + fileName);
         }
         catch (const GameException& e){
-            std::cout << e.what();
+            GameRenderer::throwException(e);;
         }
     }
 }
@@ -84,7 +85,7 @@ void GameEngine::loadGameConfig() {
         "lainnya", useDefault);
    
     state.setMaxTurn(std::get<0>(misc));
-    state.setSalary(std::get<1>(misc));
+    state.setStartingCash(std::get<1>(misc));
 
     //Buat board dari konfigurasi properti dan petak aksi
     Board& board = state.getBoard();

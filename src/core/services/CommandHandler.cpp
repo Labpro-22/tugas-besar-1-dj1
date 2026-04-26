@@ -11,6 +11,7 @@
 #include "core/services/EffectResolver.hpp"
 #include "models/Player/Player.hpp"
 #include "models/Card/SkillCard/SkillCard.hpp"
+#include "views/GameRenderer.hpp"
 
 using std::cout;
 using std::cin;
@@ -140,10 +141,9 @@ std::string CommandHandler::promptInput(std::string prompt){
 }
 
 bool CommandHandler::promptYesNo(std::string prompt){
-    GameRenderer::showYesNoMessage(prompt);
     while(true){
+        GameRenderer::showYesNoMessage(prompt);
         try{
-            std::cout << prompt << " (y/n): ";
 
             std::string answer;
             std::cin >> answer;
