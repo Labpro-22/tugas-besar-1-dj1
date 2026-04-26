@@ -117,6 +117,7 @@ bool TurnManager::payJailFine(Player& player, GameState& state) {
     player.setStatus(PlayerStatus::ACTIVE);
     player.setJailTurns(0);
     player.resetConsecutiveDoubles();
+    GameRenderer::showPayPrisonFee(state.getJailFine());
     state.addLog(player.getUsername(), "JAIL",
         "Membayar denda penjara sebesar M" + std::to_string(fine) + " dan bebas.");
     return true;

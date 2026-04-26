@@ -126,6 +126,7 @@ class GameRenderer {
         static void showLandOnGoPrison();
         static void showLandOnPrisonVisit();
         static void showLandOnPrisonJailed(int jailTurnsLeft);
+        static void showPayPrisonFee(int fee);
 
         // ── Main Setup ─────────────────────────────────────────────────
         static void showInvalidIntInput();

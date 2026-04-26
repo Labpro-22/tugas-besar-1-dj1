@@ -63,8 +63,11 @@ string Formatter::showDiceRoll(const Player& player, const Dice& dice, string& p
     std::ostringstream oss;
     oss << "Mengocok dadu..." << endl;
     oss << "Hasil: " << dice.getDice1() << " + " << dice.getDice2() << " = " << dice.getTotal() << endl;
-    oss << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << " petak..." << endl;
-
+    if(player.getJailTurns() > 0) {
+        oss << "Kamu masih dipenjara, tidak bisa pindah (" << player.getJailTurns() << " Turn) " << endl; 
+    } else {
+        oss << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << " petak..." << endl;
+    }
     return oss.str();
 };
 
@@ -843,6 +846,13 @@ string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
     if (jailTurnsLeft <= 0) {
         oss << "Batas percobaan habis! Kamu WAJIB membayar denda." << endl;
     }
+    return oss.str();
+}
+
+string Formatter::payPrisonFee(int fee) {
+    std::ostringstream oss;
+    oss << "Kamu membayar denda keluar penjara sebesar " << moneyString(fee) << endl;
+    
     return oss.str();
 }
 
