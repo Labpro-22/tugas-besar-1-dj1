@@ -180,6 +180,7 @@ void Player::buyProperty(PropertyPlot& property, int price) {
         throw NoAccessToPropertyException();
     }
 
+    price -= price*discountValue/100;
     pay(price);
     ownedProperties.push_back(property);
     property.setOwner(this);
@@ -311,6 +312,9 @@ void Player::setDiscountTurnLeft(int turns) {
 void Player::setDiscountValue(int value) {
     if (value < 0) {
         throw InvalidInputException("discountValue tidak boleh negatif.");
+    }
+    if (value > 100){
+        value = std::max(100, value);
     }
     discountValue = value;
 }

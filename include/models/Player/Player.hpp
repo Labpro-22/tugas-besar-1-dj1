@@ -28,7 +28,7 @@ private:
     int shieldTurnLeft;
     int discountTurnLeft;
     int discountValue;
-    int consecutiveDoubles; 
+    int consecutiveDoubles;
     const int JAILDURATIION = 3;
 
 public:
