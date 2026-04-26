@@ -25,8 +25,9 @@ public:
     std::string getName() const;
     std::string getCode() const;
     Color getColor() const;
-
+    
     virtual PlotType getType() const = 0;
+    virtual int getLevel() const;
     virtual Player* getOwner() const;
     virtual void startEvent(PlotContext& ctx) = 0;
 

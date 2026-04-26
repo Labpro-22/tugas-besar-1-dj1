@@ -140,11 +140,10 @@ std::string CommandHandler::promptInput(std::string prompt){
     return answer;
 }
 
-bool CommandHandler::promptYesNo(std::string prompt){\
-    GameRenderer::showYesNoMessage(prompt);
+bool CommandHandler::promptYesNo(std::string prompt){
     while(true){
+        GameRenderer::showYesNoMessage(prompt);
         try{
-            std::cout << prompt << " (y/n): ";
 
             std::string answer;
             std::cin >> answer;

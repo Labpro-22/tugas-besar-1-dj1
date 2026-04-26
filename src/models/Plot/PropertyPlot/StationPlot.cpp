@@ -27,8 +27,12 @@ int StationPlot::getLevel() const {
 }
 
 int StationPlot::calculateRentPrice(PlotContext& ctx) const {
+    return calculateBaseRentPrice(ctx)*festivalMultiplier;
+}
+
+int StationPlot::calculateBaseRentPrice(PlotContext& ctx) const {
     int ownedStation = owner->countOwnedStation();
-    return rentPriceTable.at(ownedStation)*festivalMultiplier;
+    return rentPriceTable.at(ownedStation);
 }
 
 PlotType StationPlot::getType() const {
@@ -40,7 +44,7 @@ void StationPlot::startEvent(PlotContext& ctx) {
 
     if (!isOwned()) {
         try {
-            currentPlayer.buyProperty(*this);
+            currentPlayer.buyProperty(*this, 0);
             GameRenderer::showBuyStation(*this);
         } catch (const GameException& e) {
             GameRenderer::throwException(e);

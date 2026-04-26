@@ -25,10 +25,10 @@ void FestivalPlot::startEvent(PlotContext& ctx) {
             targetIdx = idx;
             break;
         }
-        catch (const GameException e){
+        catch (const GameException& e){
            GameRenderer::throwException(e);
         }
-        catch (const GameException e){
+        catch (const GameException& e){
             GameRenderer::throwException(e);
         }
     }
