@@ -150,6 +150,7 @@ void LandPlot::setLevel(int level) {
         throw InvalidInputException("Level bangunan harus bernilai antara 0 dan 5.");
     }
     this->level = level;
+}
   
 void LandPlot::demolish(){
     level = 0;

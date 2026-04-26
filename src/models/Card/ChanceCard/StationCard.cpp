@@ -13,22 +13,23 @@ void StationCard::activate(SkillContext& ctx) {
     Player& currPlayer = ctx.getCurrentPlayer();
     Board& board = ctx.getBoard();
     int boardSize = board.getSize();
-    int playerPosition = currPlayer.getPosition();
+    int currPosition = currPlayer.getPosition();
 
+    PlotType currType = board.getPlot(currPosition)->getType();
+    while(currType != PlotType::STATIONPLOT) {
+        currType = board.getPlot(currPosition)->getType();
+        currPosition++;
+        currPosition %= boardSize;
+    }
+
+    int index = currPosition;
     try {
-        // TODO: Index masih sama seperti spesifikasi, sesuaikan sama implementasi
-        //TODO: untuk cek stasiun terjauh dan terdekat bisa buat fungsi di board
-        if (playerPosition >= board.findPlotIndex("TUG")) {
-            currPlayer.moveTo(board.findPlotIndex("GUB"), boardSize);
-        } else if (playerPosition >= board.findPlotIndex("GUB")) {
-            currPlayer.moveTo(board.findPlotIndex("GBR"), boardSize);
-        } else if (playerPosition >= board.findPlotIndex("GBR")) {
-            currPlayer.moveTo(board.findPlotIndex("STB"), boardSize);
-        } else if (playerPosition >= board.findPlotIndex("STB")) {
-            currPlayer.moveTo(board.findPlotIndex("TUG"), boardSize);
-        }
+        currPlayer.moveTo(index, boardSize);
+        std::ostringstream oss;
+        oss << "Kamu pindah ke Stasiun" << board.getPlot(currPlayer.getPosition())->getName();
+        GameRenderer::showOnLandChanceCard(*this, oss.str());
     } catch (const GameException& e) {
-        std::cerr << e.what() << '\n';
+        GameRenderer::throwException(e);
     }
 }
 

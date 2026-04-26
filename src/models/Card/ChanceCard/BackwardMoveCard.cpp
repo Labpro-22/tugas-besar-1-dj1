@@ -15,7 +15,7 @@ void BackwardMoveCard::activate(SkillContext& ctx) {
         currPlayer.move(-3, boardSize);
         
         std::ostringstream oss;
-        oss << "Kamu pindah ke " << ctx.getBoard().getPlot(currPlayer.getPosition());
+        oss << "Kamu pindah ke " << ctx.getBoard().getPlot(currPlayer.getPosition())->getName();
         GameRenderer::showOnLandChanceCard(*this, oss.str());
     } catch (const GameException& e) {
         GameRenderer::throwException(e);
