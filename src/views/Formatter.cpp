@@ -685,9 +685,9 @@ string Formatter::failSaveFile(string& fileName) {
 }
 
 // ── Log (command 17 - CETAK_LOG) ─────────────────────────────────────
-string showLogger(const LogEntry& log) {
+string Formatter::showLogger(const LogEntry& log) {
     return "[" + to_string(log.turn) + "] " + log.username + " | " + log.actionType + " | " + log.detail + "\n";
-};
+}
 
 // ── Win (command 18 - MENANG) ─────────────────────────────────────────
 string Formatter::makePlayerList(const Player& player) { 

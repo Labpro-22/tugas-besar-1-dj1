@@ -82,20 +82,17 @@ bool Board::isPlayerOwnAllColor(Color color, const Player* player) const {
 }
 
 void Board::initializeChanceDeck(std::vector<std::unique_ptr<ChanceCard>> cards) {
-    ownedChanceCards = cards;  
-    chanceDeckPile.initialize(cards);
+    chanceDeckPile.initialize(std::move(cards));
     chanceDeckPile.shuffle();
 }
- 
+
 void Board::initializeCommunityChestDeck(std::vector<std::unique_ptr<CommunityChestCard>> cards) {
-    ownedCommunityChestCards = cards;
-    communityChestDeckPile.initialize(cards);
+    communityChestDeckPile.initialize(std::move(cards));
     communityChestDeckPile.shuffle();
 }
- 
-void Board::initializeSkillDeck(std::vector<std::unique_ptr<SkillCard>> cards) {
-    ownedSkillCards = cards;
-    skillCardDeckPile.initialize(cards);
+
+void Board::initializeSkillDeck(std::vector<std::shared_ptr<SkillCard>> cards) {
+    skillCardDeckPile.initialize(std::move(cards));
     skillCardDeckPile.shuffle();
 }
 
@@ -105,7 +102,7 @@ CardDeck<std::unique_ptr<ChanceCard>>& Board::getChanceDeckPile() {
 CardDeck<std::unique_ptr<CommunityChestCard>>& Board::getCommunityChestDeckPile() {
     return communityChestDeckPile;
 }
-CardDeck<std::unique_ptr<SkillCard>>& Board::getSkillCardDeckPile() {
+CardDeck<std::shared_ptr<SkillCard>>& Board::getSkillCardDeckPile() {
     return skillCardDeckPile;
 }
  
@@ -115,7 +112,7 @@ const CardDeck<std::unique_ptr<ChanceCard>>& Board::getChanceDeckPile() const {
 const CardDeck<std::unique_ptr<CommunityChestCard>>& Board::getCommunityChestDeckPile() const {
     return communityChestDeckPile;
 }
-const CardDeck<std::unique_ptr<SkillCard>>& Board::getSkillCardDeckPile() const {
+const CardDeck<std::shared_ptr<SkillCard>>& Board::getSkillCardDeckPile() const {
     return skillCardDeckPile;
 }
  
@@ -127,7 +124,7 @@ std::unique_ptr<CommunityChestCard> Board::drawCommunityChestCard() {
     return communityChestDeckPile.draw();
 }
  
-std::unique_ptr<SkillCard> Board::drawSkillCard() {
+std::shared_ptr<SkillCard> Board::drawSkillCard() {
     return skillCardDeckPile.draw();
 }
 

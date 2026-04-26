@@ -1,5 +1,10 @@
 #include "models/Card/SkillCard/ShieldCard.hpp"
 
+#include "core/GameException.hpp"
+#include "core/SkillContext.hpp"
+#include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
+
 void ShieldCard::activate(SkillContext& ctx) {
     try {
         ctx.getCurrentPlayer().setShieldActive(true);

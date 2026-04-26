@@ -65,7 +65,7 @@ const std::vector<std::reference_wrapper<PropertyPlot>>& Player::getOwnedPropert
     return ownedProperties;
 }
 
-const std::vector<std::unique_ptr<SkillCard>>& Player::getOwnedCards() const {
+const std::vector<std::shared_ptr<SkillCard>>& Player::getOwnedCards() const {
     return ownedCards;
 }
 
@@ -219,7 +219,7 @@ void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
         throw NoCardFoundException();
     }
 
-    std::unique_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
+    std::shared_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
     ownedCards.erase(ownedCards.begin() + cardIndex-1);
 
     selectedCard->activate(ctx);
@@ -227,12 +227,12 @@ void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
     ctx.getBoard().getSkillCardDeckPile().discard(std::move(selectedCard));
 }
 
-void Player::dropCard(std::size_t cardIndex, CardDeck<std::unique_ptr<SkillCard>>& deck) {
+void Player::dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& deck) {
     if (cardIndex > ownedCards.size()) {
         throw NoCardFoundException();
     }
 
-    std::unique_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
+    std::shared_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
     ownedCards.erase(ownedCards.begin() + cardIndex-1);
 
     deck.discard(std::move(selectedCard));
@@ -345,7 +345,7 @@ void Player::resetConsecutiveDoubles() {
     consecutiveDoubles = 0;
 }
 
-void Player::addOwnedCard(const std::unique_ptr<SkillCard>& card){ //TODO: pastikan pemanggilannya aman dengan remove card dari carddeck dulu
+void Player::addOwnedCard(std::shared_ptr<SkillCard> card){
     ownedCards.push_back(std::move(card));
 }
 

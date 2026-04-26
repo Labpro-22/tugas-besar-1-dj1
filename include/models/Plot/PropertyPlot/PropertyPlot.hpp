@@ -45,4 +45,8 @@ public:
     virtual int calculateTotalValue() const;
     virtual int calculateRentPrice(PlotContext& ctx) const = 0;
     void startEvent(PlotContext& ctx) override;
+
+protected:
+    void startBuy(PlotContext& ctx);
+    void startPay(PlotContext& ctx);
 };

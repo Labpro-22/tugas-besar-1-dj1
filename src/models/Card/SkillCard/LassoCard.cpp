@@ -1,5 +1,12 @@
 #include "models/Card/SkillCard/LassoCard.hpp"
+
+#include <algorithm>
+#include <sstream>
 #include "core/GameException.hpp"
+#include "core/SkillContext.hpp"
+#include "models/Board/Board.hpp"
+#include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
 
 void LassoCard::activate(SkillContext& ctx) {
     vector<Player>& players = ctx.getPlayers();

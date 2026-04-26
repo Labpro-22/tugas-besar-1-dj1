@@ -87,26 +87,26 @@ void GameEngine::loadGameConfig() {
     state.setSalary(std::get<1>(misc));
 
     //Buat board dari konfigurasi properti dan petak aksi
-    std::vector<std::unique_ptr<Plot>> tiles;
-    int i = 0, j = 0;
+    Board& board = state.getBoard();
+    std::size_t i = 0, j = 0;
     while (i < property.size() && j < action.size()){
         if (property[i].first < action[j].first) {
-            tiles.push_back(std::move(property[i].second));
+            board.addPlot(std::move(property[i].second));
             i++;
         }
         else{
-            tiles.push_back(std::move(action[j].second));
+            board.addPlot(std::move(action[j].second));
             j++;
         }
     }
 
     while (i < property.size()){
-        tiles.push_back(std::move(property[i].second));
+        board.addPlot(std::move(property[i].second));
         i++;
     }
 
     while (j < action.size()){
-        tiles.push_back(std::move(action[j].second));
+        board.addPlot(std::move(action[j].second));
         j++;
     }
 }

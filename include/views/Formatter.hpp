@@ -2,6 +2,7 @@
 #include "models/Plot/PropertyPlot/LandPlot.hpp"
 #include "models/Plot/PropertyPlot/StationPlot.hpp"
 #include "models/Plot/PropertyPlot/UtilityPlot.hpp"
+#include "models/Card/ChanceCard/ChanceCard.hpp"
 #include "models/Card/CommunityChestCard/CommunityChestCard.hpp"
 #include "sstream"
 #include <iomanip>

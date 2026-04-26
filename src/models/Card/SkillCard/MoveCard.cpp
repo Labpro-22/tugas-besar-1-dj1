@@ -1,5 +1,11 @@
 #include "models/Card/SkillCard/MoveCard.hpp"
+
+#include <sstream>
 #include "core/GameException.hpp"
+#include "core/SkillContext.hpp"
+#include "models/Board/Board.hpp"
+#include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
 
 MoveCard::MoveCard() {
     random_device random;
