@@ -107,13 +107,9 @@ int main() {
 
             try {
                 engine.run({command});
-                // const auto logs = engine.getState().getRecentLogs(1);
-                const auto logs = engine.getState().getLogs();
+                const auto logs = engine.getState().getRecentLogs(1);
                 if (!logs.empty()) {
-                    // GameRenderer::showLogger(logs.back());
-                    for(int i = 0; i < logs.size(); i++) {
-                        GameRenderer::showLogger(logs[i]);
-                    }
+                    GameRenderer::showLogger(logs.back());
                 }
 
             } catch (const GameException& e) {

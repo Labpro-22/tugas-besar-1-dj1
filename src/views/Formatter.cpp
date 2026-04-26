@@ -199,7 +199,6 @@ string Formatter::buyProperty(const Player& player, const LandPlot& landPlot) {
 
     int leftPad = (contentWidth - static_cast<int>(title.length())) / 2;
     int rightPad = contentWidth - static_cast<int>(title.length()) - leftPad;
-    oss << "Kamu mendarat di " << landPlot.getName() << " (" << landPlot.getCode() << ")!" << endl;
 
     oss << "+" << string(contentWidth, '=') << "+" << endl;
     oss << "|" << string(leftPad, ' ') << title << string(rightPad, ' ') << "|" << endl;
@@ -214,7 +213,7 @@ string Formatter::buyProperty(const Player& player, const LandPlot& landPlot) {
     oss << "| " << left << setw(labelWidth) << "Sewa hotel"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(5))<< "|" << endl;
     oss << "+" << string(contentWidth, '=') << "+" << endl;
     oss << "Uang kamu saat ini: " << moneyString(player.getCash()) << endl;
-
+    oss << "Apakah kamu ingin membeli properti ini seharga " << landPlot.calculateBuildingValue() << "?";
     return oss.str();
 }
 
@@ -721,7 +720,7 @@ string Formatter::failSaveFile(string& fileName) {
 
 // ── Log (command 17 - CETAK_LOG) ─────────────────────────────────────
 string Formatter::showLogger(const LogEntry& log) {
-    return "[" + to_string(log.turn) + "] " + log.username + " | " + log.actionType + " | " + log.detail + "\n";
+    return "[Turn " + to_string(log.turn) + "] " + log.username + " | " + log.actionType + " | " + log.detail + "\n";
 }
 
 // ── Win (command 18 - MENANG) ─────────────────────────────────────────
