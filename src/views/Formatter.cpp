@@ -213,7 +213,7 @@ string Formatter::buyProperty(const Player& player, const LandPlot& landPlot) {
     oss << "| " << left << setw(labelWidth) << "Sewa hotel"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(5))<< "|" << endl;
     oss << "+" << string(contentWidth, '=') << "+" << endl;
     oss << "Uang kamu saat ini: " << moneyString(player.getCash()) << endl;
-    oss << "Apakah kamu ingin membeli properti ini seharga " << landPlot.calculateBuildingValue() << "?";
+    oss << "Apakah kamu ingin membeli properti ini seharga " << moneyString(landPlot.getBuyPrice()) << "?";
     return oss.str();
 }
 
@@ -226,7 +226,7 @@ string Formatter::buySuccess(const Player& player, const LandPlot& landPlot) {
 
 string Formatter::buyFailed() {
     std::ostringstream oss;
-    oss << "Properti ini akan masuk ke sistem lelang..." << endl;
+    oss << "\nProperti ini akan masuk ke sistem lelang..." << endl;
     return oss.str();
 }
 
