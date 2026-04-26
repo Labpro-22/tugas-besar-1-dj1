@@ -34,5 +34,4 @@ void FestivalPlot::startEvent(PlotContext& ctx) {
     }
 
     ctx.getBoard().getPlots().at(targetIdx).get()->applyFestival();
-    // TODO: Handle festival multiplier for Gamerenderer
 }
