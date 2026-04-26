@@ -62,6 +62,8 @@ class Formatter {
         static string sellProperty(string& name, int cost);
 
     // ── Redeem (command 10 - TEBUS) ───────────────────────────────────────────────
+        static string redeemListHeader(int playerCash);
+        static string redeemListFooter();    
         static string makeRedeemList(const PropertyPlot& property);
         static string redeemNoEligible();                                                                //TAMBAHAN
         static string successRedeemProperty(const PropertyPlot& property, int money);
@@ -134,6 +136,21 @@ class Formatter {
         static string landOnGoPrison();
         static string landOnPrisonVisit();
         static string landOnPrisonJailed(int jailTurnsLeft);
+
+    // ── Main Setup ─────────────────────────────────────────────────
+        static string invalidIntInput();
+        static string promptPlayerName(int n);
+        static string playerNameEmpty();
+        static string playerNameDuplicate();
+        static string promptPlayerCount();
+        static string gameTitle();
+        static string gameStartHint();
+        static string turnHeader(int turn, int maxTurn, const string& username);
+        static string commandPrompt();
+        static string inputStopped();
+        static string noWinner();
+        static string drawResult(const vector<Player>& winners);
+        static string fatalError(const string& message);
 
     // ── Exception ──────────────────────────────────────────────────────────────
         static string throwException(const GameException e);
