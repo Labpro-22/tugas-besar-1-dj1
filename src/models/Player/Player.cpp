@@ -219,8 +219,8 @@ void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
         throw NoCardFoundException();
     }
 
-    std::unique_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex-1]); //Asumsi cardIndex dimulai dari 1
-    ownedCards.erase(ownedCards.begin() + cardIndex-1);
+    std::unique_ptr<SkillCard> selectedCard = std::move(ownedCards[cardIndex]);
+    ownedCards.erase(ownedCards.begin() + cardIndex);
 
     selectedCard->activate(ctx);
     usedSkillThisTurn = true;

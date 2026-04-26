@@ -11,8 +11,9 @@ PropertyPlot::PropertyPlot(std::string name, std::string code, Color color, int 
     propertyStatus(propertyStatus),
     owner(owner),
     festivalDuration(festivalDuration),
-    festivalMultiplier(festivalMultiplier)
-    {}
+    festivalMultiplier(festivalMultiplier){
+        if (buyPrice < mortgageValue) buyPrice = mortgageValue;
+    }
 
 int PropertyPlot::getBuyPrice() const{
     return buyPrice;

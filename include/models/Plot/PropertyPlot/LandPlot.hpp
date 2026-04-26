@@ -29,7 +29,7 @@ public:
     int getLevel() const override;
 
     void build(PlotContext& ctx);
-    void sellBuildings();
+    void sellBuildings(PlotContext& ctx);
     int getSellBuildingPrice() const;
     bool canBuild(PlotContext& ctx) const;
     int getBuildCost() const;
@@ -40,6 +40,7 @@ public:
     int calculateBuildingValue() const;
     int calculateTotalValue() const override;
     int calculateRentPrice(PlotContext& ctx) const override;
+    int calculateBaseRentPrice(PlotContext& ctx) const override;
 
     PlotType getType() const override;
     void startEvent(PlotContext& ctx) override;

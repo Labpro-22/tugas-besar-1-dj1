@@ -18,7 +18,7 @@ public:
 private:
     vector<unique_ptr<Plot>> tiles;
  
-    CardDeck<std::unique_ptr<ChanceCard>>         chanceDeckPile; //TODO: ganti jadi unique_ptr
+    CardDeck<std::unique_ptr<ChanceCard>>         chanceDeckPile;
     CardDeck<std::unique_ptr<CommunityChestCard>> communityChestDeckPile;
     CardDeck<std::unique_ptr<SkillCard>>          skillCardDeckPile;
 
@@ -42,6 +42,7 @@ public:
     Plot* getPlot(int index) const;
     int getSize() const;
     const vector<unique_ptr<Plot>>& getPlots() const;
+   const vector<Plot*> getPlots(Color color) const;
     
     int findPlotIndex(const PlotType type) const;
     PlotType getPlotType(int idx) const;
