@@ -75,12 +75,20 @@ void GameRenderer::showIncomeTaxResult(int totalWealth, int cashBefore, int perc
     cout << Formatter::payIncomeTaxResult(totalWealth, cashBefore, percentage);
 }
 
+void GameRenderer::showPayFlatTax(int flat, int money) {
+    cout << Formatter::payFlatTax(flat, money);
+}
+
+void GameRenderer::showFailPayFlatTax(int flat, int money) {
+    cout << Formatter::failPayFlatTax(flat, money);
+}
+
 void GameRenderer::showLuxuryTax(int startMoney, int finalMoney) {
     cout << Formatter::payLuxuryTax(startMoney, finalMoney);
 }
 
-void GameRenderer::showFailPayTax(int money) {
-    cout << Formatter::failPayTax(money);
+void GameRenderer::showFailPayLuxuryTax(int money) {
+    cout << Formatter::failPayLuxuryTax(money);
 }
 
 // ── Mortgage (command 9 - GADAI) ──────────────────────────────────────
@@ -289,6 +297,27 @@ void GameRenderer::showDropCardWarning(string& name) {
 
 void GameRenderer::showDropCardAction(string& name) {
     cout << Formatter::dropCardAction(name);
+}
+
+// ── Special plots ─────────────────────────────────────────────────
+void GameRenderer::showLandOnGo() {
+    cout << Formatter::landOnGo();
+}
+ 
+void GameRenderer::showLandOnFreePark() {
+    cout << Formatter::landOnFreePark();
+}
+ 
+void GameRenderer::showLandOnGoPrison() {
+    cout << Formatter::landOnGoPrison();
+}
+ 
+void GameRenderer::showLandOnPrisonVisit() {
+    cout << Formatter::landOnPrisonVisit();
+}
+ 
+void GameRenderer::showLandOnPrisonJailed(int jailTurnsLeft) {
+    cout << Formatter::landOnPrisonJailed(jailTurnsLeft);
 }
 
 // ── Game Exception ────────────────────────────────────

@@ -1,4 +1,6 @@
 #include "models/Card/CommunityChestCard/BirthdayCard.hpp"
+#include "core/GameException.hpp"
+#include "views/GameRenderer.hpp"
 
 string BirthdayCard::getName() {
     return "BirthdayCard";
@@ -10,13 +12,19 @@ string BirthdayCard::getDescription() {
  
 void BirthdayCard::activate(SkillContext& ctx) {
     Player& currPlayer = ctx.getCurrentPlayer();
- 
-    for (Player& other : ctx.getPlayers()) {
-        if (other.getUsername() == currPlayer.getUsername()) continue;
-        if (other.isBankrupt()) continue;
- 
-        other.pay(100);
-        currPlayer.receive(100);
+    
+    try {
+        for (Player& other : ctx.getPlayers()) {
+            if (other.getUsername() == currPlayer.getUsername()) continue;
+            if (other.isBankrupt()) continue;
+        
+            other.pay(100);
+            currPlayer.receive(100);
+        }
+
+        GameRenderer::showOnLandCommunityChestCard(*this, 100, currPlayer.getCash());
+    } catch (const GameException& e) {
+        GameRenderer::throwException(e);
     }
 }
  

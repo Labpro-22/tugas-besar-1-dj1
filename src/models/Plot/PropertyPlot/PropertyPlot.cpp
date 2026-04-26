@@ -6,6 +6,7 @@
 #include "core/services/BankruptcyService.hpp"
 #include "core/services/CommandHandler.hpp"
 #include "models/Player/Player.hpp"
+
 #include "views/GameRenderer.hpp"
 
 PropertyPlot::PropertyPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
@@ -85,17 +86,6 @@ int PropertyPlot::calculateTotalValue() const{
     return buyPrice;
 }
 
-void PropertyPlot::startEvent(PlotContext& ctx) {
-    if (!isOwned()){
-        startBuy(ctx);
-    }
-    else{
-        if (owner != &ctx.getCurrentPlayer()){
-            startPay(ctx);
-        }
-    }
-}
-
 void PropertyPlot::setFestivalMultiplier(int mult) {
     if (mult < 1 || mult > 8) {
         throw InvalidInputException("Festival multiplier harus bernilai antara 1 dan 8.");
@@ -112,42 +102,4 @@ void PropertyPlot::setFestivalDuration(int dur) {
  
 void PropertyPlot::setPropertyStatus(PropertyStatus status) {
     propertyStatus = status;
-}
-
-void PropertyPlot::startBuy(PlotContext& ctx){
-    Player& current = ctx.getCurrentPlayer();
-    const bool canAfford = current.getCash() >= getBuyPrice();
-    const bool wantsBuy = canAfford
-        && CommandHandler::promptYesNo("Apakah anda ingin membeli " + getName()
-            + " (harga: M" + std::to_string(getBuyPrice()) + ")?");
-
-    if (wantsBuy) {
-        current.buyProperty(*this);
-        return;
-    }
-
-    GameRenderer::showBuyFailed();
-    std::vector<Player*> bidders;
-    for (Player& p : ctx.getPlayers()) {
-        bidders.push_back(&p);
-    }
-    ctx.getAuctionService().startAuction(*this, bidders, ctx.getLogger());
-}
-
-void PropertyPlot::startPay(PlotContext& ctx){
-    int rentPrice = calculateRentPrice(ctx);
-    Player& current = ctx.getCurrentPlayer();
-    BankruptcyService bankruptcyService;
-    try {
-        current.payRent(rentPrice, owner);
-    } catch (const InsufficientFundException&) {
-        GameRenderer::showCannotPayRent(rentPrice, current.getCash());
-        bankruptcyService.liquidateAssets(current, rentPrice - current.getCash(), ctx.getLogger());
-
-        try {
-            current.payRent(rentPrice, owner);
-        } catch (const InsufficientFundException&) {
-            bankruptcyService.transferAssets(current, owner, ctx.getLogger());
-        }
-    }
 }

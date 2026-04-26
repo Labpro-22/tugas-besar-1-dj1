@@ -3,6 +3,7 @@
 #include "core/GameException.hpp"
 #include "core/services/BankruptcyService.hpp"
 #include "core/services/CommandHandler.hpp"
+#include "views/GameRenderer.hpp"
 #include "models/Player/Player.hpp"
 #include "views/GameRenderer.hpp"
 
@@ -14,7 +15,8 @@ int IncomeTaxPlot::getPercentage() const {
 }
 
 void IncomeTaxPlot::startEvent(PlotContext& ctx) {
-    GameRenderer::showIncomeTaxPrompt(FLAT, PPH);
+    GameRenderer::showIncomeTaxPrompt(FLAT, percentage);
+    std::string msg = "Pilihan (1/2)"; 
     std::string answer;
     while (true){
         answer = CommandHandler::promptInput("Pilihan (1/2)");
@@ -26,25 +28,21 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
         }
     }
 
-    Player& player = ctx.getCurrentPlayer();
-    const int taxAmount = (answer == "1")
-        ? FLAT
-        : player.getTotalWealth() * PPH / 100;
+    if (answer == "1"){
+        if(ctx.getCurrentPlayer().getCash() < FLAT) {
+            GameRenderer::showFailPayFlatTax(FLAT, ctx.getCurrentPlayer().getCash());
+            // TODO: Handle Bankrupt
 
-    if (answer == "2") {
-        GameRenderer::showIncomeTaxResult(player.getTotalWealth(), player.getCash(), PPH);
+        } else {
+            ctx.getCurrentPlayer().payTaxes(FLAT);
+            GameRenderer::showPayFlatTax(FLAT, ctx.getCurrentPlayer().getCash());
+        }
     }
 
-    BankruptcyService bankruptcyService;
-    try {
-        player.payTaxes(taxAmount);
-    } catch (const InsufficientFundException&) {
-        GameRenderer::showFailPayTax(player.getCash());
-        bankruptcyService.liquidateAssets(player, taxAmount - player.getCash(), ctx.getLogger());
-        if (bankruptcyService.canRecover(player, taxAmount)) {
-            player.payTaxes(taxAmount);
-            return;
-        }
-        bankruptcyService.transferAssets(player, nullptr, ctx.getLogger());
+    else if (answer == "2"){
+        int totalWealth = ctx.getCurrentPlayer().getTotalWealth();
+        int cashBefore = ctx.getCurrentPlayer().getCash();
+        ctx.getCurrentPlayer().payTaxes(ctx.getCurrentPlayer().getTotalWealth() * PPH/100);
+        GameRenderer::showIncomeTaxResult(totalWealth, cashBefore, percentage);
     }
 }

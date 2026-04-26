@@ -1,5 +1,8 @@
 #include "models/Card/CommunityChestCard/CampaignCard.hpp"
 
+#include "core/GameException.hpp"
+#include "views/GameRenderer.hpp"
+
 string CampaignCard::getName() {
     return "CampaignCard";
 }
@@ -10,12 +13,23 @@ string CampaignCard::getDescription() {
  
 void CampaignCard::activate(SkillContext& ctx) {
     Player& currPlayer = ctx.getCurrentPlayer();
- 
-    for (Player& other : ctx.getPlayers()) {
-        if (other.getUsername() == currPlayer.getUsername()) continue;
-        if (other.isBankrupt()) continue;
- 
-        currPlayer.pay(200);
-        other.receive(200);
+    
+    try{
+        for (Player& other : ctx.getPlayers()) {
+            if(currPlayer.getCash() < 200) break;
+            if (other.getUsername() == currPlayer.getUsername()) continue;
+            if (other.isBankrupt()) continue;
+            
+            currPlayer.pay(200);
+            other.receive(200);
+        }
+        
+        GameRenderer::showOnLandCommunityChestCard(*this, 200, currPlayer.getCash());
+        if(currPlayer.getCash() < 200) {
+            // TODO: Handle Bankrupt
+        }
+
+    } catch (const GameException& e) {
+        GameRenderer::throwException(e);
     }
 }

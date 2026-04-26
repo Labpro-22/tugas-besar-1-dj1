@@ -1,3 +1,4 @@
+#pragma once
 #include "core/GameEngine.hpp"
 #include "models/Plot/PropertyPlot/LandPlot.hpp"
 #include "models/Plot/PropertyPlot/StationPlot.hpp"
@@ -44,8 +45,10 @@ class Formatter {
     // ── Pay tax (command 8 - BAYAR_PAJAK) ────────────────────────────────────────
         static string payIncomeTax(int flat, int percentage);
         static string payIncomeTaxResult(int totalWealth, int cashBefore, int percentage);              //TAMBAHAN
+        static string payFlatTax(int flat, int money);
+        static string failPayFlatTax(int flat, int money);
         static string payLuxuryTax(int startMoney, int finalMoney);
-        static string failPayTax(int money);
+        static string failPayLuxuryTax(int money);
    
     // ── Mortgage (command 9 - GADAI [TODO REVISION]) ────────────────────────────────────── 
         static string makeCanMortgagedList(const PropertyPlot& property, int money);
@@ -120,6 +123,13 @@ class Formatter {
     // ── Drop card (command 21 - DROP KARTU) ──────────────────────────────
         static string dropCardWarning(string& name);
         static string dropCardAction(string& name);
+
+    // ── Special plots ─────────────────────────────────────────────────
+        static string landOnGo();
+        static string landOnFreePark();
+        static string landOnGoPrison();
+        static string landOnPrisonVisit();
+        static string landOnPrisonJailed(int jailTurnsLeft);
 
     // ── Exception ──────────────────────────────────────────────────────────────
         static string throwException(const GameException e);
