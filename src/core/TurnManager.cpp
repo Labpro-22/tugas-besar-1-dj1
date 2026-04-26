@@ -59,7 +59,7 @@ void TurnManager::advanceTurn(GameState& state) {
 
 void TurnManager::sendToJail(Player& player, GameState& state) {
     const int boardSize = state.getBoardSizeOrDefault();
-    int jailIndex = state.getBoard().findPlotIndex("PEN");
+    int jailIndex = state.getBoard().findPlotIndex(PlotType::PRISONPLOT);
     if (jailIndex < 0 || jailIndex >= boardSize) {
         jailIndex = 0;
     }

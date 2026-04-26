@@ -16,7 +16,8 @@ enum class GameErrorID{
     BUILDINGISFULLEXCEPTION,
     BUILDINGISEMPTYEXCEPTION,
     COLORSETNOTOWNEDEXCEPTION,
-    NOACCESSTOPROPERTYEXCEPTION
+    NOACCESSTOPROPERTYEXCEPTION,
+    POSITIONNOTINBOARDEXCEPTION
 };
 
 class GameException : public std::exception{
@@ -123,4 +124,10 @@ class NoAccessToPropertyException : public GameException{
 public:
     NoAccessToPropertyException(): GameException(GameErrorID::NOACCESSTOPROPERTYEXCEPTION,
         "Anda tidak memiliki akses untuk properti ini.") {}
+};
+
+class PositionNotInBoardException : public GameException{
+public:
+    PositionNotInBoardException(int index): GameException(GameErrorID::POSITIONNOTINBOARDEXCEPTION,
+        "Petak dengan nomor " + std::to_string(index) + " tidak ada di dalam board.") {}
 };

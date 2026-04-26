@@ -133,6 +133,14 @@ void Player::moveTo(int index, int boardSize) {
     position = index;
 }
 
+void Player::sendToJail(const Board& board){
+    setStatus(PlayerStatus::JAILED);
+    moveTo(board.findPlotIndex(PlotType::PRISONPLOT), board.getSize());
+    setJailTurns(JAILDURATIION);
+    resetConsecutiveDoubles();
+    setHasRolled(true);
+}
+
 void Player::pay(int amount) {
     if (amount < 0) {
         throw InvalidInputException("Nilai pembayaran tidak boleh negatif.");

@@ -51,14 +51,6 @@ void LandPlot::sellBuildings(){
     owner->receive(getSellBuildingPrice());
 }
 
-void LandPlot::destroyBuilding(){
-    level = 0;
-}
-
-void LandPlot::downgradeBuilding(){
-    if (level > 0) level--;
-}
-
 int LandPlot::getSellBuildingPrice() const {
     if (level == 5) return upgHotelPrice;
     else if (level == 0) return 0;
@@ -75,8 +67,6 @@ bool LandPlot::canBuild(PlotContext& ctx) const {
     }
     if (level >= 5){
         throw BuildingIsFullException();
-
-
     }
     return true;
 } 
@@ -153,4 +143,8 @@ void LandPlot::startEvent(PlotContext& ctx){
             ctx.getCurrentPlayer().payRent(rentPrice, owner);
         }
     }
+}
+
+void LandPlot::demolish(){
+    level = 0;
 }
