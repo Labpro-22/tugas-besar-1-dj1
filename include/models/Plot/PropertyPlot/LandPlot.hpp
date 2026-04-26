@@ -3,6 +3,7 @@
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 #include "core/services/AuctionService.hpp"
 #include "models/Board/Board.hpp"
+#include "core/services/CommandHandler.hpp"
 
 class LandPlot: public PropertyPlot{
 private:

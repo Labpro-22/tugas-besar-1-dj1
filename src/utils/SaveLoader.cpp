@@ -155,7 +155,7 @@ void SaveLoader::loadPropertyState(ifstream& file, GameState& state, const map<s
             for (auto& p : players) {
                 if (p.getUsername() == pemilik) {
                     prop->setOwner(&p);
-                    p.addOwnedProperty(*plot);
+                    p.addOwnedProperty(*prop);
                     break;
                 }
             }
@@ -172,7 +172,6 @@ void SaveLoader::loadPropertyState(ifstream& file, GameState& state, const map<s
         }
     }
  
-    // Set posisi player berdasarkan kode petak
     for (auto& p : players) {
         auto it = playerPosCodes.find(p.getUsername());
         if (it != playerPosCodes.end()) {

@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 #include "models/Player/PlayerStatus.hpp"
-#include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
+class PropertyPlot;
 class SkillCard;
 class SkillContext;
 
@@ -79,7 +79,7 @@ public:
     void incrementConsecutiveDoubles();
     void resetConsecutiveDoubles();
     void addOwnedCard(const std::shared_ptr<SkillCard>& card);
-    void addOwnedProperty(Plot& plot);
+    void addOwnedProperty(PropertyPlot& property);
     void setUsedSkillThisTurn(bool used);
     void resetTurnFlags();
 

@@ -8,9 +8,9 @@
 #include "models/Player/Player.hpp"
 #include "core/PlotContext.hpp"
 #include "core/GameException.hpp"
-#include "core/services/CommandHandler.hpp"
 #include "utils/Logger.hpp"
 
+class CommandHandler;
 class Plot{
 protected:
     std::string name;

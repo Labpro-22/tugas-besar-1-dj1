@@ -11,7 +11,7 @@ public:
     static bool promptYesNo(std::string prompt);
     static std::string promptInput(std::string prompt);
     template <typename Validator>
-    std::string CommandHandler::promptInput(std::string prompt, Validator isValid){
+    std::string promptInput(std::string prompt, Validator isValid){
         std::string answer;
         while (true){
             std::cout << prompt << ": "; //TODO: tampilkan dengan renderer

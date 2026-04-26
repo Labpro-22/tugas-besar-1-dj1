@@ -402,6 +402,6 @@ bool Player::isBankrupt() const {
     return status == PlayerStatus::BANKRUPT;
 }
 
-void Player::addOwnedProperty(Plot& plot) {
-    ownedProperties.push_back(std::ref(plot));
+void Player::addOwnedProperty(PropertyPlot& property) {
+    ownedProperties.push_back(std::ref(property));
 }
