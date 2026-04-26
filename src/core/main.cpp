@@ -10,6 +10,8 @@
 #include "utils/SaveLoader.hpp"
 
 namespace {
+constexpr int MIN_PLAYERS = 2;
+constexpr int MAX_PLAYERS = 4;
 
 std::string trim(const std::string& text) {
     const std::size_t first = text.find_first_not_of(" \t\r\n");
@@ -20,7 +22,7 @@ std::string trim(const std::string& text) {
     return text.substr(first, last - first + 1);
 }
 
-int readPositiveInt() {
+int readPlayerCount() {
     while (true) {
         GameRenderer::showPromptPlayerCount();
         std::string input;
@@ -31,7 +33,9 @@ int readPositiveInt() {
         try {
             std::size_t parsed = 0;
             const int value = std::stoi(input, &parsed);
-            if (parsed == input.size() && value > 0) return value;
+            if (parsed == input.size() && value >= MIN_PLAYERS && value <= MAX_PLAYERS) {
+                return value;
+            }
         } catch (const std::exception&) {}
         GameRenderer::showInvalidIntInput();
     }
@@ -115,7 +119,7 @@ int main() {
         }
 
         if (!loaded) {
-            const int playerCount = readPositiveInt();
+            const int playerCount = readPlayerCount();
             const std::vector<std::string> playerNames = readPlayerNames(playerCount);
             engine.startNewGame(playerNames);
         }
