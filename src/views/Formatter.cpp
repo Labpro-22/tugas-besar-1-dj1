@@ -276,7 +276,6 @@ string Formatter::payIncomeTax(int flat, int percentage) {
     oss << "1. Bayar flat " << moneyString(flat) << endl;
     oss << "2. Bayar " << percentage << "% " << "dari total kekayaan" << endl;
     oss << "(Pilih sebelum menghitung kekayaan!)" << endl;
-    oss << "Pilihan (1/2): ";
 
     return oss.str();
 }
@@ -301,9 +300,10 @@ string Formatter::payFlatTax(int flat, int money) {
 
     return oss.str();
 }
-string Formatter::failPayFlatTax(int money) { 
+
+string Formatter::failPayFlatTax(int flat, int money) { 
     std::ostringstream oss;
-    oss << "Kamu tidak mampu bayar pajak flat M150 !" << endl;
+    oss << "Kamu tidak mampu bayar pajak flat " << flat << "!" << endl;
     oss << playerMoney(money) << endl;
 
     return oss.str();

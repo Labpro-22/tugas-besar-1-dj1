@@ -79,8 +79,8 @@ void GameRenderer::showPayFlatTax(int flat, int money) {
     cout << Formatter::payFlatTax(flat, money);
 }
 
-void GameRenderer::showFailPayFlatTax(int money) {
-    cout << Formatter::failPayFlatTax(money);
+void GameRenderer::showFailPayFlatTax(int flat, int money) {
+    cout << Formatter::failPayFlatTax(flat, money);
 }
 
 void GameRenderer::showLuxuryTax(int startMoney, int finalMoney) {

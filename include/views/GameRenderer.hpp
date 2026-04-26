@@ -36,7 +36,7 @@ class GameRenderer {
         static void showIncomeTaxPrompt(int flat, int percentage);
         static void showIncomeTaxResult(int totalWealth, int cashBefore, int percentage);
         static void showPayFlatTax(int flat, int money);
-        static void showFailPayFlatTax(int money);               
+        static void showFailPayFlatTax(int flat, int money);               
         static void showLuxuryTax(int startMoney, int finalMoney);
         static void showFailPayLuxuryTax(int money);
 

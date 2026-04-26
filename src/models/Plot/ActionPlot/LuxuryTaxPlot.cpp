@@ -7,10 +7,10 @@ LuxuryTaxPlot::LuxuryTaxPlot(std::string name, std::string code, Color color)
     : TaxPlot(name, code, color) {}
 
 void LuxuryTaxPlot::startEvent(PlotContext& ctx) {
-    //TODO: gunakan formatter untuk menampilkan pesan
     if(ctx.getCurrentPlayer().getCash() < PBM) {
         GameRenderer::showFailPayLuxuryTax(ctx.getCurrentPlayer().getCash());
         // TODO: Handle bankrupt
+
     } else {
         int startMoney = ctx.getCurrentPlayer().getCash();
         int finalMoney = ctx.getCurrentPlayer().getCash() - PBM; 
