@@ -122,6 +122,14 @@ void GameRenderer::showSellBuildingResult(string& name, int cost) {
 }
  
 // ── Redeem (command 10 - TEBUS) ───────────────────────────────────────
+void GameRenderer::showRedeemListHeader(int playerCash) {
+    cout << Formatter::redeemListHeader(playerCash);
+}
+
+void GameRenderer::showRedeemListFooter() {
+    cout << Formatter::redeemListFooter();
+}
+
 void GameRenderer::showRedeemList(const PropertyPlot& property) {
     cout << Formatter::makeRedeemList(property);
 }
@@ -327,6 +335,60 @@ void GameRenderer::showLandOnPrisonVisit() {
  
 void GameRenderer::showLandOnPrisonJailed(int jailTurnsLeft) {
     cout << Formatter::landOnPrisonJailed(jailTurnsLeft);
+}
+
+// ── Main Setup ─────────────────────────────────────────────────────
+
+void GameRenderer::showInvalidIntInput() {
+    cout << Formatter::invalidIntInput();
+}
+
+void GameRenderer::showPromptPlayerName(int n) {
+    cout << Formatter::promptPlayerName(n);
+}
+
+void GameRenderer::showPlayerNameEmpty() {
+    cout << Formatter::playerNameEmpty();
+}
+
+void GameRenderer::showPlayerNameDuplicate() {
+    cout << Formatter::playerNameDuplicate();
+}
+
+void GameRenderer::showPromptPlayerCount() {
+    cout << Formatter::promptPlayerCount();
+}
+
+void GameRenderer::showGameTitle() {
+    cout << Formatter::gameTitle();
+}
+
+void GameRenderer::showGameStartHint() {
+    cout << Formatter::gameStartHint();
+}
+
+void GameRenderer::showTurnHeader(int turn, int maxTurn, const string& username) {
+    cout << Formatter::turnHeader(turn, maxTurn, username);
+}
+
+void GameRenderer::showCommandPrompt() {
+    cout << Formatter::commandPrompt();
+}
+
+void GameRenderer::showInputStopped() {
+    cout << Formatter::inputStopped();
+}
+
+void GameRenderer::showNoWinner() {
+    cout << Formatter::noWinner();
+}
+
+void GameRenderer::showDrawResult(const vector<Player>& winners) {
+    cout << Formatter::drawResult(winners);
+}
+
+void GameRenderer::showFatalError(const string& message) {
+    cerr << Formatter::fatalError(message);
 }
 
 // ── Game Exception ────────────────────────────────────

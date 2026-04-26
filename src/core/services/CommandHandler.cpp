@@ -136,7 +136,7 @@ bool CommandHandler::execute(const Command& command, GameState& state, EffectRes
 std::string CommandHandler::promptInput(std::string prompt){
     GameRenderer::showInputMessage(prompt);
     std::string answer;
-    std::cin >> answer;
+    std::getline(std::cin >> std::ws, answer);
     return answer;
 }
 
@@ -146,7 +146,7 @@ bool CommandHandler::promptYesNo(std::string prompt){
         try{
 
             std::string answer;
-            std::cin >> answer;
+            std::getline(std::cin >> std::ws, answer);
             if (answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" || answer == "YES"){
                 return true;
             }
