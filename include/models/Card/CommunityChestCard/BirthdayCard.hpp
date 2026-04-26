@@ -3,8 +3,8 @@
 
 class BirthdayCard : public CommunityChestCard {
     public:
-        BirthdayCard();
-        ~BirthdayCard();
+        BirthdayCard() = default;
+        ~BirthdayCard() = default;
         string getName();
         string getDescription();
         void activate(SkillContext& ctx);
