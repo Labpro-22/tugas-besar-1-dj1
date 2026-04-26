@@ -123,6 +123,7 @@ bool PrintDeedCommand::execute(GameState& state, EffectResolver&, TurnManager&) 
         return true;
     }
     
+    state.addLog("Perintah CETAK_AKTA untuk properti " + code + " dijalankan.");
     GameRenderer::showDeed(*land);
     return true;
 }
@@ -676,9 +677,9 @@ bool HelpCommand::execute(GameState& state, EffectResolver&, TurnManager&) const
 
     // ── Kartu Kemampuan ──────────────────────────────────────────────────────
     header("Kartu Kemampuan Spesial");
-    entry("GUNAKAN_KEMAMPUAN <N>",
+    entry("GUNAKAN_KEMAMPUAN [N]",
           "Aktifkan Kartu Kemampuan Spesial ke-N dari tangan.",
-          "Hanya bisa digunakan SEBELUM melempar dadu  |  Contoh: GUNAKAN_KEMAMPUAN 2");
+          "Tanpa N: tampilkan daftar & pilih interaktif  |  Contoh: GUNAKAN_KEMAMPUAN 2");
 
     // ── Penjara ──────────────────────────────────────────────────────────────
     header("Penjara");
