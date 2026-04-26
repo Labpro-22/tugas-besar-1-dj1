@@ -1,5 +1,7 @@
 #include "models/Board/CardDeck.hpp"
 
+#include "core/GameException.hpp"
+
 template<class T>
 CardDeck<T>::CardDeck() {
     this->drawPile = {};
@@ -78,4 +80,15 @@ vector<T> CardDeck<T>::getAllCards() {
     }
     return deck;
 }
+
+// Explicit instantiations
+#include <memory>
+#include "models/Card/ChanceCard/ChanceCard.hpp"
+#include "models/Card/CommunityChestCard/CommunityChestCard.hpp"
+#include "models/Card/SkillCard/SkillCard.hpp"
+
+template class CardDeck<ChanceCard*>;
+template class CardDeck<CommunityChestCard*>;
+template class CardDeck<SkillCard*>;
+template class CardDeck<std::shared_ptr<SkillCard>>;
 

@@ -6,7 +6,7 @@
 #include <string>
 #include <vector>
 #include "core/GameException.hpp"
-#include "core/GameRenderer.hpp"
+#include "views/GameRenderer.hpp"
 
 namespace {
 std::string trim(std::string text) {

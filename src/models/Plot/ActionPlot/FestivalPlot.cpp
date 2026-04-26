@@ -1,5 +1,8 @@
 #include "models/Plot/ActionPlot/FestivalPlot.hpp"
 
+#include "core/services/CommandHandler.hpp"
+#include "models/Board/Board.hpp"
+
 FestivalPlot::FestivalPlot(std::string name, std::string code, Color color)
     : ActionPlot(name, code, color) {}
 

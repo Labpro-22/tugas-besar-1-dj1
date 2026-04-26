@@ -406,6 +406,13 @@ void Player::updateOwnedProperties(){
     }
 }
 
+void Player::goToJail(){
+    setStatus(PlayerStatus::JAILED);
+    setJailTurns(3);
+    resetConsecutiveDoubles();
+    setHasRolled(true);
+}
+
 void Player::updateStatus(){
     updateOwnedProperties();
     decrementDiscountTurn();

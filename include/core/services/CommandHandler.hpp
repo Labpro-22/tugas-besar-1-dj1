@@ -1,8 +1,14 @@
 #pragma once
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include "core/Command.hpp"
+
+class GameState;
+class EffectResolver;
+class TurnManager;
+class Player;
 
 class CommandHandler {
 public:
@@ -12,10 +18,10 @@ public:
     std::size_t promptCardDrop(const Player& player);
     static std::string promptInput(std::string prompt);
     template <typename Validator>
-    std::string CommandHandler::promptInput(std::string prompt, Validator isValid){
+    std::string promptInput(std::string prompt, Validator isValid){
         std::string answer;
         while (true){
-            std::cout << prompt << ": "; //TODO: tampilkan dengan renderer
+            std::cout << prompt << ": ";
             std::cin >> answer;
 
             if (isValid(answer)){

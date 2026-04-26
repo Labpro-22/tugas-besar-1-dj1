@@ -2,9 +2,19 @@
 
 #include <cctype>
 #include <exception>
+#include <iostream>
 #include <sstream>
 #include <vector>
 #include "core/GameException.hpp"
+#include "core/GameState.hpp"
+#include "core/TurnManager.hpp"
+#include "core/services/EffectResolver.hpp"
+#include "models/Player/Player.hpp"
+#include "models/Card/SkillCard/SkillCard.hpp"
+
+using std::cout;
+using std::cin;
+using std::endl;
 
 namespace {
 std::string toUpper(std::string text) {
@@ -139,10 +149,10 @@ bool CommandHandler::promptYesNo(std::string prompt){
 
             std::string answer;
             std::cin >> answer;
-            if (answer.compare("y") || answer.compare("Y") || answer.compare("Yes") || answer.compare("yes") || answer.compare("YES")){
+            if (answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" || answer == "YES"){
                 return true;
             }
-            else if (answer.compare("n") || answer.compare("N") || answer.compare("No") || answer.compare("no") || answer.compare("NO")){
+            else if (answer == "n" || answer == "N" || answer == "no" || answer == "No" || answer == "NO"){
                 return false;
             }
             else{

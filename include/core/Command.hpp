@@ -1,9 +1,10 @@
 #pragma once
 
 #include <string>
-#include "core/services/EffectResolver.hpp"
-#include "core/GameState.hpp"
-#include "core/TurnManager.hpp"
+
+class GameState;
+class EffectResolver;
+class TurnManager;
 
 class Command {
 public:

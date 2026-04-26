@@ -5,10 +5,12 @@
 #include <string>
 #include <vector>
 #include "models/Player/PlayerStatus.hpp"
-#include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
+class Plot;
+class PropertyPlot;
 class SkillCard;
 class SkillContext;
+template <class T> class CardDeck;
 
 class Player {
 private:
@@ -88,6 +90,8 @@ public:
 
     void updateOwnedProperties();
     void updateStatus();
+
+    void goToJail();
 
     bool isBankrupt() const;
 };

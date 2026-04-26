@@ -1,6 +1,11 @@
 #pragma once
 
+#include <memory>
 #include "core/GameState.hpp"
+
+class CommandHandler;
+class SkillCard;
+template <class T> class CardDeck;
 
 class TurnManager {
 public:
@@ -22,5 +27,6 @@ public:
     void handlePassedGo(Player& player, int oldPosition, int newPosition, GameState& state);
     bool checkGameEndConditions(GameState& state);
     void drawSkillCardAtStart(Player& player, GameState& state, CommandHandler& commandHandler);
+    void useCards(Player& player, GameState& state, CommandHandler& commandHandler);
     bool handleCardOverflow(Player& player, GameState& state, CommandHandler& commandHandler, CardDeck<std::shared_ptr<SkillCard>>& deck);
 };

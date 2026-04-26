@@ -3,6 +3,10 @@
 #include <string>
 #include "core/GameException.hpp"
 #include "core/services/BankruptcyService.hpp"
+#include "core/services/CommandHandler.hpp"
+#include "models/Board/Board.hpp"
+#include "models/Board/CardDeck.hpp"
+#include "models/Card/SkillCard/SkillCard.hpp"
 
 void TurnManager::startTurn(Player& player, GameState& state) {
     player.resetTurnFlags();
@@ -65,10 +69,7 @@ void TurnManager::sendToJail(Player& player, GameState& state) {
     } catch (const GameException&) {
         // ignore move failure — status change is the important part
     }
-    player.setStatus(PlayerStatus::JAILED);
-    player.setJailTurns(MAX_JAIL_TURNS);
-    player.resetConsecutiveDoubles();
-    player.setHasRolled(true);
+    player.goToJail();
     state.addLog(player.getUsername() + " masuk penjara.");
 }
 
@@ -122,7 +123,7 @@ bool TurnManager::handleJailedRoll(Player& player, bool rolledDouble, GameState&
     return false;
 }
 
-bool TurnManager::handleTripleDouble(Player& player, GameState& state) {
+bool TurnManager::handleTripleDouble(Player& /*player*/, GameState& /*state*/) {
     // TODO: Implementasi deteksi "melanggar batas kecepatan" (3 double berturut-turut).
     //
     // Alur yang harus dijalankan:
@@ -314,7 +315,7 @@ bool TurnManager::checkGameEndConditions(GameState& state) {
     return false;
 }
 
-void TurnManager::drawSkillCardAtStart(Player& player, GameState& state, CommandHandler& commandHandler) {
+void TurnManager::drawSkillCardAtStart(Player& player, GameState& state, CommandHandler& /*commandHandler*/) {
     // TODO: Draw 1 kartu Skill acak untuk pemain di awal giliran.
     //
     // Spec (Aturan Kartu Kemampuan Spesial #2):
