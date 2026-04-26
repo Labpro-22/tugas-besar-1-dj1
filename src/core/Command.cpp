@@ -7,6 +7,7 @@
 #include "core/services/EffectResolver.hpp"
 #include "core/SkillContext.hpp"
 #include "models/Player/Player.hpp"
+#include "utils/ConfigSaver.hpp"
 
 RollDiceCommand::RollDiceCommand(int boardSize) : boardSize(boardSize) {
     if (boardSize <= 0) {

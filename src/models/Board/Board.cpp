@@ -9,12 +9,6 @@ Board::Board()
     tiles.reserve(DEFAULT_BOARD_SIZE);
 }
  
-Board::~Board() {
-    for (ChanceCard* c : ownedChanceCards) delete c;
-    for (CommunityChestCard* c : ownedCommunityChestCards) delete c;
-    for (SkillCard* c : ownedSkillCards) delete c;
-}
- 
 bool Board::addPlot(unique_ptr<Plot> plot) {
     if (!plot) return false;
     if (static_cast<int>(tiles.size()) >= MAX_BOARD_SIZE) {
@@ -63,7 +57,7 @@ PlotType Board::getPlotType(int idx) const {
 
 bool Board::isIndexValid(int idx) const {
     if (idx <= 0 || idx > getSize()){
-        return false;
+        return false;   
     }
     return true;
 }
@@ -87,53 +81,53 @@ bool Board::isPlayerOwnAllColor(Color color, const Player* player) const {
     return true;
 }
 
-void Board::initializeChanceDeck(std::vector<ChanceCard*> cards) {
+void Board::initializeChanceDeck(std::vector<std::unique_ptr<ChanceCard>> cards) {
     ownedChanceCards = cards;  
     chanceDeckPile.initialize(cards);
     chanceDeckPile.shuffle();
 }
  
-void Board::initializeCommunityChestDeck(std::vector<CommunityChestCard*> cards) {
+void Board::initializeCommunityChestDeck(std::vector<std::unique_ptr<CommunityChestCard>> cards) {
     ownedCommunityChestCards = cards;
     communityChestDeckPile.initialize(cards);
     communityChestDeckPile.shuffle();
 }
  
-void Board::initializeSkillDeck(std::vector<SkillCard*> cards) {
+void Board::initializeSkillDeck(std::vector<std::unique_ptr<SkillCard>> cards) {
     ownedSkillCards = cards;
     skillCardDeckPile.initialize(cards);
     skillCardDeckPile.shuffle();
 }
 
-CardDeck<ChanceCard*>& Board::getChanceDeckPile() {
+CardDeck<std::unique_ptr<ChanceCard>>& Board::getChanceDeckPile() {
     return chanceDeckPile;
 }
-CardDeck<CommunityChestCard*>& Board::getCommunityChestDeckPile() {
+CardDeck<std::unique_ptr<CommunityChestCard>>& Board::getCommunityChestDeckPile() {
     return communityChestDeckPile;
 }
-CardDeck<SkillCard*>& Board::getSkillCardDeckPile() {
+CardDeck<std::unique_ptr<SkillCard>>& Board::getSkillCardDeckPile() {
     return skillCardDeckPile;
 }
  
-const CardDeck<ChanceCard*>& Board::getChanceDeckPile() const {
+const CardDeck<std::unique_ptr<ChanceCard>>& Board::getChanceDeckPile() const {
     return chanceDeckPile;
 }
-const CardDeck<CommunityChestCard*>& Board::getCommunityChestDeckPile() const {
+const CardDeck<std::unique_ptr<CommunityChestCard>>& Board::getCommunityChestDeckPile() const {
     return communityChestDeckPile;
 }
-const CardDeck<SkillCard*>& Board::getSkillCardDeckPile() const {
+const CardDeck<std::unique_ptr<SkillCard>>& Board::getSkillCardDeckPile() const {
     return skillCardDeckPile;
 }
  
-ChanceCard* Board::drawChanceCard() {
+std::unique_ptr<ChanceCard> Board::drawChanceCard() {
     return chanceDeckPile.draw();
 }
  
-CommunityChestCard* Board::drawCommunityChestCard() {
+std::unique_ptr<CommunityChestCard> Board::drawCommunityChestCard() {
     return communityChestDeckPile.draw();
 }
  
-SkillCard* Board::drawSkillCard() {
+std::unique_ptr<SkillCard> Board::drawSkillCard() {
     return skillCardDeckPile.draw();
 }
 
