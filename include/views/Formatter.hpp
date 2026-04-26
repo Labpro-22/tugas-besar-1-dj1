@@ -15,6 +15,10 @@ class Formatter {
         static string onLand(string name, string description);
         static string playerMoney(int money);
 
+    // ── Input Handler ───────────────────────────────────────────────────────
+        static string promptInputMessage(string prompt);
+        static string promptYesNoMessage(string prompt);
+
     // ── Dice (command 2 & 3) ─────────────────────────────────────────────
         static string showDiceRoll(const Player& player, const Dice& dice, string& position);
         static string showControlDice(const Player& player, const Dice& dice, string& position); 
@@ -113,14 +117,14 @@ class Formatter {
         static string communityChestPlot(CommunityChestCard& card, int cost, int playerMoney);
     
     // ── Skill cards (command 20 - GUNAKAN_KEMAMPUAN) ─────────────────────
-        static string makeCardList(int idx, string& name, string& description);
+        static string makeCardList(int idx, const string& name, const string& description);
         static string usedSkillCard(bool isUsed);
         static string activateSkillCard(string& name, string& description);
         static string effectSkillCard(string& label, string& description);
 
     // ── Drop card (command 21 - DROP KARTU) ──────────────────────────────
-        static string dropCardWarning(string& name);
-        static string dropCardAction(string& name);
+        static string dropCardWarning(const string& name);
+        static string dropCardAction(const string& name);
 
     // ── Exception ──────────────────────────────────────────────────────────────
         static string throwException(const GameException e);
