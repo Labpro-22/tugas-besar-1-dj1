@@ -7,7 +7,9 @@ CommunityChestCardPlot::CommunityChestCardPlot(std::string name, std::string cod
     : CardPlot(name, code, color) {}
 
 void CommunityChestCardPlot::startEvent(PlotContext& ctx) {
-    CommunityChestCard* card = ctx.getBoard().drawCommunityChestCard();
+    std::unique_ptr<CommunityChestCard> card = ctx.getBoard().drawCommunityChestCard();
     SkillContext skillCtx(ctx);
-    card->activate(skillCtx);
+    if (card) {
+        card->activate(skillCtx);
+    }
 }

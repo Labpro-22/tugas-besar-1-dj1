@@ -1,6 +1,8 @@
 #include "models/Plot/PropertyPlot/LandPlot.hpp"
 
 #include "models/Player/Player.hpp"
+#include "core/GameException.hpp"
+#include "views/GameRenderer.hpp"
 
 LandPlot::LandPlot(std::string name, std::string code, Color color,
             int mortgageValue, int buyPrice, int upgHousePrice, int upgHotelPrice,

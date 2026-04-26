@@ -1,5 +1,12 @@
 #include "models/Card/SkillCard/TeleportCard.hpp"
+
+#include <string>
 #include "core/GameException.hpp"
+#include "core/SkillContext.hpp"
+#include "core/services/CommandHandler.hpp"
+#include "models/Board/Board.hpp"
+#include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
 
 void TeleportCard::activate(SkillContext& ctx) {
     Player& currPlayer = ctx.getCurrentPlayer();

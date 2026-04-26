@@ -1,5 +1,11 @@
 #include "models/Card/ChanceCard/StationCard.hpp"
+
+#include <sstream>
 #include "core/GameException.hpp"
+#include "core/SkillContext.hpp"
+#include "models/Board/Board.hpp"
+#include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
 
 const string StationCard::getName() const{
     return "StationCard";

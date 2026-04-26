@@ -1,5 +1,6 @@
 #include "models/Plot/ActionPlot/LuxuryTaxPlot.hpp"
 
+#include "core/services/BankruptcyService.hpp"
 #include "models/Player/Player.hpp"
 #include "views/GameRenderer.hpp"
 

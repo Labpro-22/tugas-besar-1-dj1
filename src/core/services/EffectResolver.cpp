@@ -13,7 +13,7 @@ void EffectResolver::resolveLanding(Player& player, int tileIndex, GameState& st
 }
 
 void EffectResolver::resolveBankruptcy(Player& player, Player* creditor, GameState& state) const {
-    bankruptcyService.transferAssets(player, creditor, state);
+    bankruptcyService.transferAssets(player, creditor, state.getLogger());
 }
 
 void EffectResolver::resolveTax(Player& player, int taxAmount, GameState& state) const {
@@ -27,7 +27,7 @@ void EffectResolver::resolveTax(Player& player, int taxAmount, GameState& state)
         return;
     }
 
-    bankruptcyService.liquidateAssets(player, taxAmount - player.getCash(), state);
+    bankruptcyService.liquidateAssets(player, taxAmount - player.getCash(), state.getLogger());
     if (bankruptcyService.canRecover(player, taxAmount)) {
         player.pay(taxAmount);
         state.addLog(player.getUsername() + " membayar pajak sebesar " + std::to_string(taxAmount) + " setelah likuidasi aset.");

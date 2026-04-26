@@ -80,10 +80,10 @@ bool TurnManager::payJailFine(Player& player, GameState& state) {
 
     BankruptcyService bankruptcyService;
     if (!bankruptcyService.canRecover(player, JAIL_FINE)) {
-        bankruptcyService.liquidateAssets(player, JAIL_FINE - player.getCash(), state);
+        bankruptcyService.liquidateAssets(player, JAIL_FINE - player.getCash(), state.getLogger());
     }
     if (!bankruptcyService.canRecover(player, JAIL_FINE)) {
-        bankruptcyService.transferAssets(player, nullptr, state);
+        bankruptcyService.transferAssets(player, nullptr, state.getLogger());
         return false;
     }
 
@@ -169,7 +169,7 @@ void TurnManager::grantGoSalary(Player& player, GameState& state) {
     // 1. Verifikasi posisi pemain: player.getPosition() harus menunjuk ke indeks
     //    petak GO pada board. Cari indeks GO dengan state.getBoard().findPlotIndex("GO").
     //    Jika tidak cocok, early return (tidak log apa pun — tidak eligible).
-    if (player.getPosition() != state.getBoard().findPlotIndex("GO")){
+    if (player.getPosition() != state.getBoard().findPlotIndex(PlotType::STARTPLOT)){
         return;
     }
     //
@@ -212,7 +212,7 @@ void TurnManager::handlePassedGo(Player& player, int oldPosition, int newPositio
     // Alur:
     // 1. Cari indeks GO: int goIndex = state.getBoard().findPlotIndex("GO").
     //    Biasanya goIndex == 0.
-    int goIndex = state.getBoard().findPlotIndex("GO");
+    int goIndex = state.getBoard().findPlotIndex(PlotType::STARTPLOT);
     int boardSize = state.getBoardSizeOrDefault();
     //
     // 2. Deteksi "melewati GO":
@@ -348,8 +348,8 @@ void TurnManager::drawSkillCardAtStart(Player& player, GameState& state, Command
     // 3. Draw satu kartu:
     //    auto card = deck.drawRandom();
     //
-    auto rawCard = rawSkillDeck.draw();
-    std::shared_ptr<SkillCard> card(rawCard, [](SkillCard*){});
+    std::shared_ptr<SkillCard> card = rawSkillDeck.draw();
+    const std::string cardName = card ? card->getName() : "";
     // 4. Tentukan nilai kartu saat pertama didapat (spec):
     //    - MoveCard: nilai langkah diacak saat didapat (1–6 atau range tim).
     //    - DiscountCard: persentase diskon diacak (10–50% atau sesuai tim).
@@ -358,8 +358,8 @@ void TurnManager::drawSkillCardAtStart(Player& player, GameState& state, Command
     //
     // 5. Tambahkan ke tangan pemain: player.addOwnedCard(card).
     //
-    player.addOwnedCard(card);
-    state.addLog(player.getUsername(), "KARTU", "Mendapat kartu " + rawCard->getName());
+    player.addOwnedCard(std::move(card));
+    state.addLog(player.getUsername(), "KARTU", "Mendapat kartu " + cardName);
     // 6. Cek overflow (tangan jadi > 3):
     //    if (player.getOwnedCards().size() > 3) {
     //        handleCardOverflow(player, state);
@@ -372,7 +372,6 @@ void TurnManager::drawSkillCardAtStart(Player& player, GameState& state, Command
     // 7. Logging:
     //    state.addLog(player.getUsername(), "KARTU", "Mendapat kartu " + card->getName());
     //
-    state.addLog(player.getUsername(), "KARTU", "Mendapat kartu " + rawCard->getName());
     // 8. Edge case:
     //    - Pemain JAILED: spec tidak eksplisit melarang, tapi tidak logis jika
     //      tidak bisa pakai kartu (hanya boleh sebelum lempar dadu, sedangkan

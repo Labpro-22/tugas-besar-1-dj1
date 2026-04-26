@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include "core/GameEngine.hpp"
 #include "views/Formatter.hpp"

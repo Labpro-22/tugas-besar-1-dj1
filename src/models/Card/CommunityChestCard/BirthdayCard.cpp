@@ -1,4 +1,6 @@
 #include "models/Card/CommunityChestCard/BirthdayCard.hpp"
+#include "core/GameException.hpp"
+#include "views/GameRenderer.hpp"
 
 string BirthdayCard::getName() {
     return "BirthdayCard";
