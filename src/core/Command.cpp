@@ -228,6 +228,10 @@ bool BuildCommand::execute(GameState& state, EffectResolver&, TurnManager&) cons
             monopolyFulfilled = false;
         }
 
+        if (!plots[0]->isStreetOwned(ctx, plots[0]->getOwner())){
+            monopolyFulfilled = false;
+        }
+
         if (monopolyFulfilled) {
             eligibleGroups[pair.first] = plots;
         }
