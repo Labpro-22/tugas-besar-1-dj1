@@ -82,6 +82,9 @@ map<string,string> SaveLoader::loadPlayerState(ifstream& file, GameState& state)
  
     int jumlahPemain;
     file >> jumlahPemain;
+    if (jumlahPemain < 2 || jumlahPemain > 4) {
+        throw InvalidFileDataException();
+    }
  
     map<string, string> playerPosCode;
  
