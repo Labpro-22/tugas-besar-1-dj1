@@ -535,6 +535,9 @@ bool BankruptCommand::execute(GameState& state, EffectResolver& effectResolver, 
 
 bool EndTurnCommand::execute(GameState& state, EffectResolver&, TurnManager& turnManager) const {
     Player& currentPlayer = state.getCurrentPlayer();
+    if (currentPlayer.getConsecutiveDoubles() != 0 || !currentPlayer.getHasRolled()){
+        throw InvalidInputException("Tidak bisa mengakhiri turn sekarang.");
+    }
     turnManager.endTurn(currentPlayer, state);
     turnManager.advanceTurn(state);
 
