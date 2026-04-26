@@ -64,7 +64,6 @@ string Formatter::showDiceRoll(const Player& player, const Dice& dice, string& p
     oss << "Mengocok dadu..." << endl;
     oss << "Hasil: " << dice.getDice1() << " + " << dice.getDice2() << " = " << dice.getTotal() << endl;
     oss << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << " petak..." << endl;
-    oss << onLand(position, "");
 
     return oss.str();
 };
@@ -883,7 +882,7 @@ string Formatter::promptPlayerCount() {
 }
 
 string Formatter::turnHeader(int turn, int maxTurn, const string& username) {
-    return "Giliran " + std::to_string(turn) + "/" + std::to_string(maxTurn)
+    return "\nGiliran " + std::to_string(turn) + "/" + std::to_string(maxTurn)
          + " - " + username + "\n";
 }
 

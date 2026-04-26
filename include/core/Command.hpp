@@ -132,3 +132,15 @@ public:
     bool execute(GameState& state, EffectResolver& effectResolver, TurnManager& turnManager) const override;
 };
 
+class HelpCommand : public Command {
+public:
+    bool execute(GameState& state, EffectResolver& effectResolver, TurnManager& turnManager) const override;
+};
+
+class PrintLogCommand : public Command {
+private:
+    int count; 
+public:
+    explicit PrintLogCommand(int count = -1);
+    bool execute(GameState& state, EffectResolver& effectResolver, TurnManager& turnManager) const override;
+};
