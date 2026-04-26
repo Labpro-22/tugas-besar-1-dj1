@@ -4,6 +4,7 @@
 #include <string>
 
 enum class GameErrorID{
+    ILLEGALFUNCTIONCALLEXCEPTION,
     INVALIDINPUTEXCEPTION,
     INVALIDSTATEEXCEPTION,
     OUTOFRANGEEXCEPTION,
@@ -17,7 +18,9 @@ enum class GameErrorID{
     BUILDINGISEMPTYEXCEPTION,
     COLORSETNOTOWNEDEXCEPTION,
     NOACCESSTOPROPERTYEXCEPTION,
-    POSITIONNOTINBOARDEXCEPTION
+    POSITIONNOTINBOARDEXCEPTION,
+    CANTDOACTIONTHISTURNEXCEPTION,
+    NOCARDFOUNDEXCEPTION
 };
 
 class GameException : public std::exception{
@@ -38,6 +41,12 @@ public:
     }
 };
 
+
+class IllegalFunctionCallException : public GameException{
+public:
+    IllegalFunctionCallException(std::string warning): GameException(GameErrorID::ILLEGALFUNCTIONCALLEXCEPTION,
+        "Terjadi error dalam pemanggilan fungsi: " + warning) {}
+};
 
 class InvalidInputException : public GameException{
 public:
@@ -130,4 +139,16 @@ class PositionNotInBoardException : public GameException{
 public:
     PositionNotInBoardException(int index): GameException(GameErrorID::POSITIONNOTINBOARDEXCEPTION,
         "Petak dengan nomor " + std::to_string(index) + " tidak ada di dalam board.") {}
+};
+
+class CantDoActionThisTurnException : public GameException{
+public:
+    CantDoActionThisTurnException(std::string action): GameException(GameErrorID::CANTDOACTIONTHISTURNEXCEPTION,
+        "Tidak bisa " + action + " di turn ini.") {}
+};
+
+class NoCardFoundException : public GameException{
+public:
+    NoCardFoundException(): GameException(GameErrorID::NOCARDFOUNDEXCEPTION,
+        "Kartu tidak ditemukan.") {}
 };

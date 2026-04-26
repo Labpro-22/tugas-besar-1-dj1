@@ -4,6 +4,7 @@
 #include "core/GameException.hpp"
 #include "core/GameState.hpp"
 #include "models/Player/Player.hpp"
+#include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
 void EffectResolver::resolveLanding(Player& player, int tileIndex, GameState& state) {
     PlotContext ctx(player, state.getPlayers(), state.getBoard(), state.getDice(), state.getLogger(), auctionService);
@@ -36,6 +37,6 @@ void EffectResolver::resolveTax(Player& player, int taxAmount, GameState& state)
     resolveBankruptcy(player, nullptr, state);
 }
 
-bool EffectResolver::resolveAuction(int basePrice, std::vector<Player*>& bidders, Player*& winner, int& finalPrice, GameState& state) const {
-    return auctionService.startAuction(basePrice, bidders, winner, finalPrice, state);
+bool EffectResolver::resolveAuction(PropertyPlot& property, const std::vector<Player*>& bidders, GameState& state) const {
+    return auctionService.startAuction(property, bidders, state.getLogger());
 }

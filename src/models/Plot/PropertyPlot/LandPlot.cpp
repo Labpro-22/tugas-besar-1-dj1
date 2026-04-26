@@ -1,6 +1,5 @@
 #include "models/Plot/PropertyPlot/LandPlot.hpp"
 
-#include "core/services/CommandHandler.hpp"
 #include "models/Player/Player.hpp"
 
 LandPlot::LandPlot(std::string name, std::string code, Color color,
@@ -125,24 +124,6 @@ int LandPlot::calculateRentPrice(PlotContext& ctx) const {
 
 PlotType LandPlot::getType() const {
     return PlotType::LANDPLOT;
-}
-
-void LandPlot::startEvent(PlotContext& ctx){
-    if (!isOwned()){
-        if (ctx.getCurrentPlayer().getCash() >= getBuyPrice()
-            && CommandHandler::promptYesNo("Apakah anda ingin membeli petak ini (harga: M" + std::to_string(getBuyPrice()) + ")?")){
-            ctx.getCurrentPlayer().buyProperty(*this);
-        }
-        else{
-            // ctx.getAuctionService().startAuction(); //TODO: perbaiki auction service
-        }
-    }
-    else{
-        if (owner != &ctx.getCurrentPlayer()){
-            int rentPrice = calculateRentPrice(ctx);
-            ctx.getCurrentPlayer().payRent(rentPrice, owner);
-        }
-    }
 }
 
 void LandPlot::setLevel(int level) {
