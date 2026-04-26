@@ -40,7 +40,17 @@ int Board::getSize() const {
 const vector<unique_ptr<Plot>>& Board::getPlots() const {
     return tiles;
 }
- 
+
+const vector<Plot*> Board::getPlots(Color color) const {
+    std::vector<Plot*> result;
+    for (const auto& p : tiles) {
+        if (p->getColor() == color) {
+            result.push_back(p.get());
+        }
+    }
+    return result;
+}
+
 int Board::findPlotIndex(const PlotType type) const {
     for (int i = 0; i < tiles.size(); ++i) {
         if (tiles[i]->getType() == type) {

@@ -51,11 +51,11 @@ string Formatter::playerMoney(int money) {
 
 // ── Input Handler ───────────────────────────────────────────────────────
 string Formatter::promptInputMessage(string prompt){
-    return prompt + " :";
+    return prompt + ": ";
 }
 
 string Formatter::promptYesNoMessage(string prompt) {
-    return prompt + " (y/n) :";
+    return prompt + " (y/n): ";
 }
 
  // ── Dice (command 2 & 3) ─────────────────────────────────────────────
@@ -838,6 +838,6 @@ string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
 }
 
 // ── Exception ──────────────────────────────────────────────────────────────
-string Formatter::throwException(GameException e) {
+std::string Formatter::throwException(const GameException& e) {
     return e.what();
 }
