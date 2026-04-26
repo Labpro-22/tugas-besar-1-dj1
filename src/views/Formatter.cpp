@@ -51,11 +51,11 @@ string Formatter::playerMoney(int money) {
 
 // ── Input Handler ───────────────────────────────────────────────────────
 string Formatter::promptInputMessage(string prompt){
-    return prompt + " :";
+    return prompt + ": ";
 }
 
 string Formatter::promptYesNoMessage(string prompt) {
-    return prompt + " (y/n) :";
+    return prompt + " (y/n): ";
 }
 
  // ── Dice (command 2 & 3) ─────────────────────────────────────────────
