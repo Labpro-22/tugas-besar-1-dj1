@@ -110,6 +110,12 @@ void GameEngine::loadGameConfig() {
         board.addPlot(std::move(action[j].second));
         j++;
     }
+
+    
+    // Load kartu untuk board
+    board.initializeChanceDeck(ConfigLoader::loadChanceCard());
+    board.initializeCommunityChestDeck(ConfigLoader::loadCommunityChestCard());
+    board.initializeSkillDeck(ConfigLoader::loadSkillCard());
 }
 
 void GameEngine::run(const std::vector<std::string>& scriptedCommands) {
