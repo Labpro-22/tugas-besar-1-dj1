@@ -2,6 +2,7 @@
 
 #include <cctype>
 #include <exception>
+#include <sstream>
 #include <string>
 #include "core/services/CommandHandler.hpp"
 #include "models/Player/Player.hpp"
@@ -31,6 +32,27 @@ bool parseBidAmount(const std::string& raw, int& bidAmount) {
     }
 }
 
+bool parseBidAction(const std::string& raw, int& bidAmount) {
+    std::istringstream iss(raw);
+    std::string action;
+    std::string amount;
+    std::string extra;
+
+    if (!(iss >> action)) {
+        return false;
+    }
+
+    action = toUpper(action);
+    if (action != "BID") {
+        return false;
+    }
+    if (!(iss >> amount) || (iss >> extra)) {
+        return false;
+    }
+
+    return parseBidAmount(amount, bidAmount);
+}
+
 void logAuction(Logger& logger, const std::string& username, const std::string& detail) {
     logger.log(LogEntry{0, username, "AUCTION", detail});
 }
@@ -53,10 +75,16 @@ bool AuctionService::startAuction(
         return false;
     }
 
-    const std::string startingPlayer = active.front()->getUsername();
-    GameRenderer::showAuctionStart(property, startingPlayer);
+    const std::string playerBeforeStart = active.front()->getUsername();
+    GameRenderer::showAuctionStart(property, playerBeforeStart);
     logAuction(logger, "SYSTEM",
         "Lelang dimulai untuk " + property.getName() + ".");
+
+    if (active.size() > 1) {
+        Player* playerBeforeStartPtr = active.front();
+        active.erase(active.begin());
+        active.push_back(playerBeforeStartPtr);
+    }
 
     CommandHandler commandHandler;
     int highestBid = 0;
@@ -84,7 +112,8 @@ bool AuctionService::startAuction(
                 GameRenderer::showAuctionHighestBid(highestBid, highestBidder->getUsername());
             }
 
-            const std::string action = toUpper(commandHandler.promptInput("Masukkan aksi [PASS/BID]"));
+            const std::string rawAction = commandHandler.promptInput("Masukkan aksi [PASS/BID <jumlah>]");
+            const std::string action = toUpper(rawAction);
 
             bool removeFromActive = false;
             bool placedBid = false;
@@ -92,10 +121,9 @@ bool AuctionService::startAuction(
             if (action == "PASS") {
                 logAuction(logger, bidder->getUsername(), "Pass dari lelang.");
                 removeFromActive = true;
-            } else if (action == "BID") {
-                const std::string bidRaw = commandHandler.promptInput("Masukkan nominal BID");
+            } else {
                 int bidAmount = 0;
-                if (!parseBidAmount(bidRaw, bidAmount)) {
+                if (!parseBidAction(rawAction, bidAmount)) {
                     logAuction(logger, bidder->getUsername(), "Pass (input invalid).");
                     removeFromActive = true;
                 } else if (bidAmount <= highestBid) {
@@ -111,9 +139,6 @@ bool AuctionService::startAuction(
                     logAuction(logger, bidder->getUsername(),
                         "Menawar M" + std::to_string(bidAmount) + ".");
                 }
-            } else {
-                logAuction(logger, bidder->getUsername(), "Pass (aksi tidak dikenali).");
-                removeFromActive = true;
             }
 
             if (removeFromActive) {
