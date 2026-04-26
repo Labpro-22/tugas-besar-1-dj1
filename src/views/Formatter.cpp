@@ -325,9 +325,10 @@ string Formatter::failPayFlatTax(int flat, int money) {
 }
 
 string Formatter::payLuxuryTax(int startMoney, int finalMoney) { 
+    int taxAmount = startMoney - finalMoney;
     std::ostringstream oss;
     oss << onLand("Pajak Barang Mewah", "(PBM) !");
-    oss << "Pajak sebesar M150 langsung dipotong" << endl;
+    oss << "Pajak sebesar " << moneyString(taxAmount) << " langsung dipotong" << endl;
     oss << "Uang kamu: " << moneyString(startMoney) << " -> " << moneyString(finalMoney) << endl;
 
     return oss.str();    
@@ -336,7 +337,6 @@ string Formatter::payLuxuryTax(int startMoney, int finalMoney) {
 string Formatter::failPayLuxuryTax(int money) { 
     std::ostringstream oss;
     oss << onLand("Pajak Barang Mewah", "(PBM) !");
-    oss << "Pajak sebesar M150 langsung dipotong" << endl;
     oss << "Kamu tidak mampu membayar pajak" << endl;
     oss << "Uang kamu: " << moneyString(money) << endl;
 

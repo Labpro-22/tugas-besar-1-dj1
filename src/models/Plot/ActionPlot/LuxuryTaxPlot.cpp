@@ -42,13 +42,15 @@ LuxuryTaxPlot::LuxuryTaxPlot(std::string name, std::string code, Color color)
     : TaxPlot(name, code, color) {}
 
 void LuxuryTaxPlot::startEvent(PlotContext& ctx) {
-    if(!ctx.getCurrentPlayer().isShieldActive() && ctx.getCurrentPlayer().getCash() < PBM) {
+    if(ctx.getCurrentPlayer().getCash() < PBM) {
         GameRenderer::showFailPayLuxuryTax(ctx.getCurrentPlayer().getCash());
-    }
+        // TODO: Handle bankrupt
 
-    int startMoney = ctx.getCurrentPlayer().getCash();
-    if (settleBankTax(ctx, PBM)) {
-        int finalMoney = ctx.getCurrentPlayer().getCash();
+    } else {
+        int startMoney = ctx.getCurrentPlayer().getCash();
+        int finalMoney = ctx.getCurrentPlayer().getCash() - PBM; 
         GameRenderer::showLuxuryTax(startMoney, finalMoney);
+        ctx.getCurrentPlayer().payTaxes(PBM);
     }
 }
+ 
