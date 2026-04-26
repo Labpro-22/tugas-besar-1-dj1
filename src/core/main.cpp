@@ -108,7 +108,6 @@ int main() {
             try {
                 engine.run({command});
                 const auto logs = engine.getState().getRecentLogs(1);
-                const auto logs = engine.getState().getLogs();
                 if (!logs.empty()) {
                     GameRenderer::showLogger(logs.back());
                 }
