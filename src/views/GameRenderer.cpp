@@ -11,33 +11,27 @@ void GameRenderer::showBoard(const GameState& state) {
 };
 
 // ── Dice (command 2 & 3) ────────────────────────────────────────────
-void GameRenderer::showDiceRoll(string username, const Dice& dice, string position) {
-    cout << "Mengocok dadu..." << endl;
-    showControlDice(username, dice, position);
+void GameRenderer::showDiceRoll(const Player& player, const Dice& dice, string& postion) {
+    cout << Formatter::showDiceRoll(player, dice, postion);
 };
 
-void GameRenderer::showControlDice(string username, const Dice& dice, string position) {
-    cout << "Hasil: " << dice.getDice1() << " + " << dice.getDice2() << " = " << dice.getTotal() << endl;
-    cout << "Memajukan Bidak " << username << " sebanyak " << dice.getTotal() << "petak..." << endl;
-    cout << username << " mendarat di " << position << endl;
+void GameRenderer::showControlDice(const Player& player, const Dice& dice, string& position) {
+    cout << Formatter::showControlDice(player, dice, position);
 };
 
 // ── Deed / Akta (command 4) ──────────────────────────────────────────
-void GameRenderer::showDeed(PropertyPlot& property) {
-    cout << "+===========================================+" << endl;
-    cout << "|              AKTA KEPEMILIKAN             |" << endl;
-    cout << "| " << property.getName() << " (" << property.getCode() << ")" << " |" << endl;
-    cout << "+===========================================+" << endl;
+void GameRenderer::showDeed(const LandPlot& landPlot) {
+    cout << Formatter::makeDeedTable(landPlot);
     
 };    
 
-// ── Property list  (CETAK_PROPERTI) ──────────────────────────────────────────
+// ── Property list  (CETAK_PROPERTI) (command 5) ──────────────────────────────────────────
  
 void GameRenderer::showPropertyList(PlotContext& ctx, const Player& player) {
     cout << Formatter::makePropertyList(ctx, player);
 }
  
-// ── Buy flow  (BELI) ──────────────────────────────────────────────────────────
+// ── Buy flow  (BELI) (command 6) ──────────────────────────────────────────────────────────
  
 void GameRenderer::showBuyPrompt(const Player& player, const LandPlot& landPlot) {
     cout << Formatter::buyProperty(player, landPlot);
@@ -59,7 +53,7 @@ void GameRenderer::showBuyUtility(const UtilityPlot& utility) {
     cout << Formatter::buyUtility(utility);
 }
  
-// ── Build flow  (BANGUN) ──────────────────────────────────────────────────────
+// ── Build flow  (BANGUN) (commnd 11) ──────────────────────────────────────────────────────
  
 void GameRenderer::showBuildGroupList(const Player& player) {
     cout << Formatter::buildGroupList(player);
