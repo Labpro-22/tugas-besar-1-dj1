@@ -228,6 +228,10 @@ bool BuildCommand::execute(GameState& state, EffectResolver&, TurnManager&) cons
             monopolyFulfilled = false;
         }
 
+        if (!plots[0]->isStreetOwned(ctx, plots[0]->getOwner())){
+            monopolyFulfilled = false;
+        }
+
         if (monopolyFulfilled) {
             eligibleGroups[pair.first] = plots;
         }
@@ -241,11 +245,6 @@ bool BuildCommand::execute(GameState& state, EffectResolver&, TurnManager&) cons
     vector<Color> colorOptions;
     for (const auto& pair : colorGroups) {
         colorOptions.push_back(pair.first);
-    }
-
-    if (colorOptions.empty()) {
-        GameRenderer::throwException(InvalidInputException("Tidak ada color group yang bisa dibangun."));
-        return false;
     }
 
     Color selectedColor;
@@ -456,7 +455,7 @@ bool RedeemCommand::execute(GameState& state, EffectResolver&, TurnManager&) con
 
     if (mortgaged.empty()) {
         GameRenderer::showRedeemNoEligible();
-        throw InvalidStateException("Tidak ada properti yang sedang digadaikan.");
+        return false;
     }
 
     GameRenderer::showRedeemListHeader(player.getCash());
