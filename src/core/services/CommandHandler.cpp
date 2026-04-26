@@ -169,7 +169,7 @@ std::size_t CommandHandler::promptCardDrop(const Player& player) {
 
     while (true) {
         try {
-            Formatter::dropCardWarning(cards.at(3)->getName());
+            GameRenderer::showDropCardWarning(cards.at(3)->getName());
             for (std::size_t i = 0; i < cards.size(); ++i) {
                 GameRenderer::showCardList(i, cards.at(i)->getName(), cards.at(i)->getDescription());
             }

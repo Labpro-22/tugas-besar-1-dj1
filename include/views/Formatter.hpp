@@ -71,7 +71,6 @@ class Formatter {
         static string buildGroupList(const Player& player);
         static string buildPlotList(const Player& player, const Color& color);
         static string buildSuccess(const Player& player, const LandPlot& landPlot);
-        static string buildUpgradePrompt(const LandPlot& landPlot);
         static string buildUpgradeSuccess(const Player& player, const LandPlot& landPlot);
         static string buildNoEligible();
 

@@ -62,7 +62,6 @@ class GameRenderer {
         static void showBuildGroupList(const Player& player);
         static void showBuildPlotList(const Player& player, const Color& color);
         static void showBuildSuccess(const Player& player, const LandPlot& landPlot);
-        static void showBuildUpgradePrompt(const LandPlot& landPlot);
         static void showBuildUpgradeSuccess(const Player& player, const LandPlot& landPlot);
         static void showBuildNoEligible();
 

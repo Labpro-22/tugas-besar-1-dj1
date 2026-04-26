@@ -457,7 +457,7 @@ string Formatter::buildGroupList(const Player& player) {
     }
 
     oss << "Uang kamu saat ini : " << moneyString(player.getCash()) << endl;
-    oss << "Pilih nomor color group (0 untuk batal): ";
+
     return oss.str();
 }
 
@@ -506,7 +506,6 @@ string Formatter::buildPlotList(const Player& player, const Color& color) {
         oss << "Seluruh color group [" << colorString(color) << "] sudah memiliki 4 rumah. Siap di-upgrade ke hotel!" << endl;
     }
 
-    oss << "Pilih petak (0 untuk batal): ";
     return oss.str();
 }
 
@@ -515,12 +514,6 @@ string Formatter::buildSuccess(const Player& player, const LandPlot& landPlot) {
     oss << "Kamu membangun 1 rumah di " << landPlot.getName()
         << ". Biaya: " << moneyString(landPlot.getUpgHousePrice()) << endl;
     oss << "Uang tersisa: " << moneyString(player.getCash() - landPlot.getUpgHousePrice()) << endl;
-    return oss.str();
-}
-
-string Formatter::buildUpgradePrompt(const LandPlot& landPlot) {
-    std::ostringstream oss;
-    oss << "Upgrade ke hotel? Biaya: " << moneyString(landPlot.getUpgHotelPrice()) << " (y/n): ";
     return oss.str();
 }
 
