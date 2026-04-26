@@ -7,6 +7,10 @@ using namespace std;
 
 class GameRenderer {
     public:
+        // ── Input Handler ───────────────────────────────────────────────────────
+        static void showInputMessage(string prompt);
+        static void showYesNoMessage(string prompt);
+
         // ── Board (command 1 - CETAK_PAPAN) ─────────────────────────────────
         static void showBoard(const GameState& state);
 
@@ -105,14 +109,14 @@ class GameRenderer {
         static void showOnLandCommunityChestCard(CommunityChestCard& card, int cost, int playerMoney);
 
         // ── Gunakan Kemampuan (command 20 - GUNAKAN KEMAMPUAN) ────────────────────────────────────
-        static void showCardList(int idx, string& name, string& description);
+        static void showCardList(int idx, const string& name, const string& description);
         static void showHaveUsedSkillCard(bool isUsed);
         static void showActivateSkillCard(string name, string description);
         static void showEffectSkillCard(string label, string desciption);
 
         // ── Drop card (command 21 - DROP KARTU KEMAMPUAN) ────────────────────────────────────
-        static void showDropCardWarning(string& name);
-        static void showDropCardAction(string& name);
+        static void showDropCardWarning(const string& name);
+        static void showDropCardAction(const string& name);
 
         // ── Special plots ─────────────────────────────────────────────────
         static void showLandOnGo();

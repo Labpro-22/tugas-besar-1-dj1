@@ -1,5 +1,14 @@
 #include "views/GameRenderer.hpp"
 
+// ── Input Handler ───────────────────────────────────────────────────────
+void GameRenderer::showInputMessage(string prompt){
+    cout << Formatter::promptInputMessage(prompt);
+};
+
+void GameRenderer::showYesNoMessage(string prompt){
+    cout << Formatter::promptYesNoMessage(prompt);
+};
+
 // ── Board (command 1 - CETAK_PAPAN) ─────────────────────────────────
 void GameRenderer::showBoard(const GameState& state) {
     cout << BoardFormatter::boardFormat(
@@ -274,7 +283,7 @@ void GameRenderer::showOnLandCommunityChestCard(CommunityChestCard& card, int co
 }
 
 // ── Gunakan Kemampuan (command 20 - GUNAKAN KEMAMPUANs) ────────────────────────────────────
-void GameRenderer::showCardList(int idx, string& name, string& description) {
+void GameRenderer::showCardList(int idx, const string& name, const string& description) {
     cout << Formatter::makeCardList(idx, name, description);
 }
 
@@ -291,11 +300,11 @@ void GameRenderer::showEffectSkillCard(string label, string description) {
 }
 
 // ── Drop Kartu kemampuan (command 21 - DROP KARTU KEMAMPUAN) ────────────────────────────────────
-void GameRenderer::showDropCardWarning(string& name) {
+void GameRenderer::showDropCardWarning(const string& name) {
     cout << Formatter::dropCardWarning(name);
 }
 
-void GameRenderer::showDropCardAction(string& name) {
+void GameRenderer::showDropCardAction(const string& name) {
     cout << Formatter::dropCardAction(name);
 }
 
