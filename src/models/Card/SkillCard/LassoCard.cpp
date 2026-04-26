@@ -20,8 +20,13 @@ void LassoCard::activate(SkillContext& ctx) {
     try {
         nearestPlayer->moveTo(currPlayerPosition, boardSize);
         ctx.getCurrentPlayer().setUsedSkillThisTurn(true);
+
+        std::ostringstream oss;
+        oss << nearestPlayer->getUsername() << "ditarik ke area kamu!";
+        GameRenderer::showActivateSkillCard(LassoCard::getName(), oss.str());
+        
     } catch (const GameException& e) {
-        std::cerr << e.what() << '\n';
+        GameRenderer::throwException(e);
     }
 }
 

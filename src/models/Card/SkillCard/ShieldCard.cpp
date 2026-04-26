@@ -1,9 +1,15 @@
 #include "models/Card/SkillCard/ShieldCard.hpp"
 
 void ShieldCard::activate(SkillContext& ctx) {
-    ctx.getCurrentPlayer().setShieldActive(true);
-    ctx.getCurrentPlayer().setUsedSkillThisTurn(true);
-    ctx.getCurrentPlayer().setShieldTurnLeft(1);
+    try {
+        ctx.getCurrentPlayer().setShieldActive(true);
+        ctx.getCurrentPlayer().setUsedSkillThisTurn(true);
+        ctx.getCurrentPlayer().setShieldTurnLeft(1);
+
+        GameRenderer::showActivateSkillCard(ShieldCard::getName(), "Anda kebal terhadap tagihan atau sanksi selama giliran ini.");
+    } catch (const GameException& e) {
+        GameRenderer::throwException(e);
+    }
 }
 
 const string ShieldCard::getName() const {

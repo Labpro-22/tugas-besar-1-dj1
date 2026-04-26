@@ -4,6 +4,7 @@
 #include "vector"
 #include "random"
 #include "algorithm"
+#include "views/GameRenderer.hpp"
 using namespace std;
 
 template<class T>

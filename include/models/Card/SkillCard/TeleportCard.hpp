@@ -3,14 +3,10 @@
 #include "models/Board/Board.hpp"
 
 class TeleportCard : public SkillCard {
-    private:
-        int targetIndex;
     public:
-        TeleportCard(int targetIndex);
-        ~TeleportCard();
+        TeleportCard() = default;
+        ~TeleportCard() = default;
         void activate(SkillContext& ctx);
         const string getName() const;
         const string getDescription() const;
-        int getTargetIndex() const;
-
 };

@@ -1,19 +1,17 @@
 #include "models/Card/SkillCard/TeleportCard.hpp"
 #include "core/GameException.hpp"
 
-TeleportCard::TeleportCard(int targetIndex) : targetIndex(targetIndex){}
-
-TeleportCard::~TeleportCard() {}
-
 void TeleportCard::activate(SkillContext& ctx) {
     Player& currPlayer = ctx.getCurrentPlayer();
     int boardSize = ctx.getBoard().getSize();
 
     try {
-        currPlayer.moveTo(targetIndex, boardSize);
+        GameRenderer::showActivateSkillCard(TeleportCard::getName(), "Kamu dapat TELEPORT ke plot mana saja!");
+        string index = CommandHandler::promptInput("Pilih index plot untuk TELEPORT");
+        currPlayer.moveTo(stoi(index), boardSize);
         currPlayer.setUsedSkillThisTurn(true);
     } catch (const GameException& e) {
-        std::cerr << e.what() << '\n';
+        GameRenderer::throwException(e);
     }
 }
 
@@ -23,8 +21,4 @@ const string TeleportCard::getName() const{
 
 const string TeleportCard::getDescription() const {
     return "Memberikan pemain kebebasan untuk berpindah ke petak manapun di atas papan permainan.";
-}
-
-int TeleportCard::getTargetIndex() const {
-    return targetIndex;
 }

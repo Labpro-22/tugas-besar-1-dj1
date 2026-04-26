@@ -17,8 +17,13 @@ void MoveCard::activate(SkillContext& ctx) {
     try {
         currPlayer.move(moveNumber, boardSize);
         currPlayer.setUsedSkillThisTurn(true);
+
+        std::ostringstream oss;
+        oss << "Kamu pindah " << moveNumber << " Petak ke depan";
+        GameRenderer::showActivateSkillCard(MoveCard::getName(), oss.str());
+
     } catch (const GameException& e) {
-        std::cerr << e.what() << '\n';
+        GameRenderer::throwException(e);
     }
 }
 
