@@ -64,8 +64,6 @@ bool LandPlot::canBuild(PlotContext& ctx) const {
     }
     if (level >= 5){
         throw BuildingIsFullException();
-
-
     }
     return true;
 } 

@@ -138,6 +138,7 @@ void Player::sendToJail(const Board& board){
     moveTo(board.findPlotIndex(PlotType::PRISONPLOT), board.getSize());
     setJailTurns(JAILDURATIION);
     resetConsecutiveDoubles();
+    setHasRolled(true);
 }
 
 void Player::pay(int amount) {

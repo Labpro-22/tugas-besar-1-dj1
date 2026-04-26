@@ -13,7 +13,7 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
     std::string answer;
     while (true){
         answer = CommandHandler::promptInput(msg);
-        if (answer.compare("1") || answer.compare("2")){
+        if (answer == "1" || answer == "2"){
             break;
         }
         else{
@@ -22,11 +22,11 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
         }
     }
 
-    if (answer.compare("1")){
+    if (answer == "1"){
         ctx.getCurrentPlayer().payTaxes(FLAT);
     }
 
-    else if (answer.compare("2")){
+    else if (answer == "2"){
         ctx.getCurrentPlayer().payTaxes(ctx.getCurrentPlayer().getTotalWealth() * PPH/100);
     }
 }

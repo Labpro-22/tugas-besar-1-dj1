@@ -139,10 +139,10 @@ bool CommandHandler::promptYesNo(std::string prompt){
 
             std::string answer;
             std::cin >> answer;
-            if (answer.compare("y") || answer.compare("Y") || answer.compare("Yes") || answer.compare("yes") || answer.compare("YES")){
+            if (answer == "y" || answer == "Y" || answer == "Yes" || answer == "yes" || answer == "YES"){
                 return true;
             }
-            else if (answer.compare("n") || answer.compare("N") || answer.compare("No") || answer.compare("no") || answer.compare("NO")){
+            else if (answer == "n" || answer == "N" || answer == "No" || answer == "no" || answer == "NO"){
                 return false;
             }
             else{
