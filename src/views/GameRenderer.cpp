@@ -299,6 +299,27 @@ void GameRenderer::showDropCardAction(string& name) {
     cout << Formatter::dropCardAction(name);
 }
 
+// ── Special plots ─────────────────────────────────────────────────
+void GameRenderer::showLandOnGo() {
+    cout << Formatter::landOnGo();
+}
+ 
+void GameRenderer::showLandOnFreePark() {
+    cout << Formatter::landOnFreePark();
+}
+ 
+void GameRenderer::showLandOnGoPrison() {
+    cout << Formatter::landOnGoPrison();
+}
+ 
+void GameRenderer::showLandOnPrisonVisit() {
+    cout << Formatter::landOnPrisonVisit();
+}
+ 
+void GameRenderer::showLandOnPrisonJailed(int jailTurnsLeft) {
+    cout << Formatter::landOnPrisonJailed(jailTurnsLeft);
+}
+
 // ── Game Exception ────────────────────────────────────
 void GameRenderer::throwException(const GameException& ex) {
     cout << Formatter::throwException(ex);
