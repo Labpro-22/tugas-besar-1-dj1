@@ -155,10 +155,10 @@ bool SetDiceCommand::execute(GameState& state, EffectResolver& effectResolver, T
 }
 
 bool PrintBoardCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
-    const Board& board = state.getBoard();
+    GameRenderer::showBoard(state);
     state.addLog(
         "Perintah PRINT_BOARD dijalankan. Jumlah tile board: " +
-        std::to_string(board.getSize()) + "."
+        std::to_string(state.getBoard().getSize()) + "."
     );
     return true;
 }
