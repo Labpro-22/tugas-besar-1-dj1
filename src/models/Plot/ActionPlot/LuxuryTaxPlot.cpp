@@ -1,5 +1,7 @@
 #include "models/Plot/ActionPlot/LuxuryTaxPlot.hpp"
 
+#include "models/Player/Player.hpp"
+
 LuxuryTaxPlot::LuxuryTaxPlot(std::string name, std::string code, Color color)
     : TaxPlot(name, code, color) {}
 

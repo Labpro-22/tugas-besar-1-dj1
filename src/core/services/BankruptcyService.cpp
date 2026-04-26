@@ -1,6 +1,8 @@
 #include "core/services/BankruptcyService.hpp"
 
 #include "core/GameException.hpp"
+#include "core/GameState.hpp"
+#include "models/Player/Player.hpp"
 
 bool BankruptcyService::canRecover(const Player& player, int amountNeeded) const {
     if (amountNeeded < 0) {

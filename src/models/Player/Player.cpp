@@ -248,6 +248,22 @@ bool Player::dropCard(std::size_t cardIndex) {
     return true;
 }
 
+bool Player::dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& deck) {
+    if (cardIndex >= ownedCards.size()) {
+        return false;
+    }
+
+    std::shared_ptr<SkillCard>& card = ownedCards[cardIndex];
+
+    ownedCards.erase(ownedCards.begin()
+        + static_cast<std::vector<std::shared_ptr<SkillCard>>::difference_type>(cardIndex));
+
+    // Masuk discard pile
+    deck.discard(card);
+
+    return true;
+}
+
 void Player::receive(int amount) {
     if (amount < 0) {
         throw InvalidInputException("Nilai penerimaan tidak boleh negatif.");
@@ -396,6 +412,13 @@ void Player::updateOwnedProperties(){
     for (auto propertyRef : ownedProperties){
         propertyRef.get().updateFestival();
     }
+}
+
+void Player::goToJail(){
+    setStatus(PlayerStatus::JAILED);
+    setJailTurns(3);
+    resetConsecutiveDoubles();
+    setHasRolled(true);
 }
 
 void Player::updateStatus(){

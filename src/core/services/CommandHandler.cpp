@@ -2,9 +2,19 @@
 
 #include <cctype>
 #include <exception>
+#include <iostream>
 #include <sstream>
 #include <vector>
 #include "core/GameException.hpp"
+#include "core/GameState.hpp"
+#include "core/TurnManager.hpp"
+#include "core/services/EffectResolver.hpp"
+#include "models/Player/Player.hpp"
+#include "models/Card/SkillCard/SkillCard.hpp"
+
+using std::cout;
+using std::cin;
+using std::endl;
 
 namespace {
 std::string toUpper(std::string text) {
@@ -139,10 +149,10 @@ bool CommandHandler::promptYesNo(std::string prompt){
 
             std::string answer;
             std::cin >> answer;
-            if (answer == "y" || answer == "Y" || answer == "Yes" || answer == "yes" || answer == "YES"){
+            if (answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" || answer == "YES"){
                 return true;
             }
-            else if (answer == "n" || answer == "N" || answer == "No" || answer == "no" || answer == "NO"){
+            else if (answer == "n" || answer == "N" || answer == "no" || answer == "No" || answer == "NO"){
                 return false;
             }
             else{
@@ -154,4 +164,33 @@ bool CommandHandler::promptYesNo(std::string prompt){
         }
     }
     return true;
+}
+
+// CommandHandler.cpp
+std::size_t CommandHandler::promptCardDrop(const Player& player) {
+    const auto& cards = player.getOwnedCards();
+
+    while (true) {
+        try {
+            // TODO: Tampilkan daftar kartu
+            std::cout << "Tangan penuh! Pilih kartu yang akan dibuang:\n";
+            for (std::size_t i = 0; i < cards.size(); ++i) {
+                std::cout << "  [" << (i + 1) << "] "
+                          << cards[i]->getName() << "\n";
+            }
+
+            std::string raw = promptInput("Pilih nomor kartu (1-"
+                                          + std::to_string(cards.size()) + ")");
+            int choice = parseInt(raw);
+
+            if (choice < 1 || static_cast<std::size_t>(choice) > cards.size()) {
+                throw InvalidInputException("Nomor tidak valid.");
+            }
+
+            return static_cast<std::size_t>(choice - 1);
+
+        } catch (const GameException& e) {
+            std::cout << e.what() << "\n";
+        }
+    }
 }

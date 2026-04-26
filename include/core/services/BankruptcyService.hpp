@@ -1,6 +1,7 @@
 #pragma once
 
-#include "core/GameState.hpp"
+class GameState;
+class Player;
 
 class BankruptcyService {
 public:

@@ -1,5 +1,10 @@
 #include "models/Plot/ActionPlot/IncomeTaxPlot.hpp"
 
+#include <iostream>
+#include "core/GameException.hpp"
+#include "core/services/CommandHandler.hpp"
+#include "models/Player/Player.hpp"
+
 IncomeTaxPlot::IncomeTaxPlot(std::string name, std::string code, Color color)
     : TaxPlot(name, code, color) {}
 
