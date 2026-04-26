@@ -1,6 +1,8 @@
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
-PropertyPlot::PropertyPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue, 
+#include "models/Player/Player.hpp"
+
+PropertyPlot::PropertyPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
                             Player* owner, PropertyStatus propertyStatus,
                             int festivalDuration, int festivalMultiplier):
     Plot(name, code, color),
@@ -18,6 +20,18 @@ int PropertyPlot::getBuyPrice() const{
 
 int PropertyPlot::getMortgageValue() const{
     return mortgageValue;
+}
+
+int PropertyPlot::getFestivalDuration() const {
+    return festivalDuration;
+}
+
+int PropertyPlot::getFestivalMultiplier() const {
+    return festivalMultiplier;
+}
+
+int PropertyPlot::getSellPrice() const {
+    return buyPrice;
 }
 
 PropertyStatus PropertyPlot::getPropertyStatus() const{
@@ -75,4 +89,22 @@ void PropertyPlot::startEvent(PlotContext& ctx) {
             ctx.getCurrentPlayer().payRent(rentPrice, owner);
         }
     }
+}
+
+void PropertyPlot::setFestivalMultiplier(int mult) {
+    if (mult < 1 || mult > 8) {
+        throw InvalidInputException("Festival multiplier harus bernilai antara 1 dan 8.");
+    }
+    festivalMultiplier = mult;
+}
+ 
+void PropertyPlot::setFestivalDuration(int dur) {
+    if (dur < 0) {
+        throw InvalidInputException("Festival duration tidak boleh negatif.");
+    }
+    festivalDuration = dur;
+}
+ 
+void PropertyPlot::setPropertyStatus(PropertyStatus status) {
+    propertyStatus = status;
 }

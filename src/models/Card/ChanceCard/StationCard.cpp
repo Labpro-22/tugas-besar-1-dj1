@@ -16,7 +16,8 @@ void StationCard::activate(SkillContext& ctx) {
     int playerPosition = currPlayer.getPosition();
 
     try {
-        // TODO: Tunggu getAllByType() dari Board
+        // TODO: Index masih sama seperti spesifikasi, sesuaikan sama implementasi
+        //TODO: untuk cek stasiun terjauh dan terdekat bisa buat fungsi di board
         if (playerPosition >= board.findPlotIndex("TUG")) {
             currPlayer.moveTo(board.findPlotIndex("GUB"), boardSize);
         } else if (playerPosition >= board.findPlotIndex("GUB")) {

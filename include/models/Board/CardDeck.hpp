@@ -21,10 +21,11 @@ class CardDeck {
 
         T draw();
         void discard(T);
+        void reshuffleFromDiscard();
 
         int drawPileSize();
         int discardPileSize();
 
-        vector<T> getAllCards();
+        vector<T> getAllCards() const;
 };
 

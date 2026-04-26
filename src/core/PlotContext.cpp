@@ -7,26 +7,26 @@
 PlotContext::PlotContext(Player& currentPlayer, std::vector<Player>& players, Board& board, Dice& dice, Logger& logger, AuctionService& auctionService)
     : currentPlayer(currentPlayer), players(players), board(board), dice(dice), logger(logger), auctionService(auctionService) {}
 
-Player& PlotContext::getCurrentPlayer() const {
+Player& PlotContext::getCurrentPlayer(){
     return currentPlayer;
 }
 
-std::vector<Player>& PlotContext::getPlayers() const {
+std::vector<Player>& PlotContext::getPlayers(){
     return players;
 }
 
-Board& PlotContext::getBoard() const {
+Board& PlotContext::getBoard(){
     return board;
 }
 
-Dice& PlotContext::getDice() const {
+Dice& PlotContext::getDice(){
     return dice;
 }
 
-Logger& PlotContext::getLogger() const {
+Logger& PlotContext::getLogger(){
     return logger;
 }
 
-AuctionService& PlotContext::getAuctionService() const {
+AuctionService& PlotContext::getAuctionService(){
     return auctionService;
 }

@@ -1,5 +1,7 @@
 #include "models/Board/CardDeck.hpp"
 
+#include "core/GameException.hpp"
+
 template<class T>
 CardDeck<T>::CardDeck() {
     this->drawPile = {};
@@ -19,6 +21,23 @@ void CardDeck<T>::shuffle() {
     std::shuffle(drawPile.begin(), drawPile.end(), g);
 }
 
+// asumsi discard pile tidak kosong
+template<class T>
+void CardDeck<T>::reshuffleFromDiscard() {
+    if (discardPile.empty()) {
+        throw InvalidStateException("Tidak dapat reshuffle karena discard pile kosong.");
+    }
+
+    // Pindahkan semua kartu dari discard pile ke draw pile
+    while (!discardPile.empty()) {
+        drawPile.push_back(discardPile.front());
+        discardPile.pop_front();
+    }
+
+    // Kocok ulang draw pile
+    shuffle();
+}
+
 template<class T>
 void CardDeck<T>::initialize(vector<T> card) {
     for(auto it = card.begin(); it < card.end(); ++it) {
@@ -30,22 +49,17 @@ void CardDeck<T>::initialize(vector<T> card) {
 
 template<class T>
 T CardDeck<T>::draw() {
-    if(!drawPile.empty()) {
-        T drawCard = drawPile.back();
-        drawPile.pop_back();
-        return drawCard;
+    if (drawPile.empty()) {
+        throw InvalidStateException("Draw pile kosong.");
     }
+    T drawCard = drawPile.back();
+    drawPile.pop_back();
+    return drawCard;
 }
 
 template<class T>
 void CardDeck<T>::discard(T card) {
-    reverse(drawPile.begin(), drawPile.end());
-    auto it = find(drawPile.begin(), drawPile.end(), card);
-    if(it != drawPile.end()) {
-        discardPile.push_back(*it);
-        drawPile.erase(it);
-    }
-    reverse(drawPile.begin(), drawPile.end());
+    discardPile.push_back(card);
 }
 
 template<class T>
@@ -59,11 +73,22 @@ int CardDeck<T>::discardPileSize() {
 }
 
 template<class T>
-vector<T> CardDeck<T>::getAllCards() {
+vector<T> CardDeck<T>::getAllCards() const {
     vector<T> deck;
     for(auto it = drawPile.begin(); it < drawPile.end(); ++it) {
         deck.push_back(*it);
     }
     return deck;
 }
+
+// Explicit instantiations
+#include <memory>
+#include "models/Card/ChanceCard/ChanceCard.hpp"
+#include "models/Card/CommunityChestCard/CommunityChestCard.hpp"
+#include "models/Card/SkillCard/SkillCard.hpp"
+
+template class CardDeck<ChanceCard*>;
+template class CardDeck<CommunityChestCard*>;
+template class CardDeck<SkillCard*>;
+template class CardDeck<std::shared_ptr<SkillCard>>;
 

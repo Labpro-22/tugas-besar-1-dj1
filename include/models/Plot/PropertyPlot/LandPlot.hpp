@@ -3,6 +3,7 @@
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 #include "core/services/AuctionService.hpp"
 #include "models/Board/Board.hpp"
+#include "core/services/CommandHandler.hpp"
 
 class LandPlot: public PropertyPlot{
 private:
@@ -24,8 +25,8 @@ public:
     int getUpgHotelPrice() const;
     std::map<int, int> getRentPriceTable() const override;
     int getRentPrice(int level) const override;
+    void setLevel(int level);
     int getLevel() const override;
-    int getSellPrice() const;
 
     void build(PlotContext& ctx);
     void sellBuildings();

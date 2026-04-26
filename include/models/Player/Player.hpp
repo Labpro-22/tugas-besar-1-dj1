@@ -5,10 +5,12 @@
 #include <string>
 #include <vector>
 #include "models/Player/PlayerStatus.hpp"
-#include "models/Plot/PropertyPlot/PropertyPlot.hpp"
 
+class Plot;
+class PropertyPlot;
 class SkillCard;
 class SkillContext;
+template <class T> class CardDeck;
 
 class Player {
 private:
@@ -26,6 +28,7 @@ private:
     int discountTurnLeft;
     int discountValue;
     int consecutiveDoubles; 
+    const int JAILDURATIION = 3;
 
 public:
     Player();
@@ -48,8 +51,9 @@ public:
     int getTotalWealth() const;
 
     void move();
-    void move(int steps, int boardSize = 40);
+    void move(int steps, int boardSize = 40); //TODO: tangani untuk kasus dynamic board
     void moveTo(int index, int boardSize = 40);
+    void sendToJail(const Board& board);
     void pay(int amount);
     void payTaxes(int amount);
     void payRent(int amount, Player* targetPlayer);
@@ -59,6 +63,7 @@ public:
     bool useCards(std::size_t cardIndex, SkillContext& ctx);
     bool dropCard();
     bool dropCard(std::size_t cardIndex);
+    bool dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& discardPile);
     void receive(int amount);
 
     Player& operator+=(int amount);
@@ -79,6 +84,7 @@ public:
     void incrementConsecutiveDoubles();
     void resetConsecutiveDoubles();
     void addOwnedCard(const std::shared_ptr<SkillCard>& card);
+    void addOwnedProperty(PropertyPlot& property);
     void setUsedSkillThisTurn(bool used);
     void resetTurnFlags();
 
@@ -87,6 +93,8 @@ public:
 
     void updateOwnedProperties();
     void updateStatus();
+
+    void goToJail();
 
     bool isBankrupt() const;
 };

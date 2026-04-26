@@ -3,7 +3,9 @@
 #include <vector>
 #include "core/services/AuctionService.hpp"
 #include "core/services/BankruptcyService.hpp"
-#include "core/GameState.hpp"
+
+class GameState;
+class Player;
 
 class EffectResolver {
 private:

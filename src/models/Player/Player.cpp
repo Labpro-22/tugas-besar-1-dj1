@@ -133,6 +133,14 @@ void Player::moveTo(int index, int boardSize) {
     position = index;
 }
 
+void Player::sendToJail(const Board& board){
+    setStatus(PlayerStatus::JAILED);
+    moveTo(board.findPlotIndex(PlotType::PRISONPLOT), board.getSize());
+    setJailTurns(JAILDURATIION);
+    resetConsecutiveDoubles();
+    setHasRolled(true);
+}
+
 void Player::pay(int amount) {
     if (amount < 0) {
         throw InvalidInputException("Nilai pembayaran tidak boleh negatif.");
@@ -237,6 +245,22 @@ bool Player::dropCard(std::size_t cardIndex) {
     }
 
     ownedCards.erase(ownedCards.begin() + static_cast<std::vector<std::shared_ptr<SkillCard>>::difference_type>(cardIndex));
+    return true;
+}
+
+bool Player::dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& deck) {
+    if (cardIndex >= ownedCards.size()) {
+        return false;
+    }
+
+    std::shared_ptr<SkillCard>& card = ownedCards[cardIndex];
+
+    ownedCards.erase(ownedCards.begin()
+        + static_cast<std::vector<std::shared_ptr<SkillCard>>::difference_type>(cardIndex));
+
+    // Masuk discard pile
+    deck.discard(card);
+
     return true;
 }
 
@@ -390,6 +414,13 @@ void Player::updateOwnedProperties(){
     }
 }
 
+void Player::goToJail(){
+    setStatus(PlayerStatus::JAILED);
+    setJailTurns(3);
+    resetConsecutiveDoubles();
+    setHasRolled(true);
+}
+
 void Player::updateStatus(){
     updateOwnedProperties();
     decrementDiscountTurn();
@@ -400,4 +431,8 @@ void Player::updateStatus(){
 
 bool Player::isBankrupt() const {
     return status == PlayerStatus::BANKRUPT;
+}
+
+void Player::addOwnedProperty(PropertyPlot& property) {
+    ownedProperties.push_back(std::ref(property));
 }

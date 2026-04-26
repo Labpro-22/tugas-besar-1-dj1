@@ -1,5 +1,8 @@
 #include "models/Plot/PropertyPlot/LandPlot.hpp"
 
+#include "core/services/CommandHandler.hpp"
+#include "models/Player/Player.hpp"
+
 LandPlot::LandPlot(std::string name, std::string code, Color color,
             int mortgageValue, int buyPrice, int upgHousePrice, int upgHotelPrice,
             std::map<int, int> rentPriceTable, Player* owner, PropertyStatus propertyStatus,
@@ -48,14 +51,6 @@ void LandPlot::sellBuildings(){
     owner->receive(getSellBuildingPrice());
 }
 
-void LandPlot::destroyBuilding(){
-    level = 0;
-}
-
-void LandPlot::downgradeBuilding(){
-    if (level > 0) level--;
-}
-
 int LandPlot::getSellBuildingPrice() const {
     if (level == 5) return upgHotelPrice;
     else if (level == 0) return 0;
@@ -72,8 +67,6 @@ bool LandPlot::canBuild(PlotContext& ctx) const {
     }
     if (level >= 5){
         throw BuildingIsFullException();
-
-
     }
     return true;
 } 
@@ -152,6 +145,12 @@ void LandPlot::startEvent(PlotContext& ctx){
     }
 }
 
+void LandPlot::setLevel(int level) {
+    if (level < 0 || level > 5) {
+        throw InvalidInputException("Level bangunan harus bernilai antara 0 dan 5.");
+    }
+    this->level = level;
+  
 void LandPlot::demolish(){
     level = 0;
 }

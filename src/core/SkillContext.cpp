@@ -1,4 +1,4 @@
-#include "SkillContext.hpp"
+#include "core/SkillContext.hpp"
 
 SkillContext::SkillContext(Player& currentPlayer, std::vector<Player>& players, Board& board, Logger& logger)
     : currentPlayer(currentPlayer), players(players), board(board), logger(logger) {}

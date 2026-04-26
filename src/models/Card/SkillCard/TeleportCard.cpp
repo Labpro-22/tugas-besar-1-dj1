@@ -22,3 +22,7 @@ const string TeleportCard::getName() const{
 const string TeleportCard::getDescription() const {
     return "Memberikan pemain kebebasan untuk berpindah ke petak manapun di atas papan permainan.";
 }
+
+int TeleportCard::getTargetIndex() const {
+    return targetIndex;
+}

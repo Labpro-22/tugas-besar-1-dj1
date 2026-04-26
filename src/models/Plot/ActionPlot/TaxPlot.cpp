@@ -1,5 +1,9 @@
 #include "models/Plot/ActionPlot/TaxPlot.hpp"
 
+int TaxPlot::FLAT = 0;
+int TaxPlot::PPH = 0;
+int TaxPlot::PBM = 0;
+
 TaxPlot::TaxPlot(std::string name, std::string code, Color color)
     : ActionPlot(name, code, color) {}
 

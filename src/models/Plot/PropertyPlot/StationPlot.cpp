@@ -1,5 +1,9 @@
 #include "models/Plot/PropertyPlot/StationPlot.hpp"
 
+#include "models/Player/Player.hpp"
+
+std::map<int, int> StationPlot::rentPriceTable;
+
 StationPlot::StationPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
                          Player* owner, PropertyStatus propertyStatus,
                          int festivalDuration, int festivalMultiplier):

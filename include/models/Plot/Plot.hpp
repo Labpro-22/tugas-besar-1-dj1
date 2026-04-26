@@ -5,11 +5,12 @@
 #include <map>
 #include "models/Plot/Colors.hpp"
 #include "models/Plot/PlotType.hpp"
-#include "models/Player/Player.hpp"
 #include "core/PlotContext.hpp"
 #include "core/GameException.hpp"
-#include "core/services/CommandHandler.hpp"
 #include "utils/Logger.hpp"
+
+class CommandHandler;
+class Player;
 
 class Plot{
 protected:
