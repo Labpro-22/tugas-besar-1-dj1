@@ -112,7 +112,7 @@ int main() {
                 if (!logs.empty()) {
                     // GameRenderer::showLogger(logs.back());
                     for(int i = 0; i < logs.size(); i++) {
-                        GameRenderer::showLogger(i, logs[i]);
+                        GameRenderer::showLogger(logs[i]);
                     }
                 }
 
