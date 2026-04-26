@@ -46,6 +46,7 @@ void LandPlot::build(PlotContext& ctx){
     else{
         owner->pay(upgHousePrice);
     }
+    level++;
 }
 
 void LandPlot::sellBuildings(PlotContext& ctx){
