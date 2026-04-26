@@ -51,10 +51,32 @@ class GameRenderer {
         static void showFestival(); 
 
         // ── Save / Load (command 15-16) ─────────────────────────────────────
-        static void showSaveSuccess(string filename); 
-        static void showSaveFailed(string filename); 
+        static void successSaveFile(string& fileName);
+        static void failSaveFile(string& fileName);
+        static void successLoadFile(string& fileName, string& username);
+        static void fileNotFound(string& fileName);
+        static void failLoadFile();
 
 
         // ── Log (command 17 - CETAK_LOG) ────────────────────────────────────
         static void showLogger(const LogEntry& entry); //17
+
+        // ── Menang (command 18 - MENANG) ────────────────────────────────────
+        static void showPlayerList(const Player& player);
+        static void showFinalPlayer(string& username);
+        static void showWinner(string& username);
+        
+        // ── Kesempatan dan Dana umum (command 19 - (KESEMPATAN DAN DANA UMUM) ────────────────────────────────────
+        static void showOnLandChanceCard(ChanceCard& card, string& description);
+        static void showOnLandCommunityChestCard(CommunityChestCard& card, int cost, int playerMoney);
+
+        // ── Gunakan Kemampuan (command 20 - GUNAKAN KEMAMPUAN) ────────────────────────────────────
+        static void showCardList(int idx, string& name, string& description);
+        static void showHaveUsedSkillCard(bool isUsed);
+        static void showActivateSkillCard(string& name, string& description);
+        static void showEffectSkillCard(string& label, string& desciption);
+
+        // ── Drop card (command 21 - DROP KARTU KEMAMPUAN) ────────────────────────────────────
+        static void showDropCardWarning(string& name);
+        static void showDropCardAction(string& name);
 };
