@@ -6,9 +6,12 @@
 #include "core/TurnManager.hpp"
 #include "core/services/EffectResolver.hpp"
 #include "core/SkillContext.hpp"
+#include "views/GameRenderer.hpp"
 #include "models/Player/Player.hpp"
 #include "utils/ConfigSaver.hpp"
+#include "views/GameRenderer.hpp"
 
+// ── LEMPAR_DADU (command 2) ──────────────────────────────────────────
 RollDiceCommand::RollDiceCommand(int boardSize) : boardSize(boardSize) {
     if (boardSize <= 0) {
         throw InvalidInputException("boardSize harus lebih dari 0.");
@@ -39,9 +42,13 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
     if (player.getStatus() == PlayerStatus::JAILED) {
         const bool released = turnManager.handleJailedRoll(player, isDouble, state);
         if (!released) {
+            std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+            GameRenderer::showDiceRoll(player, state.getDice(), position);
             return true;
         }
         player.move(steps, effectiveBoardSize);
+        std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+        GameRenderer::showDiceRoll(player, state.getDice(), position);
         effectResolver.resolveLanding(player, player.getPosition(), state);
         return true;
     }
@@ -51,6 +58,8 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
             state.addLog(player.getUsername() +
                 " melempar double tiga kali berturut-turut dan langsung masuk penjara.");
             turnManager.sendToJail(player, state);
+            std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+            GameRenderer::showDiceRoll(player, state.getDice(), position);
             return true;
         }
         player.incrementConsecutiveDoubles();
@@ -59,6 +68,10 @@ bool RollDiceCommand::execute(GameState& state, EffectResolver& effectResolver, 
     }
 
     player.move(steps, effectiveBoardSize);
+ 
+    std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+    GameRenderer::showDiceRoll(player, state.getDice(), position);
+ 
     effectResolver.resolveLanding(player, player.getPosition(), state);
 
     if (player.getStatus() != PlayerStatus::JAILED) {
@@ -88,11 +101,15 @@ PrintDeedCommand::PrintDeedCommand(std::string code) : code(std::move(code)) {}
 
 bool PrintDeedCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     state.addLog("Perintah PRINT_DEED untuk properti " + code + " dijalankan.");
+    GameRenderer::showDeed(*dynamic_cast<LandPlot*>(state.getBoard().getPlot(state.getCurrentPlayer().getPosition())));
     return true;
 }
 
-bool PrintPropertyCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
+bool PrintPropertyCommand::execute(GameState& state, EffectResolver& eff, TurnManager&) const {
     state.addLog("Perintah PRINT_PROPERTY dijalankan.");
+    AuctionService auctionService;
+    PlotContext ctx(state.getCurrentPlayer(), state.getPlayers(), state.getBoard(), state.getDice(), state.getLogger(), auctionService);
+    GameRenderer::showPropertyList(ctx, state.getCurrentPlayer());
     return true;
 }
 
@@ -100,6 +117,155 @@ BuildCommand::BuildCommand(std::string propertyCode) : propertyCode(std::move(pr
 
 bool BuildCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     state.addLog("Perintah BUILD untuk properti " + propertyCode + " dijalankan.");
+    AuctionService auctionService;
+    PlotContext ctx(state.getCurrentPlayer(), state.getPlayers(), state.getBoard(), state.getDice(), state.getLogger(), auctionService);
+    GameRenderer::showBuildGroupList(state.getCurrentPlayer());
+    const auto& ownedProperties = state.getCurrentPlayer().getOwnedProperties();
+
+    map<Color, vector<LandPlot*>> colorGroups;
+    for (const auto& plotRef : ownedProperties) {
+        Plot& plot = plotRef.get();
+
+        auto* land = dynamic_cast<LandPlot*>(&plot);
+        if (!land) continue;
+
+        colorGroups[land->getColor()].push_back(land);
+    }
+
+    map<Color, vector<LandPlot*>> eligibleGroups;
+    for (const auto& pair : colorGroups) {
+        const vector<LandPlot*>& plots = pair.second;
+
+        bool monopolyFulfilled = true;
+
+        for (const LandPlot* land : plots) {
+            if (land->getPropertyStatus() != PropertyStatus::OWNED) {
+                monopolyFulfilled = false;
+                break;
+            }
+        }
+
+        if (plots.empty()) {
+            monopolyFulfilled = false;
+        }
+
+        if (monopolyFulfilled) {
+            eligibleGroups[pair.first] = plots;
+        }
+    }
+
+    if (eligibleGroups.empty()) {
+        GameRenderer::showBuildNoEligible();
+        return true;
+    }
+
+    vector<Color> colorOptions;
+    for (const auto& pair : colorGroups) {
+        colorOptions.push_back(pair.first);
+    }
+
+    if (colorOptions.empty()) {
+        GameRenderer::throwException(InvalidInputException("Tidak ada color group yang bisa dibangun."));
+        return false;
+    }
+
+    Color selectedColor;
+    vector<LandPlot*> selectedPlots;
+
+    try {
+        string index = CommandHandler::promptInput("Pilih nomor color group (0 untuk batal)");
+        int colorIndex = stoi(index);
+
+        if (colorIndex == 0) {
+            return true;
+        }
+
+        if (colorIndex < 1 || colorIndex > static_cast<int>(colorOptions.size())) {
+            GameRenderer::throwException(InvalidInputException());
+        }
+
+        selectedColor = colorOptions[colorIndex - 1];
+        selectedPlots = colorGroups[selectedColor];
+        GameRenderer::showBuildPlotList(state.getCurrentPlayer(), selectedColor);
+
+    } catch (const GameException& e) {
+        GameRenderer::throwException(e);
+        return false;
+    } catch (...) {
+        GameRenderer::throwException(InvalidInputException());
+        return false;
+    }
+
+    try {
+        string petak = CommandHandler::promptInput("Pilih petak (0 untuk batal)");
+        int plotIndex = stoi(petak);
+
+        if (plotIndex == 0) {
+            return true;
+        }
+
+        if (plotIndex < 1 || plotIndex > static_cast<int>(selectedPlots.size())) {
+            GameRenderer::throwException(InvalidInputException());
+        }
+
+        LandPlot* selectedLand = selectedPlots[plotIndex - 1];
+        if (selectedLand->getLevel() == 5) {
+            GameRenderer::throwException(InvalidInputException());
+        }
+
+        bool allFourHouses = true;
+        for (const LandPlot* land : selectedPlots) {
+            if (land->getLevel() != 4) {
+                allFourHouses = false;
+                break;
+            }
+        }
+
+        if (allFourHouses) {
+            int upgradeCost = selectedLand->getUpgHotelPrice();
+            if (state.getCurrentPlayer().getCash() < upgradeCost) {
+                GameRenderer::throwException(InvalidInputException("Uang tidak cukup untuk upgrade ke hotel."));
+            }
+
+            bool confirm = CommandHandler::promptYesNo("Upgrade ke hotel?");
+            if (!confirm) {
+                return true;
+            }
+
+            state.getCurrentPlayer().pay(upgradeCost);
+            selectedLand->build(ctx);
+
+            GameRenderer::showBuildUpgradeSuccess(state.getCurrentPlayer(), *selectedLand);
+            return true;
+        }
+
+        int minLevel = selectedPlots[0]->getLevel();
+        for (const LandPlot* land : selectedPlots) {
+            if (land->getLevel() < minLevel) {
+                minLevel = land->getLevel();
+            }
+        }
+
+        if (selectedLand->getLevel() > minLevel) {
+            GameRenderer::throwException(InvalidInputException("Petak belum memenuhi syarat pemerataan untuk dibangun."));
+        }
+
+        int buildCost = selectedLand->getUpgHousePrice();
+        if (state.getCurrentPlayer().getCash() < buildCost) {
+            GameRenderer::throwException(InvalidInputException("Uang tidak cukup untuk membangun rumah."));
+        }
+
+        state.getCurrentPlayer().pay(buildCost);
+        selectedLand->build(ctx);
+        GameRenderer::showBuildSuccess(state.getCurrentPlayer(),*selectedLand);
+
+    } catch (const GameException& e) {
+        GameRenderer::throwException(e);
+        return false;
+    } catch (...) {
+        GameRenderer::throwException(InvalidInputException());
+        return false;
+    }
     return true;
 }
 
@@ -107,13 +273,123 @@ MortgageCommand::MortgageCommand(std::string propertyCode) : propertyCode(std::m
 
 bool MortgageCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     state.addLog("Perintah MORTGAGE untuk properti " + propertyCode + " dijalankan.");
+    Player& player = state.getCurrentPlayer();
+    const auto& ownedProperties = player.getOwnedProperties();
+
+    vector<PropertyPlot*> mortgageOptions;
+    int idx = 1;
+    for (const auto& plotRef : ownedProperties) {
+        Plot& plot = plotRef.get();
+        auto* property = dynamic_cast<PropertyPlot*>(&plot);
+        if (!property) {
+            continue;
+        }
+
+        if (property->getPropertyStatus() == PropertyStatus::MORTGAGED) {
+            continue;
+        }
+
+        auto* land = dynamic_cast<LandPlot*>(property);
+        if (land->getLevel() > 0) {
+            GameRenderer::showMortgageFailed(*land);
+            int buildingIdx = 1;
+
+            for (const auto& otherRef : ownedProperties) {
+                Plot& otherPlot = otherRef.get();
+
+                auto* otherLand = dynamic_cast<LandPlot*>(&otherPlot);
+                if (!otherLand) {
+                    continue;
+                }
+
+                if (otherLand->getColor() != land->getColor()) {
+                    continue;
+                }
+
+                if (otherLand->getLevel() <= 0) {
+                    continue;
+                }
+
+                GameRenderer::showSellBuildingOption(buildingIdx++, *otherLand);
+            }
+
+            continue;
+        }
+
+        mortgageOptions.push_back(property);
+        GameRenderer::showCanMortgagedList(*property, property->getMortgageValue());
+        idx++;
+    }
+
+    if (mortgageOptions.empty()) {
+        GameRenderer::throwException(InvalidInputException("Tidak ada properti yang dapat digadaikan."));
+    }
+
+    string input = CommandHandler::promptInput("Pilih properti yang ingin digadaikan (0 untuk batal)");
+    int choice = stoi(input);
+
+    if (choice == 0) {
+        return true;
+    }
+
+    if (choice < 1 || choice > mortgageOptions.size()) {
+        GameRenderer::throwException(InvalidInputException());
+    }
+
+    PropertyPlot* selectedProperty = mortgageOptions[choice - 1];
+    int mortgageValue = selectedProperty->getMortgageValue();
+    selectedProperty->setPropertyStatus(PropertyStatus::MORTGAGED);
+
+    player.receive(mortgageValue);
+    GameRenderer::showMortgageSuccess(selectedProperty->getName(), mortgageValue, player.getCash());
+
+    state.addLog(player.getUsername() + " menggadaikan " + selectedProperty->getName()+ " dan menerima " + Formatter::moneyString(mortgageValue) + ".");
     return true;
 }
 
 RedeemCommand::RedeemCommand(std::string propertyCode) : propertyCode(std::move(propertyCode)) {}
 
 bool RedeemCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
-    state.addLog("Perintah REDEEM untuk properti " + propertyCode + " dijalankan.");
+    Player& player = state.getCurrentPlayer();
+    const auto& ownedProps = player.getOwnedProperties();
+
+    std::vector<std::reference_wrapper<PropertyPlot>> mortgaged;
+    for (const auto& ref : ownedProps) {
+        if (ref.get().getPropertyStatus() == PropertyStatus::MORTGAGED) {
+            mortgaged.push_back(ref.get());
+        }
+    }
+
+    if (mortgaged.empty()) {
+        GameRenderer::showRedeemNoEligible();
+        return false;
+    }
+
+    GameRenderer::showRedeemListHeader(player.getCash());
+    for (const auto& ref : mortgaged) {
+        GameRenderer::showRedeemList(ref.get());
+    }
+    GameRenderer::showRedeemListFooter();
+
+    std::string rawChoice = CommandHandler::promptInput("");
+    int choice = 0;
+    try { choice = std::stoi(rawChoice); } catch (...) { return false; }
+    if (choice == 0) return false;
+    if (choice < 1 || static_cast<std::size_t>(choice) > mortgaged.size()) return false;
+
+    PropertyPlot& chosen = mortgaged[static_cast<std::size_t>(choice) - 1].get();
+    int redeemPrice = chosen.getBuyPrice();
+
+    if (player.getCash() < redeemPrice) {
+        GameRenderer::showRedeemFailed(chosen, player.getCash());
+        return false;
+    }
+
+    player.pay(redeemPrice);
+    chosen.setPropertyStatus(PropertyStatus::OWNED);
+    GameRenderer::showRedeemSuccess(chosen, player.getCash());
+    state.addLog(player.getUsername(), "TEBUS",
+        "Tebus " + chosen.getName() + " seharga M" + std::to_string(redeemPrice));
     return true;
 }
 
@@ -125,22 +401,71 @@ UseSkillCardCommand::UseSkillCardCommand(int cardIndex) : cardIndex(cardIndex) {
 
 bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     Player& player = state.getCurrentPlayer();
+ 
+    if (player.hasUsedSkillThisTurn()) {
+        GameRenderer::showHaveUsedSkillCard(true);
+        return false;
+    }
+ 
+    if (player.getHasRolled()) {
+        GameRenderer::showHaveUsedSkillCard(false);
+        return false;
+    }
+ 
+    const auto& cards = player.getOwnedCards();
+    if (cards.empty()) {
+        state.addLog(player.getUsername() + " tidak memiliki kartu kemampuan.");
+        return false;
+    }
+ 
+    GameRenderer::showCardList(0, "", ""); 
+    for (std::size_t i = 0; i < cards.size(); ++i) {
+        GameRenderer::showCardList(static_cast<int>(i) + 1,
+            cards[i]->getName(), cards[i]->getDescription());
+    }
+ 
+    if (cardIndex < 1 || static_cast<std::size_t>(cardIndex) > cards.size()) {
+        throw InvalidInputException("Index kartu tidak valid.");
+    }
+ 
+    const std::string name = cards[static_cast<std::size_t>(cardIndex) - 1]->getName();
+    const std::string desc = cards[static_cast<std::size_t>(cardIndex) - 1]->getDescription();
+ 
     SkillContext ctx{player, state.getPlayers(), state.getBoard(), state.getLogger()};
-    player.useCards(cardIndex, ctx);
-
-    state.addLog(player.getUsername() + " menggunakan skill card index " + std::to_string(cardIndex) + ".");
+    player.useCards(static_cast<std::size_t>(cardIndex) - 1, ctx);
+    player.setUsedSkillThisTurn(true);
+ 
+    GameRenderer::showActivateSkillCard(name, desc);
+    state.addLog(player.getUsername(), "KARTU",
+        "Pakai " + name + " → " + desc);
     return true;
 }
 
 SaveCommand::SaveCommand(std::string filename) : filename(std::move(filename)) {}
 
 bool SaveCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
-    if (ConfigSaver::fileExists(filename)) {
-        // TODO: overwrite confirmation dialog
+    if (state.getCurrentPlayer().getHasRolled()) {
+        state.addLog("SIMPAN hanya bisa dilakukan sebelum melempar dadu.");
+        return false;
     }
-    ConfigSaver::save(state, filename);
-    state.addLog(state.getCurrentPlayer().getUsername(), "SIMPAN", "Permainan disimpan ke " + filename);
-    return true;
+ 
+    if (ConfigSaver::fileExists(filename)) {
+        std::string prompt = "File \"" + filename + "\" sudah ada. Timpa file lama?";
+        if (!CommandHandler::promptYesNo(prompt)) {
+            return false;
+        }
+    }
+ 
+    try {
+        ConfigSaver::save(state, filename);
+        GameRenderer::successSaveFile(const_cast<std::string&>(filename));
+        state.addLog(state.getCurrentPlayer().getUsername(), "SIMPAN",
+            "Permainan disimpan ke " + filename);
+        return true;
+    } catch (const std::exception&) {
+        GameRenderer::failSaveFile(const_cast<std::string&>(filename));
+        return false;
+    }
 }
 
 TaxCommand::TaxCommand(int amount) : amount(amount) {

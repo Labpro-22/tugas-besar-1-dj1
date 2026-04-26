@@ -382,6 +382,17 @@ string Formatter::sellProperty(string& name, int cost) {
 }
 
 // ── Redeem (command 10 - TEBUS) ───────────────────────────────────────────────
+string Formatter::redeemListHeader(int playerCash) {
+    ostringstream oss;
+    oss << "=== Properti yang Sedang Digadaikan ===" << endl;
+    oss << "Uang kamu saat ini: " << moneyString(playerCash) << endl;
+    return oss.str();
+}
+
+string Formatter::redeemListFooter() {
+    return "Pilih nomor properti (0 untuk batal): ";
+}
+
 string Formatter::makeRedeemList(const PropertyPlot& property) { 
     std::ostringstream oss;
     oss << makePropertyList(property, property.getColor()) << "[M] " << "Harga Tebus : " << moneyString(property.getMortgageValue()) << endl;
@@ -457,7 +468,7 @@ string Formatter::buildGroupList(const Player& player) {
     }
 
     oss << "Uang kamu saat ini : " << moneyString(player.getCash()) << endl;
-    oss << "Pilih nomor color group (0 untuk batal): ";
+
     return oss.str();
 }
 
@@ -506,7 +517,6 @@ string Formatter::buildPlotList(const Player& player, const Color& color) {
         oss << "Seluruh color group [" << colorString(color) << "] sudah memiliki 4 rumah. Siap di-upgrade ke hotel!" << endl;
     }
 
-    oss << "Pilih petak (0 untuk batal): ";
     return oss.str();
 }
 
@@ -515,12 +525,6 @@ string Formatter::buildSuccess(const Player& player, const LandPlot& landPlot) {
     oss << "Kamu membangun 1 rumah di " << landPlot.getName()
         << ". Biaya: " << moneyString(landPlot.getUpgHousePrice()) << endl;
     oss << "Uang tersisa: " << moneyString(player.getCash() - landPlot.getUpgHousePrice()) << endl;
-    return oss.str();
-}
-
-string Formatter::buildUpgradePrompt(const LandPlot& landPlot) {
-    std::ostringstream oss;
-    oss << "Upgrade ke hotel? Biaya: " << moneyString(landPlot.getUpgHotelPrice()) << " (y/n): ";
     return oss.str();
 }
 
@@ -842,6 +846,68 @@ string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
         oss << "Batas percobaan habis! Kamu WAJIB membayar denda." << endl;
     }
     return oss.str();
+}
+
+// ── Main Setup ─────────────────────────────────────────────────────
+
+string Formatter::invalidIntInput() {
+    return "Masukkan bilangan bulat positif.\n";
+}
+
+string Formatter::promptPlayerName(int n) {
+    return "Nama pemain " + std::to_string(n) + ": ";
+}
+
+string Formatter::playerNameEmpty() {
+    return "Nama pemain tidak boleh kosong.\n";
+}
+
+string Formatter::playerNameDuplicate() {
+    return "Nama pemain harus unik.\n";
+}
+
+string Formatter::gameTitle() {
+    return "=== NIMONSPOLI ===\n";
+}
+
+string Formatter::gameStartHint() {
+    return "Ketik EXIT untuk keluar.\n";
+}
+
+string Formatter::promptPlayerCount() {
+    return "Jumlah pemain: ";
+}
+
+string Formatter::turnHeader(int turn, int maxTurn, const string& username) {
+    return "Giliran " + std::to_string(turn) + "/" + std::to_string(maxTurn)
+         + " - " + username + "\n";
+}
+
+string Formatter::commandPrompt() {
+    return "Perintah: ";
+}
+
+string Formatter::inputStopped() {
+    return "\nInput dihentikan.\n";
+}
+
+string Formatter::noWinner() {
+    return "Permainan selesai tanpa pemenang.\n";
+}
+
+string Formatter::drawResult(const vector<Player>& winners) {
+    std::ostringstream oss;
+    oss << "Permainan seri antara: ";
+    for (std::size_t i = 0; i < winners.size(); ++i) {
+        if (i > 0) oss << ", ";
+        oss << winners[i].getUsername();
+    }
+    oss << "\n";
+    return oss.str();
+}
+
+string Formatter::fatalError(const string& message) {
+    return "Error: " + message + "\n";
 }
 
 // ── Exception ──────────────────────────────────────────────────────────────

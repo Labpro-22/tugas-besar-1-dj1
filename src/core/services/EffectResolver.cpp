@@ -13,7 +13,11 @@ void EffectResolver::resolveLanding(Player& player, int tileIndex, GameState& st
 }
 
 void EffectResolver::resolveBankruptcy(Player& player, Player* creditor, GameState& state) const {
-    bankruptcyService.transferAssets(player, creditor, state.getLogger());
+    std::vector<Player*> auctionBidders;
+    for (Player& bidder : state.getPlayers()) {
+        auctionBidders.push_back(&bidder);
+    }
+    bankruptcyService.transferAssets(player, creditor, state.getLogger(), auctionBidders, auctionService);
 }
 
 void EffectResolver::resolveTax(Player& player, int taxAmount, GameState& state) const {

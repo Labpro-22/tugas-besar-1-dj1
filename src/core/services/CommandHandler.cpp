@@ -136,7 +136,7 @@ bool CommandHandler::execute(const Command& command, GameState& state, EffectRes
 std::string CommandHandler::promptInput(std::string prompt){
     GameRenderer::showInputMessage(prompt);
     std::string answer;
-    std::cin >> answer;
+    std::getline(std::cin >> std::ws, answer);
     return answer;
 }
 
@@ -146,7 +146,7 @@ bool CommandHandler::promptYesNo(std::string prompt){
         try{
 
             std::string answer;
-            std::cin >> answer;
+            std::getline(std::cin >> std::ws, answer);
             if (answer == "y" || answer == "Y" || answer == "yes" || answer == "Yes" || answer == "YES"){
                 return true;
             }
@@ -169,7 +169,7 @@ std::size_t CommandHandler::promptCardDrop(const Player& player) {
 
     while (true) {
         try {
-            Formatter::dropCardWarning(cards.at(3)->getName());
+            GameRenderer::showDropCardWarning(cards.at(3)->getName());
             for (std::size_t i = 0; i < cards.size(); ++i) {
                 GameRenderer::showCardList(i, cards.at(i)->getName(), cards.at(i)->getDescription());
             }

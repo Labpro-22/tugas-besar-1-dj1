@@ -53,6 +53,8 @@ class GameRenderer {
         static void showSellBuildingResult(string& name, int cost);
         
         // ── Redeem (command 10 - TEBUS) ───────────────────────────────────────
+        static void showRedeemListHeader(int playerCash);
+        static void showRedeemListFooter();
         static void showRedeemList(const PropertyPlot& property);
         static void showRedeemNoEligible();
         static void showRedeemSuccess(const PropertyPlot& property, int money);
@@ -62,7 +64,6 @@ class GameRenderer {
         static void showBuildGroupList(const Player& player);
         static void showBuildPlotList(const Player& player, const Color& color);
         static void showBuildSuccess(const Player& player, const LandPlot& landPlot);
-        static void showBuildUpgradePrompt(const LandPlot& landPlot);
         static void showBuildUpgradeSuccess(const Player& player, const LandPlot& landPlot);
         static void showBuildNoEligible();
 
@@ -125,6 +126,21 @@ class GameRenderer {
         static void showLandOnGoPrison();
         static void showLandOnPrisonVisit();
         static void showLandOnPrisonJailed(int jailTurnsLeft);
+
+        // ── Main Setup ─────────────────────────────────────────────────
+        static void showInvalidIntInput();
+        static void showPromptPlayerName(int n);
+        static void showPlayerNameEmpty();
+        static void showPlayerNameDuplicate();
+        static void showPromptPlayerCount();
+        static void showGameTitle();
+        static void showGameStartHint();
+        static void showTurnHeader(int turn, int maxTurn, const string& username);
+        static void showCommandPrompt();
+        static void showInputStopped();
+        static void showNoWinner();
+        static void showDrawResult(const vector<Player>& winners);
+        static void showFatalError(const string& message);
 
         // ── GAME EXCEPTION ────────────────────────────────────
         static void throwException(const GameException& ex);

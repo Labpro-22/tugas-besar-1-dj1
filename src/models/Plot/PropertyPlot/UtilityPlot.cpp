@@ -1,5 +1,8 @@
 #include "models/Plot/PropertyPlot/UtilityPlot.hpp"
 
+#include <utility>
+
+#include "core/GameException.hpp"
 #include "models/Board/Dice.hpp"
 #include "models/Player/Player.hpp"
 #include "views/GameRenderer.hpp"
@@ -16,15 +19,19 @@ std::map<int, int> UtilityPlot::getRentPriceTable() const {
 }
 
 int UtilityPlot::getRentPrice(int level) const {
-    return rentPriceTable.at(level);
+    auto it = rentPriceTable.find(level);
+    if (it == rentPriceTable.end()) {
+        return 0;
+    }
+    return it->second;
 }
 
-void UtilityPlot::setRentPriceTable(std::map<int, int> rentPriceTable){
-    rentPriceTable = rentPriceTable;
+void UtilityPlot::setRentPriceTable(std::map<int, int> newRentPriceTable){
+    rentPriceTable = std::move(newRentPriceTable);
 }
 
 int UtilityPlot::getLevel() const {
-    return owner->countOwnedUtility();
+    return owner == nullptr ? 0 : owner->countOwnedUtility();
 }
 
 int UtilityPlot::calculateRentPrice(PlotContext& ctx) const {
@@ -32,9 +39,13 @@ int UtilityPlot::calculateRentPrice(PlotContext& ctx) const {
 }
 
 int UtilityPlot::calculateBaseRentPrice(PlotContext& ctx) const {
-    int ownedUtility = owner->countOwnedUtility();
+    int ownedUtility = owner == nullptr ? 0 : owner->countOwnedUtility();
     int diceTotal = ctx.getDice().getTotal();
-    return rentPriceTable.at(ownedUtility)*diceTotal;
+    auto it = rentPriceTable.find(ownedUtility);
+    if (it == rentPriceTable.end()) {
+        return 0;
+    }
+    return it->second*diceTotal;
 }
 
 PlotType UtilityPlot::getType() const {
