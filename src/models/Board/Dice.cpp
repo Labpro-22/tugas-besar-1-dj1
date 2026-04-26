@@ -5,11 +5,12 @@ Dice::Dice(): dice1(0), dice2(0), isManual(false), rng(random_device{}()), dist(
 Dice::~Dice() {}
  
 std::pair<int, int> Dice::roll() {
+    isManual = false;
     if (!isManual) {
         dice1 = dist(rng);
         dice2 = dist(rng);
     }
-    isManual = false;
+
     return {dice1, dice2};
 }
  
