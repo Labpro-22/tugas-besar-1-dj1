@@ -763,7 +763,10 @@ string Formatter::communityChestPlot(CommunityChestCard& card, int cost, int cur
     oss << "Kartu : " << card.getName() << endl;
     oss << "\"" << card.getDescription() << "\"" << endl;
 
-    if(currMoney >= cost) {
+    if(card.getName() == "BirthdayCard") {
+        oss << "Kamu mendapatkan uang " << moneyString(cost) << " dari semua player " << endl;
+        oss << playerMoney(currMoney) << endl;
+    } else if(currMoney >= cost) {
         oss << "Kamu membayar " << moneyString(cost) << " ke Bank. Sisa Uang = " << moneyString(currMoney) << endl;
     } else {
         oss << "Kamu tidak mampu bayar (" << moneyString(cost) << ") " << endl;
