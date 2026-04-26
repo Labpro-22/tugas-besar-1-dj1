@@ -17,6 +17,7 @@ void StationCard::activate(SkillContext& ctx) {
 
     try {
         // TODO: Index masih sama seperti spesifikasi, sesuaikan sama implementasi
+        //TODO: untuk cek stasiun terjauh dan terdekat bisa buat fungsi di board
         if (playerPosition >= board.findPlotIndex("TUG")) {
             currPlayer.moveTo(board.findPlotIndex("GBR"), boardSize);
         } else if (playerPosition >= board.findPlotIndex("STB")) {

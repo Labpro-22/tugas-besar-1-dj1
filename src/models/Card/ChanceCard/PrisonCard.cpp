@@ -13,7 +13,7 @@ void PrisonCard::activate(SkillContext& ctx) {
     Player& currPlayer = ctx.getCurrentPlayer();
     int boardSize = ctx.getBoard().getSize();
 
-    int index = ctx.getBoard().findPlotIndex("PEN");
+    int index = ctx.getBoard().findPlotIndex(PlotType::PRISONPLOT);
     try {
         currPlayer.moveTo(index, boardSize);
         currPlayer.setJailTurns(3);

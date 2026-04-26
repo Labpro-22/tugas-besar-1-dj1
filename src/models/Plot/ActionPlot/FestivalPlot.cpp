@@ -9,18 +9,24 @@ PlotType FestivalPlot::getType() const {
 
 void FestivalPlot::startEvent(PlotContext& ctx) {
     //TODO: tampilkan pesan festival plot
-    std::string answer;
+    int targetIdx;
     while (true){
-        answer = CommandHandler::promptInput("Masukkan nomor petak yang ingin diberi efek festival");
+        std::string answer = CommandHandler::promptInput("Masukkan nomor petak yang ingin diberi efek festival");
         try{
             int idx = std::stoi(answer);
-            if (idx > 0 && idx <= ctx.getBoard().getSize()){
-                break;
+            if (!ctx.getBoard().isPropertyPlot(idx)){
+                throw InvalidPlotTypeException();
             }
+            targetIdx = idx;
+            break;
         }
-        catch (std::exception e){}
+        catch (GameException e){
+            // std::cout << e.what(); //TODO: tampilkan dengan renderer
+        }
+        catch (std::exception e){
+            // std::cout << InvalidInputException().what(); //TODO: tampilkan dengan renderer
+        }
     }
 
-    int idx = std::stoi(answer);
-    ctx.getBoard().getPlots().at(idx).get()->applyFestival(); //TODO perbaiki dengan menambah getPlotByIndex di board 
+    ctx.getBoard().getPlots().at(targetIdx).get()->applyFestival();
 }

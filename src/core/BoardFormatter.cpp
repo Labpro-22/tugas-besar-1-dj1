@@ -29,7 +29,7 @@ string BoardFormatter::ansiReset() {
 
 string BoardFormatter::getPlayerLabels(int plotIndex, const Board& board, const vector<Player>& players) {
     string label = "";
-    int prisonIndex = board.findPlotIndex("PEN");
+    int prisonIndex = board.findPlotIndex(PlotType::PRISONPLOT;
 
     for (int i = 0; i < static_cast<int>(players.size()); ++i) {
         const Player& p = players[i];
