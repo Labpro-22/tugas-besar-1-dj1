@@ -12,7 +12,7 @@ class Formatter {
         static string colorString(const Color& color);
         static string statusString(const PropertyStatus& status);
 
-        static string onLand(string& name, string description);
+        static string onLand(string name, string description);
         static string playerMoney(int money);
 
         static string showDiceRoll(const Player& player, const Dice& dice, string& position);
@@ -64,14 +64,15 @@ class Formatter {
         static string winner(string username);
         static string finalPlayer(string username);
 
+        static string chanceCardPlot(ChanceCard& card, string& description);
         static string communityChestPlot(CommunityChestCard& card, int cost, int playerMoney);
 
         static string showLogger(const LogEntry& log);
         
-        static string makeCardList(int idx, string name, string description);
+        static string makeCardList(int idx, string& name, string& description);
         static string usedSkillCard(bool isUsed);
-        static string activateSkillCard(string name, string description);
-        static string effectSkillCard(string label, string description);
+        static string activateSkillCard(string& name, string& description);
+        static string effectSkillCard(string& label, string& description);
 
         static string makeDebtSummary(int playerMoney, int debt);
         static string potentialLiquidation(string& status, const PropertyPlot& property);
@@ -82,8 +83,8 @@ class Formatter {
         static string sellPropertyToBank(const PropertyPlot& property, int money);
         static string payDebtSuccess(int debt, const Player& visitor, const Player& owner);
 
-        static string dropCardWarning(string name);
-        static string dropCardAction(string name);
+        static string dropCardWarning(string& name);
+        static string dropCardAction(string& name);
 
         static string throwException(GameException e);
 };

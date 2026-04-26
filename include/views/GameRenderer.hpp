@@ -57,4 +57,23 @@ class GameRenderer {
 
         // ── Log (command 17 - CETAK_LOG) ────────────────────────────────────
         static void showLogger(const LogEntry& entry); //17
+
+        // ── Menang (command 18 - MENANG) ────────────────────────────────────
+        static void showPlayerList(const Player& player);
+        static void showFinalPlayer(string& username);
+        static void showWinner(string& username);
+        
+        // ── Kesempatan dan Dana umum (command 19 - (KESEMPATAN DAN DANA UMUM) ────────────────────────────────────
+        static void showOnLandChanceCard(ChanceCard& card, string& description);
+        static void showOnLandCommunityChestCard(CommunityChestCard& card, int cost, int playerMoney);
+
+        // ── Gunakan Kemampuan (command 20 - GUNAKAN KEMAMPUAN) ────────────────────────────────────
+        static void showCardList(int idx, string& name, string& description);
+        static void showHaveUsedSkillCard(bool isUsed);
+        static void showActivateSkillCard(string& name, string& description);
+        static void showEffectSkillCard(string& label, string& desciption);
+
+        // ── Drop card (command 21 - DROP KARTU KEMAMPUAN) ────────────────────────────────────
+        static void showDropCardWarning(string& name);
+        static void showDropCardAction(string& name);
 };
