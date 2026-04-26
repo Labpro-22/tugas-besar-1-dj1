@@ -2,9 +2,11 @@
 #include "core/PlotContext.hpp"
 
 #include "core/GameException.hpp"
+#include "core/GameState.hpp"
+#include "models/Player/Player.hpp"
 
 void EffectResolver::resolveLanding(Player& player, int tileIndex, GameState& state) {
-    PlotContext ctx(player, state.getPlayers(), state.getBoard(), state.getLogger(), auctionService);
+    PlotContext ctx(player, state.getPlayers(), state.getBoard(), state.getDice(), state.getLogger(), auctionService);
     state.getBoard().getPlot(tileIndex)->startEvent(ctx);
     state.addLog(player.getUsername() + " mendarat di tile " + std::to_string(tileIndex) + ".");
 }

@@ -73,10 +73,6 @@ void GameRenderer::showBuildSuccess(const Player& player, const LandPlot& landPl
     cout << Formatter::buildSuccess(player, landPlot);
 }
  
-void GameRenderer::showPropertyList(PlotContext& ctx, const Player& player) {
-    cout << Formatter::makePropertyList(ctx, player);
-}
- 
 void GameRenderer::showBuildUpgradeSuccess(const Player& player, const LandPlot& landPlot) {
     cout << Formatter::buildUpgradeSuccess(player, landPlot);
 }

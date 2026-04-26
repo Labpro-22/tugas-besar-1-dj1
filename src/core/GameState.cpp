@@ -6,11 +6,10 @@ GameState::GameState()
     : currentPlayerIdx(0),
       maxTurn(0),
       currentTurn(1),
-      gameOver(false),
-      board(Board()) {
-    if (maxTurn <= 0) {
-        throw InvalidInputException("maxTurn harus lebih dari 0.");
-    }
+      salary(0),
+      jailFine(0),
+      startingCash(0),
+      gameOver(false) {
 }
 
 void GameState::addPlayer(const Player& player) {
@@ -76,6 +75,9 @@ void GameState::setCurrentPlayerIdx(int idx) {
 }
 
 void GameState::setMaxTurn(int maxTurn){
+    if (maxTurn <= 0) {
+        throw InvalidInputException("maxTurn harus lebih dari 0.");
+    }
     this->maxTurn = maxTurn;
 }
 
@@ -176,6 +178,16 @@ const Dice& GameState::getDice() const {
 
 Board& GameState::getBoard() {
     return board;
+}
+
+const Board& GameState::getBoard() const {
+    return board;
+}
+
+void GameState::setBoard(const std::shared_ptr<Board>& /*newBoard*/) {
+    // TODO: Board memiliki move-assignment yang deleted karena konflik noexcept.
+    // Implementasikan swap internal state (tiles, decks) dari *newBoard ke board
+    // secara manual, atau ubah Board agar support move-assignment.
 }
 
 int GameState::getBoardSizeOrDefault(int defaultSize) const {

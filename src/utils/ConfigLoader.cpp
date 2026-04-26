@@ -1,6 +1,6 @@
 #include "utils/ConfigLoader.hpp"
 
-const std::string ConfigLoader::configPath = "config/ ";
+const std::string ConfigLoader::configPath = "config/";
 const std::string ConfigLoader::defaultPropertyFileName = "property.txt";
 const std::string ConfigLoader::defaultStationFileName = "railroad.txt";
 const std::string ConfigLoader::defaultUtilityFileName = "utility.txt";
@@ -22,15 +22,14 @@ std::map<int, int> ConfigLoader::loadIntMap(std::string path){
     std::ifstream file = ConfigLoader::open(path);
     std::map<int, int> map;
     try{
-        while (!file.eof()){
-            int key, value;
-            file >> key >> value;
+        int key, value;
+        while (file >> key >> value){
             map[key] = value;
         }
     }
     catch (const std::exception&){
         throw InvalidFileDataException();
-    } 
+    }
     return map;
 }
 
@@ -62,34 +61,34 @@ std::tuple<int, int, int> ConfigLoader::loadTuple3(std::string path){
 
 
 Color ConfigLoader::colorTypeToEnum(std::string color){
-    if (color.compare("DEFAULT")){
+    if (color == "DEFAULT"){
         return Color::DEFAULT;
     }
-    else if (color.compare("COKLAT")){
+    else if (color == "COKLAT"){
         return Color::BROWN;
     }
-    else if (color.compare("BIRU_MUDA")){
+    else if (color == "BIRU_MUDA"){
         return Color::LIGHTBLUE;
     }
-    else if (color.compare("MERAH_MUDA")){
+    else if (color == "MERAH_MUDA"){
         return Color::PINK;
     }
-    else if (color.compare("ABU_ABU")){
+    else if (color == "ABU_ABU"){
         return Color::GRAY;
     }
-    else if (color.compare("ORANGE")){
+    else if (color == "ORANGE"){
         return Color::ORANGE;
     }
-    else if (color.compare("MERAH")){
+    else if (color == "MERAH"){
         return Color::RED;
     }
-    else if (color.compare("KUNING")){
+    else if (color == "KUNING"){
         return Color::YELLOW;
     }
-    else if (color.compare("HIJAU")){
+    else if (color == "HIJAU"){
         return Color::GREEN;
     }
-    else if (color.compare("BIRU_TUA")){
+    else if (color == "BIRU_TUA"){
         return Color::DARKBLUE;
     }
     else{
@@ -101,22 +100,18 @@ std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadProperty(st
     std::ifstream file = ConfigLoader::open(path);
     std::vector<std::pair<int, std::unique_ptr<Plot>>> tiles;
     try{
-        while (!file.eof()){
-            int id, buyPrice, mortgageValue;
-            std::string code, name, type, color;
-            std::map<int, int> rentPriceTable; 
+        int id, buyPrice, mortgageValue;
+        std::string code, name, type, color;
+        while (file >> id >> code >> name >> type >> color >> buyPrice >> mortgageValue){
+            std::map<int, int> rentPriceTable;
 
-            //Baca tipe
-            file >> id >> code >> name >> type >> color >> buyPrice >> mortgageValue;
-
-            
             //Ubah color (string) menjadi enum Color
             Color colorEnum = ConfigLoader::colorTypeToEnum(color);
 
             //Buat plot sesuai tipenya
             std::unique_ptr<Plot> plot;
-    
-            if (type.compare("STREET")){
+
+            if (type == "STREET"){
                 //Baca data lainnya
                 int upgHousePrice, upgHotelPrice;
                 file >> upgHousePrice >> upgHotelPrice;
@@ -127,23 +122,23 @@ std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadProperty(st
                     int value;
                     file >> value;
                     rentPriceTable[i] = value;
-                }       
+                }
 
-                plot = std::make_unique<Plot>(LandPlot(name, code, colorEnum, buyPrice, mortgageValue,
-                                    upgHousePrice, upgHotelPrice, rentPriceTable));
+                plot = std::unique_ptr<Plot>(new LandPlot(name, code, colorEnum, mortgageValue, buyPrice,
+                                    upgHousePrice, upgHotelPrice, rentPriceTable, nullptr, PropertyStatus::BANK, 0, 1));
 
             }
-            else if (type.compare("RAILROAD")){
-                plot = std::make_unique<Plot>(StationPlot(name, code, colorEnum, buyPrice, mortgageValue));
+            else if (type == "RAILROAD"){
+                plot = std::unique_ptr<Plot>(new StationPlot(name, code, colorEnum, buyPrice, mortgageValue, nullptr, PropertyStatus::BANK, 0, 1));
             }
-            else if (type.compare("UTILITY")){
-                plot = std::make_unique<Plot>(UtilityPlot(name, code, colorEnum, buyPrice, mortgageValue));
+            else if (type == "UTILITY"){
+                plot = std::unique_ptr<Plot>(new UtilityPlot(name, code, colorEnum, buyPrice, mortgageValue, nullptr, PropertyStatus::BANK, 0, 1));
             }
             else{
                 throw UnknownTypeException(type);
             }
 
-            tiles.push_back(std::make_pair(id, plot));
+            tiles.push_back(std::make_pair(id, std::move(plot)));
         }
     }
     catch (const GameException&){
@@ -170,67 +165,62 @@ std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadAction(std:
     std::ifstream file = ConfigLoader::open(path);
     std::vector<std::pair<int, std::unique_ptr<Plot>>> tiles;
     try{
-        while (!file.eof()){
-            int id;
-            std::string code, name, type, color;
-
-            //Baca tipe
-            file >> id >> code >> name >> type >> color;
-
-            
+        int id;
+        std::string code, name, type, color;
+        while (file >> id >> code >> name >> type >> color){
             //Ubah color (string) menjadi enum Color
             Color colorEnum = ConfigLoader::colorTypeToEnum(color);
 
             //Buat plot sesuai tipenya
             std::unique_ptr<Plot> plot;
-    
-            if (type.compare("SPESIAL")){
-                if (code.compare("GO")){
-                    plot = std::make_unique<Plot>(StartPlot(name, code, colorEnum));
+
+            if (type == "SPESIAL"){
+                if (code == "GO"){
+                    plot = std::unique_ptr<Plot>(new StartPlot(name, code, colorEnum));
                 }
-                else if (code.compare("PEN")){
-                    plot = std::make_unique<Plot>(PrisonPlot(name, code, colorEnum));
+                else if (code == "PEN"){
+                    plot = std::unique_ptr<Plot>(new PrisonPlot(name, code, colorEnum));
                 }
-                else if (code.compare("BBP")){
-                    plot = std::make_unique<Plot>(FreeParkPlot(name, code, colorEnum));
+                else if (code == "BBP"){
+                    plot = std::unique_ptr<Plot>(new FreeParkPlot(name, code, colorEnum));
                 }
-                else if (code.compare("PPJ")){
-                    plot = std::make_unique<Plot>(GoPrisonPlot(name, code, colorEnum));
-                }
-                else{
-                    throw UnknownTypeException(type + " dengan kode " + code);
-                }
-            }
-            else if (type.compare("KARTU")){
-                if (code.compare("DNU")){
-                    plot = std::make_unique<Plot>(CommunityChestCardPlot(name, code, colorEnum));
-                }
-                else if (code.compare("KSP")){
-                    plot = std::make_unique<Plot>(ChanceCardPlot(name, code, colorEnum));
+                else if (code == "PPJ"){
+                    plot = std::unique_ptr<Plot>(new GoPrisonPlot(name, code, colorEnum));
                 }
                 else{
                     throw UnknownTypeException(type + " dengan kode " + code);
                 }
             }
-            else if (type.compare("PAJAK")){
-                if (code.compare("PPH")){
-                    plot = std::make_unique<Plot>(IncomeTaxPlot(name, code, colorEnum));
+            else if (type == "KARTU"){
+                if (code == "DNU"){
+                    plot = std::unique_ptr<Plot>(new CommunityChestCardPlot(name, code, colorEnum));
                 }
-                else if (code.compare("PBM")){
-                    plot = std::make_unique<Plot>(LuxuryTaxPlot(name, code, colorEnum));
+                else if (code == "KSP"){
+                    plot = std::unique_ptr<Plot>(new ChanceCardPlot(name, code, colorEnum));
                 }
                 else{
                     throw UnknownTypeException(type + " dengan kode " + code);
                 }
             }
-            else if (type.compare("FESTIVAL")){
-                plot = std::make_unique<Plot>(FestivalPlot(name, code, colorEnum));
+            else if (type == "PAJAK"){
+                if (code == "PPH"){
+                    plot = std::unique_ptr<Plot>(new IncomeTaxPlot(name, code, colorEnum));
+                }
+                else if (code == "PBM"){
+                    plot = std::unique_ptr<Plot>(new LuxuryTaxPlot(name, code, colorEnum));
+                }
+                else{
+                    throw UnknownTypeException(type + " dengan kode " + code);
+                }
+            }
+            else if (type == "FESTIVAL"){
+                plot = std::unique_ptr<Plot>(new FestivalPlot(name, code, colorEnum));
             }
             else{
                 throw UnknownTypeException(type);
             }
 
-            tiles.push_back(std::make_pair(id, plot));
+            tiles.push_back(std::make_pair(id, std::move(plot)));
         }
     }
     catch (const GameException&){
@@ -238,7 +228,7 @@ std::vector<std::pair<int, std::unique_ptr<Plot>>> ConfigLoader::loadAction(std:
     }
     catch (const std::exception&){
         throw InvalidFileDataException();
-    } 
+    }
 
     return tiles;
 }

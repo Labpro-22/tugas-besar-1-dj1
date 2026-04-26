@@ -1,5 +1,10 @@
 #include "models/Plot/PropertyPlot/UtilityPlot.hpp"
 
+#include "models/Board/Dice.hpp"
+#include "models/Player/Player.hpp"
+
+std::map<int, int> UtilityPlot::rentPriceTable;
+
 UtilityPlot::UtilityPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
                          Player* owner, PropertyStatus propertyStatus,
                          int festivalDuration, int festivalMultiplier):

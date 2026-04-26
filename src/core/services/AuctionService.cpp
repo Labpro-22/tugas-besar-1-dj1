@@ -1,6 +1,8 @@
 #include "core/services/AuctionService.hpp"
 
 #include "core/GameException.hpp"
+#include "core/GameState.hpp"
+#include "models/Player/Player.hpp"
 
 bool AuctionService::startAuction(
     int basePrice,

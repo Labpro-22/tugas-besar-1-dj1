@@ -56,13 +56,8 @@ void GameEngine::loadGameConfig() {
     UtilityPlot::setRentPriceTable(utility);
 
     //Load action
-    auto action = load(ConfigLoader::loadProperty, ConfigLoader::defaultPropertyFileName,
+    auto action = load(ConfigLoader::loadAction, ConfigLoader::defaultActionFileName,
         "petak aksi", useDefault);
-    std::string actionPath;
-    std::vector<std::pair<int, std::unique_ptr<Plot>>> action;
-    if (useDefault){
-        actionPath = ConfigLoader::configPath + ConfigLoader::defaultActionFileName;
-    }
 
     // Load tax
     auto tax = load(ConfigLoader::loadTax, ConfigLoader::defaultTaxFileName,
