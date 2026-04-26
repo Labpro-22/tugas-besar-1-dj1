@@ -126,9 +126,7 @@ UseSkillCardCommand::UseSkillCardCommand(int cardIndex) : cardIndex(cardIndex) {
 bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     Player& player = state.getCurrentPlayer();
     SkillContext ctx{player, state.getPlayers(), state.getBoard(), state.getLogger()};
-    if (!player.useCards(static_cast<std::size_t>(cardIndex), ctx)) {
-        throw InvalidInputException("Kartu skill pada index tersebut tidak dapat digunakan.");
-    }
+    player.useCards(cardIndex, ctx);
 
     state.addLog(player.getUsername() + " menggunakan skill card index " + std::to_string(cardIndex) + ".");
     return true;
