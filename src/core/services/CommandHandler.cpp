@@ -11,6 +11,7 @@
 #include "core/services/EffectResolver.hpp"
 #include "models/Player/Player.hpp"
 #include "models/Card/SkillCard/SkillCard.hpp"
+#include "views/GameRenderer.hpp"
 
 using std::cout;
 using std::cin;
@@ -139,7 +140,7 @@ std::string CommandHandler::promptInput(std::string prompt){
     return answer;
 }
 
-bool CommandHandler::promptYesNo(std::string prompt){
+bool CommandHandler::promptYesNo(std::string prompt){\
     GameRenderer::showYesNoMessage(prompt);
     while(true){
         try{
@@ -169,7 +170,7 @@ std::size_t CommandHandler::promptCardDrop(const Player& player) {
 
     while (true) {
         try {
-            Formatter::dropCardWarning(cards.at(3)->getName());
+            GameRenderer::showDropCardWarning(cards.at(3)->getName());
             for (std::size_t i = 0; i < cards.size(); ++i) {
                 GameRenderer::showCardList(i, cards.at(i)->getName(), cards.at(i)->getDescription());
             }
