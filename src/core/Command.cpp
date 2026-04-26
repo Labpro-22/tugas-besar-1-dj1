@@ -179,6 +179,7 @@ bool PrintDeedCommand::execute(GameState& state, EffectResolver&, TurnManager&) 
         return true;
     }
     
+    state.addLog("Perintah CETAK_AKTA untuk properti " + code + " dijalankan.");
     GameRenderer::showDeed(*land);
     return true;
 }
@@ -501,7 +502,7 @@ UseSkillCardCommand::UseSkillCardCommand(int cardIndex) : cardIndex(cardIndex) {
     }
 }
 
-bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
+bool UseSkillCardCommand::execute(GameState& state, EffectResolver& effectResolver, TurnManager&) const {
     Player& player = state.getCurrentPlayer();
 
     if (player.hasUsedSkillThisTurn()) {
@@ -548,9 +549,13 @@ bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager
     const std::size_t cardPosition = static_cast<std::size_t>(selectedIndex) - 1;
     const std::string name = cards[cardPosition]->getName();
     const std::string desc = cards[cardPosition]->getDescription();
+    const int oldPosition = player.getPosition();
  
     SkillContext ctx{player, state.getPlayers(), state.getBoard(), state.getLogger()};
     player.useCards(cardPosition, ctx);
+    if (player.getPosition() != oldPosition) {
+        effectResolver.resolveLanding(player, player.getPosition(), state);
+    }
  
     state.addLog(player.getUsername(), "KARTU",
         "Pakai " + name + " -> " + desc);
@@ -731,9 +736,9 @@ bool HelpCommand::execute(GameState& state, EffectResolver&, TurnManager&) const
 
     // ── Kartu Kemampuan ──────────────────────────────────────────────────────
     header("Kartu Kemampuan Spesial");
-    entry("GUNAKAN_KEMAMPUAN <N>",
+    entry("GUNAKAN_KEMAMPUAN [N]",
           "Aktifkan Kartu Kemampuan Spesial ke-N dari tangan.",
-          "Hanya bisa digunakan SEBELUM melempar dadu  |  Contoh: GUNAKAN_KEMAMPUAN 2");
+          "Tanpa N: tampilkan daftar & pilih interaktif  |  Contoh: GUNAKAN_KEMAMPUAN 2");
 
     // ── Penjara ──────────────────────────────────────────────────────────────
     header("Penjara");
