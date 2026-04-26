@@ -450,11 +450,6 @@ string Formatter::buildGroupList(const Player& player) {
         if (allOwned) eligibleGroups[entry.first] = plots;
     }
 
-    if (eligibleGroups.empty()) {
-        oss << buildNoEligible();
-        return oss.str();
-    }
-
     int idx = 1;
     for (const auto& entry : eligibleGroups) {
         const Color& color = entry.first;

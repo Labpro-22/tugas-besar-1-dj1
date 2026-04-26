@@ -92,9 +92,65 @@ SetDiceCommand::SetDiceCommand(int dice1, int dice2) : dice1(dice1), dice2(dice2
     }
 }
 
-bool SetDiceCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
+bool SetDiceCommand::execute(GameState& state, EffectResolver& effectResolver, TurnManager& turnManager) const {
     state.getDice().setDiceManual(dice1, dice2);
     state.addLog("Dadu manual diset ke " + std::to_string(dice1) + " dan " + std::to_string(dice2) + ".");
+
+    const int steps = dice1 + dice2;
+    const int effectiveBoardSize = state.getBoardSizeOrDefault(state.getBoard().getSize());
+    const bool isDouble = state.getDice().isDouble();
+    Player& player = state.getCurrentPlayer();
+
+    if (player.getHasRolled()) {
+        state.addLog(player.getUsername() + " sudah melakukan ROLL pada giliran ini.");
+        return false;
+    }
+
+    state.addLog(player.getUsername() + " melempar dadu: " +
+        std::to_string(dice1) + " dan " + std::to_string(dice2) + ".");
+    player.setHasRolled(true);
+
+    if (player.getStatus() == PlayerStatus::JAILED) {
+        const bool released = turnManager.handleJailedRoll(player, isDouble, state);
+        if (!released) {
+            std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+            GameRenderer::showDiceRoll(player, state.getDice(), position);
+            return true;
+        }
+
+        const int oldPosition = player.getPosition();
+        player.move(steps, effectiveBoardSize);
+        turnManager.handlePassedGo(player, oldPosition, player.getPosition(), state);
+        std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+        GameRenderer::showDiceRoll(player, state.getDice(), position);
+        effectResolver.resolveLanding(player, player.getPosition(), state);
+        return true;
+    }
+
+    if (isDouble) {
+        player.incrementConsecutiveDoubles();
+        if (turnManager.handleTripleDouble(player, state)) {
+            std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+            GameRenderer::showDiceRoll(player, state.getDice(), position);
+            return true;
+        }
+    } else {
+        player.resetConsecutiveDoubles();
+    }
+
+    const int oldPosition = player.getPosition();
+    player.move(steps, effectiveBoardSize);
+    turnManager.handlePassedGo(player, oldPosition, player.getPosition(), state);
+ 
+    std::string position = state.getBoard().getPlot(player.getPosition())->getName();
+    GameRenderer::showDiceRoll(player, state.getDice(), position);
+ 
+    effectResolver.resolveLanding(player, player.getPosition(), state);
+
+    if (player.getStatus() != PlayerStatus::JAILED) {
+        turnManager.handleExtraTurn(player, isDouble, state);
+    }
+
     return true;
 }
 
@@ -185,11 +241,6 @@ bool BuildCommand::execute(GameState& state, EffectResolver&, TurnManager&) cons
     vector<Color> colorOptions;
     for (const auto& pair : colorGroups) {
         colorOptions.push_back(pair.first);
-    }
-
-    if (colorOptions.empty()) {
-        GameRenderer::throwException(InvalidInputException("Tidak ada color group yang bisa dibangun."));
-        return false;
     }
 
     Color selectedColor;
@@ -400,7 +451,7 @@ bool RedeemCommand::execute(GameState& state, EffectResolver&, TurnManager&) con
 
     if (mortgaged.empty()) {
         GameRenderer::showRedeemNoEligible();
-        throw InvalidStateException("Tidak ada properti yang sedang digadaikan.");
+        return false;
     }
 
     GameRenderer::showRedeemListHeader(player.getCash());
@@ -569,6 +620,9 @@ bool BankruptCommand::execute(GameState& state, EffectResolver& effectResolver, 
 
 bool EndTurnCommand::execute(GameState& state, EffectResolver&, TurnManager& turnManager) const {
     Player& currentPlayer = state.getCurrentPlayer();
+    if (currentPlayer.getConsecutiveDoubles() != 0 || !currentPlayer.getHasRolled()){
+        throw InvalidInputException("Tidak bisa mengakhiri turn sekarang.");
+    }
     turnManager.endTurn(currentPlayer, state);
     turnManager.advanceTurn(state);
 
