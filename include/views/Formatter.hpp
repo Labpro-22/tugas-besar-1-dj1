@@ -86,6 +86,13 @@ class Formatter {
         static string dropCardWarning(string& name);
         static string dropCardAction(string& name);
 
+        static string successSaveFile(string& fileName);
+        static string failSaveFile(string& fileName);
+
+        static string successLoadFile(string& fileName, string& username);
+        static string fileNotFound(string& fileName);
+        static string failLoadFile();
+
         static string throwException(GameException e);
 };
 

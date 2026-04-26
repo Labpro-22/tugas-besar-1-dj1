@@ -51,8 +51,11 @@ class GameRenderer {
         static void showFestival(); 
 
         // ── Save / Load (command 15-16) ─────────────────────────────────────
-        static void showSaveSuccess(string filename); 
-        static void showSaveFailed(string filename); 
+        static void successSaveFile(string& fileName);
+        static void failSaveFile(string& fileName);
+        static void successLoadFile(string& fileName, string& username);
+        static void fileNotFound(string& fileName);
+        static void failLoadFile();
 
 
         // ── Log (command 17 - CETAK_LOG) ────────────────────────────────────

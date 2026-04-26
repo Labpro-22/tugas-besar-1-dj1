@@ -660,6 +660,40 @@ string Formatter::dropCardAction(string& name) {
     return name + "telah dibuang. Sekarang kamu memiliki 3 kartu di tangan.\n";
 }
 
+string Formatter::successLoadFile(string& fileName, string& username) {
+    std::ostringstream oss;
+    oss << "Memuat permainan..." << endl;
+    oss << "Permainan berhasil dimuat. Melanjutkan giliran " << username << endl;
+
+    return oss.str();
+}
+
+string Formatter::fileNotFound(string& fileName) {
+    std::ostringstream oss;
+    oss << "File " << fileName << " tidak ditemukan." << endl;
+
+    return oss.str();
+}
+
+string Formatter::failLoadFile() {
+    std::ostringstream oss;
+    oss <<  "Gagal memuat file! File rusak atau format tidak dikenali." << endl;
+
+    return oss.str();
+}
+
+string Formatter::successSaveFile(string& fileName) {
+    std::ostringstream oss;
+    oss << "Menyimpan permainan..." << endl;
+    oss << "Permainan berhasil disimpan ke: " << fileName << endl;
+
+    return oss.str();
+}
+
+string Formatter::failSaveFile(string& fileName) {
+    return "Gagal menyimpan file! Pastikan direktori dapat ditulis.\n";
+}
+
 string Formatter::throwException(GameException e) {
     return e.what();
 }

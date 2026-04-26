@@ -81,13 +81,24 @@ void GameRenderer::showBuildNoEligible() {
  
 
 // ── Save / Load (command 15-16) ─────────────────────────────────────
-void GameRenderer::showSaveSuccess(string filename) {
-    cout << "Menyimpan permainan..." << endl;
-    cout << "Permainan berhasil disimpan ke: " << filename << endl;
-};
+void GameRenderer::successSaveFile(string& fileName) {
+    cout << Formatter::successSaveFile(fileName);
+}
 
-void GameRenderer::showSaveFailed(string filename) {
-    cout << "Gagal menyimpan file! pastikan direktori dapat ditulis." << endl;
+void GameRenderer::failSaveFile(string& fileName) {
+    cout << Formatter::failSaveFile(fileName);
+}
+
+void GameRenderer::successLoadFile(string& fileName, string& username) {
+    cout << Formatter::successLoadFile(fileName, username);
+}
+
+void GameRenderer::fileNotFound(string& fileName) {
+    cout << Formatter::fileNotFound(fileName);
+}
+
+void GameRenderer::failLoadFile() {
+    cout << Formatter::failLoadFile();
 }
 
 // ── Log (command 17 - CETAK_LOG) ────────────────────────────────────
