@@ -18,7 +18,7 @@ private:
 public:
     GameEngine();
 
-    void startNewGame(const std::vector<std::string>& playerNames); //TODO: handle player names di dalamnya
+    void startNewGame(const std::vector<std::string>& playerNames);
     void loadGameConfig();
     void loadGame(const GameState& loadedState);
     void run(const std::vector<std::string>& scriptedCommands);
