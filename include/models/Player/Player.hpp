@@ -58,6 +58,7 @@ public:
     void payTaxes(int amount);
     void payRent(int amount, Player* targetPlayer);
     void buyProperty(PropertyPlot& property);
+    void buyProperty(PropertyPlot& property, int price);
     void tradeProperty(PropertyPlot& property, Player* targetPlayer, int price); //TODO: cek apakah aman untuk trade banyak properti sekaligus
     void transferProperty(PropertyPlot& property, Player* targetPlayer);
     bool useCards(std::size_t cardIndex, SkillContext& ctx);

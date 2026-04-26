@@ -156,12 +156,7 @@ void Player::payTaxes(int amount) {
         shieldActive = false;
         return;
     }
-    try{
-        pay(amount);
-    }
-    catch (InsufficientFundException e){
-        //TODO: serviceBankrupt
-    }
+    pay(amount);
 }
 
 void Player::payRent(int amount, Player* targetPlayer){
@@ -169,21 +164,21 @@ void Player::payRent(int amount, Player* targetPlayer){
         shieldActive = false;
         return;
     }
-    try{
-        pay(amount);
+    if (targetPlayer == nullptr) {
+        throw InvalidInputException("Target pemain untuk pembayaran sewa tidak valid.");
     }
-    catch (InsufficientFundException e){
-        //TODO: serviceBankrupt
-    }
+    pay(amount);
     targetPlayer->receive(amount);
 }
 
 void Player::buyProperty(PropertyPlot& property) {
+    buyProperty(property, property.getBuyPrice());
+}
+
+void Player::buyProperty(PropertyPlot& property, int price) {
     if (property.getOwner() != NULL) {
         throw NoAccessToPropertyException();
     }
-
-    int price = property.getBuyPrice();
 
     pay(price);
     ownedProperties.push_back(property);
