@@ -93,6 +93,6 @@ class Formatter {
         static string fileNotFound(string& fileName);
         static string failLoadFile();
 
-        static string throwException(GameException e);
+        static string throwException(const GameException e);
 };
 

@@ -137,11 +137,11 @@ void GameRenderer::showHaveUsedSkillCard(bool isUsed) {
     cout << Formatter::usedSkillCard(isUsed);
 }
 
-void GameRenderer::showActivateSkillCard(string& name, string& description) {
+void GameRenderer::showActivateSkillCard(string name, string description) {
     cout << Formatter::activateSkillCard(name, description);
 }
 
-void GameRenderer::showEffectSkillCard(string& label, string& description) {
+void GameRenderer::showEffectSkillCard(string label, string description) {
     cout << Formatter::effectSkillCard(label, description);
 }
 
@@ -152,4 +152,9 @@ void GameRenderer::showDropCardWarning(string& name) {
 
 void GameRenderer::showDropCardAction(string& name) {
     cout << Formatter::dropCardAction(name);
+}
+
+// ── Game Exception ────────────────────────────────────
+void GameRenderer::throwException(const GameException& ex) {
+    cout << Formatter::throwException(ex);
 }

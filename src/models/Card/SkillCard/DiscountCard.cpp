@@ -8,6 +8,11 @@ void DiscountCard::activate(SkillContext& ctx) {
     int discountPercent = number(g);
     ctx.getCurrentPlayer().setDiscountValue(discountPercent);
     ctx.getCurrentPlayer().setDiscountTurnLeft(1);
+    ctx.getCurrentPlayer().setUsedSkillThisTurn(true);
+
+    std::ostringstream oss;
+    oss << "Kamu mendapatkan diskon sebesar " << discountPercent << "%" << "(1 Turn)";
+    GameRenderer::showActivateSkillCard(DiscountCard::getName(), oss.str());
 }
 
 const string DiscountCard::getName() const {

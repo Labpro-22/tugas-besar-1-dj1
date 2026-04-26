@@ -73,10 +73,14 @@ class GameRenderer {
         // ── Gunakan Kemampuan (command 20 - GUNAKAN KEMAMPUAN) ────────────────────────────────────
         static void showCardList(int idx, string& name, string& description);
         static void showHaveUsedSkillCard(bool isUsed);
-        static void showActivateSkillCard(string& name, string& description);
-        static void showEffectSkillCard(string& label, string& desciption);
+        static void showActivateSkillCard(string name, string description);
+        static void showEffectSkillCard(string label, string desciption);
 
         // ── Drop card (command 21 - DROP KARTU KEMAMPUAN) ────────────────────────────────────
         static void showDropCardWarning(string& name);
         static void showDropCardAction(string& name);
+
+        // ── GAME EXCEPTION ────────────────────────────────────
+        static void throwException(const GameException& ex);
+
 };
