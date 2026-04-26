@@ -74,13 +74,20 @@ int main() {
         engine.startNewGame(playerNames);
 
         GameRenderer::showGameStartHint();
+        std::string lastPlayerName;
         while (!engine.isGameOver()) {
             const GameState& state = engine.getState();
-            GameRenderer::showBoard(state);
+            const std::string& currentPlayerName = state.getCurrentPlayer().getUsername();
+
+            if (currentPlayerName != lastPlayerName) {
+                GameRenderer::showBoard(state);
+                lastPlayerName = currentPlayerName;
+            }
+
             GameRenderer::showTurnHeader(
                 state.getCurrentTurn(),
                 state.getMaxTurn(),
-                state.getCurrentPlayer().getUsername()
+                currentPlayerName
             );
 
             GameRenderer::showCommandPrompt();
