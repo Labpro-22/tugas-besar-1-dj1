@@ -64,7 +64,6 @@ string Formatter::showDiceRoll(const Player& player, const Dice& dice, string& p
     oss << "Mengocok dadu..." << endl;
     oss << "Hasil: " << dice.getDice1() << " + " << dice.getDice2() << " = " << dice.getTotal() << endl;
     oss << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << " petak..." << endl;
-    oss << onLand(position, "");
 
     return oss.str();
 };
@@ -213,7 +212,7 @@ string Formatter::buyProperty(const Player& player, const LandPlot& landPlot) {
     oss << "| " << left << setw(labelWidth) << "Sewa hotel"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(5))<< "|" << endl;
     oss << "+" << string(contentWidth, '=') << "+" << endl;
     oss << "Uang kamu saat ini: " << moneyString(player.getCash()) << endl;
-    oss << "Apakah kamu ingin membeli properti ini seharga " << landPlot.calculateBuildingValue() << "?";
+    oss << "Apakah kamu ingin membeli properti ini seharga " << moneyString(landPlot.getBuyPrice()) << "?";
     return oss.str();
 }
 
@@ -226,7 +225,7 @@ string Formatter::buySuccess(const Player& player, const LandPlot& landPlot) {
 
 string Formatter::buyFailed() {
     std::ostringstream oss;
-    oss << "Properti ini akan masuk ke sistem lelang..." << endl;
+    oss << "\nProperti ini akan masuk ke sistem lelang..." << endl;
     return oss.str();
 }
 
@@ -778,7 +777,7 @@ string Formatter::communityChestPlot(CommunityChestCard& card, int cost, int cur
 
 // ── Skill cards (command 20 - GUNAKAN_KEMAMPUAN) ─────────────────────
 string Formatter::makeCardList(int idx, const string& name, const string& description) { 
-    return to_string(idx + 1) + ". " + name + "---" + description + "\n";
+    return to_string(idx) + ". " + name + "---" + description + "\n";
 }
 
 string Formatter::usedSkillCard(bool isUsed) {
@@ -883,7 +882,7 @@ string Formatter::promptPlayerCount() {
 }
 
 string Formatter::turnHeader(int turn, int maxTurn, const string& username) {
-    return "Giliran " + std::to_string(turn) + "/" + std::to_string(maxTurn)
+    return "\nGiliran " + std::to_string(turn) + "/" + std::to_string(maxTurn)
          + " - " + username + "\n";
 }
 

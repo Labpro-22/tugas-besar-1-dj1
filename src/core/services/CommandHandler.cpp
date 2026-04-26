@@ -52,58 +52,80 @@ std::unique_ptr<Command> CommandHandler::parse(const std::string& rawCommand) co
     }
 
     const std::string cmd = toUpper(tokens[0]);
-    if (cmd == "ROLL") {
+
+    // ── LEMPAR_DADU / ROLL ────────────────────────────────────────────────────
+    if (cmd == "LEMPAR_DADU" || cmd == "ROLL") {
         const int boardSize = (tokens.size() > 1) ? parseInt(tokens[1]) : 40;
         return std::make_unique<RollDiceCommand>(boardSize);
     }
-    if (cmd == "SETDICE" || cmd == "SET_DICE") {
+
+    // ── ATUR_DADU X Y / SET_DICE X Y ─────────────────────────────────────────
+    if (cmd == "ATUR_DADU" || cmd == "SETDICE" || cmd == "SET_DICE") {
         if (tokens.size() < 3) {
-            throw InvalidInputException("SETDICE membutuhkan 2 argumen angka.");
+            throw InvalidInputException("ATUR_DADU membutuhkan 2 argumen angka (1-6).");
         }
         return std::make_unique<SetDiceCommand>(parseInt(tokens[1]), parseInt(tokens[2]));
     }
-    if (cmd == "PRINT_BOARD") {
+
+    // ── CETAK_PAPAN ───────────────────────────────────────────────────────────
+    if (cmd == "CETAK_PAPAN" || cmd == "PRINT_BOARD") {
         return std::make_unique<PrintBoardCommand>();
     }
-    if (cmd == "PRINT_DEED") {
+
+    // ── CETAK_AKTA <KODE> ─────────────────────────────────────────────────────
+    if (cmd == "CETAK_AKTA" || cmd == "PRINT_DEED") {
         if (tokens.size() < 2) {
-            throw InvalidInputException("PRINT_DEED membutuhkan kode properti.");
+            throw InvalidInputException("CETAK_AKTA membutuhkan kode properti. Contoh: CETAK_AKTA JKT");
         }
         return std::make_unique<PrintDeedCommand>(tokens[1]);
     }
-    if (cmd == "PRINT_PROPERTY") {
+
+    // ── CETAK_PROPERTI ────────────────────────────────────────────────────────
+    if (cmd == "CETAK_PROPERTI" || cmd == "PRINT_PROPERTY") {
         return std::make_unique<PrintPropertyCommand>();
     }
-    if (cmd == "BUILD") {
-        if (tokens.size() < 2) {
-            throw InvalidInputException("BUILD membutuhkan kode properti.");
-        }
-        return std::make_unique<BuildCommand>(tokens[1]);
+
+    // ── BANGUN ────────────────────────────────────────────────────────────────
+    if (cmd == "BANGUN" || cmd == "BUILD") {
+        const std::string code = (tokens.size() > 1) ? tokens[1] : "";
+        return std::make_unique<BuildCommand>(code);
     }
-    if (cmd == "MORTGAGE") {
-        if (tokens.size() < 2) {
-            throw InvalidInputException("MORTGAGE membutuhkan kode properti.");
-        }
-        return std::make_unique<MortgageCommand>(tokens[1]);
+
+    // ── GADAI ─────────────────────────────────────────────────────────────────
+    if (cmd == "GADAI" || cmd == "MORTGAGE") {
+        const std::string code = (tokens.size() > 1) ? tokens[1] : "";
+        return std::make_unique<MortgageCommand>(code);
     }
-    if (cmd == "REDEEM") {
-        if (tokens.size() < 2) {
-            throw InvalidInputException("REDEEM membutuhkan kode properti.");
-        }
-        return std::make_unique<RedeemCommand>(tokens[1]);
+
+    // ── TEBUS ─────────────────────────────────────────────────────────────────
+    if (cmd == "TEBUS" || cmd == "REDEEM") {
+        const std::string code = (tokens.size() > 1) ? tokens[1] : "";
+        return std::make_unique<RedeemCommand>(code);
     }
-    if (cmd == "USE_SKILL") {
+
+    // ── GUNAKAN_KEMAMPUAN <N> ─────────────────────────────────────────────────
+    if (cmd == "GUNAKAN_KEMAMPUAN" || cmd == "USE_SKILL") {
         if (tokens.size() < 2) {
-            throw InvalidInputException("USE_SKILL membutuhkan index kartu.");
+            throw InvalidInputException("GUNAKAN_KEMAMPUAN membutuhkan nomor kartu. Contoh: GUNAKAN_KEMAMPUAN 1");
         }
         return std::make_unique<UseSkillCardCommand>(parseInt(tokens[1]));
     }
-    if (cmd == "SAVE") {
+
+    // ── SIMPAN <NAMA_FILE> ────────────────────────────────────────────────────
+    if (cmd == "SIMPAN" || cmd == "SAVE") {
         if (tokens.size() < 2) {
-            throw InvalidInputException("SAVE membutuhkan nama file.");
+            throw InvalidInputException("SIMPAN membutuhkan nama file. Contoh: SIMPAN game1.txt");
         }
         return std::make_unique<SaveCommand>(tokens[1]);
     }
+
+    // ── CETAK_LOG [N] ─────────────────────────────────────────────────────────
+    if (cmd == "CETAK_LOG") {
+        const int n = (tokens.size() > 1) ? parseInt(tokens[1]) : -1;
+        return std::make_unique<PrintLogCommand>(n);
+    }
+
+    // ── Internal / automatic commands (kept for engine-internal use) ──────────
     if (cmd == "TAX") {
         if (tokens.size() < 2) {
             throw InvalidInputException("TAX membutuhkan nominal pajak.");
@@ -120,13 +142,23 @@ std::unique_ptr<Command> CommandHandler::parse(const std::string& rawCommand) co
         const int creditorIdx = (tokens.size() > 1) ? parseInt(tokens[1]) : -1;
         return std::make_unique<BankruptCommand>(creditorIdx);
     }
+
+    // ── END (akhiri giliran) ──────────────────────────────────────────────────
     if (cmd == "END") {
         return std::make_unique<EndTurnCommand>();
     }
-    if (cmd == "PAY_JAIL_FINE" || cmd == "PAY_FINE" || cmd == "PAYJAIL") {
+
+    // ── BAYAR_DENDA (keluar penjara) ──────────────────────────────────────────
+    if (cmd == "BAYAR_DENDA" || cmd == "PAY_JAIL_FINE" || cmd == "PAY_FINE" || cmd == "PAYJAIL") {
         return std::make_unique<PayJailFineCommand>();
     }
-    throw InvalidInputException("Perintah tidak dikenali: " + tokens[0] + '\n');
+
+    // ── HELP ──────────────────────────────────────────────────────────────────
+    if (cmd == "HELP") {
+        return std::make_unique<HelpCommand>();
+    }
+
+    throw InvalidInputException("Perintah tidak dikenali: " + tokens[0]);
 }
 
 bool CommandHandler::execute(const Command& command, GameState& state, EffectResolver& effectResolver, TurnManager& turnManager) const {
