@@ -151,3 +151,7 @@ void LandPlot::startEvent(PlotContext& ctx){
         }
     }
 }
+
+void LandPlot::demolish(){
+    level = 0;
+}

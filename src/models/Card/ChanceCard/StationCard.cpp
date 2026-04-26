@@ -16,13 +16,15 @@ void StationCard::activate(SkillContext& ctx) {
     int playerPosition = currPlayer.getPosition();
 
     try {
-        // TODO: Index masih sama seperti spesifikasi, sesuaikan sama implementasi
+        // TODO: Tunggu getAllByType() dari Board
         if (playerPosition >= board.findPlotIndex("TUG")) {
+            currPlayer.moveTo(board.findPlotIndex("GUB"), boardSize);
+        } else if (playerPosition >= board.findPlotIndex("GUB")) {
             currPlayer.moveTo(board.findPlotIndex("GBR"), boardSize);
-        } else if (playerPosition >= board.findPlotIndex("STB")) {
-            currPlayer.moveTo(board.findPlotIndex("TUG"), boardSize);
         } else if (playerPosition >= board.findPlotIndex("GBR")) {
             currPlayer.moveTo(board.findPlotIndex("STB"), boardSize);
+        } else if (playerPosition >= board.findPlotIndex("STB")) {
+            currPlayer.moveTo(board.findPlotIndex("TUG"), boardSize);
         }
     } catch (const GameException& e) {
         std::cerr << e.what() << '\n';

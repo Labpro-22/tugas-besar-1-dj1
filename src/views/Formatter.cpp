@@ -1,4 +1,4 @@
-#include "core/Formatter.hpp"
+#include "views/Formatter.hpp"
 
 string Formatter::moneyString(int value) {
     return "M" + to_string(value);
@@ -91,8 +91,7 @@ string Formatter::makeDeedTable(const LandPlot& landPlot) {
     if(status == PropertyStatus::BANK) {
         oss << "| Status : " << statusString(status) << " |" << endl;
     } else {
-        // TODO: getOwner() ??
-        //oss << "| Status : " << statusString(status) << " (" << landPlot.getOwner() << ") " << " |" << endl;
+        oss << "| Status : " << statusString(status) << " (" << landPlot.getOwner() << ") " << " |" << endl;
     }
 
     oss << "+===========================================================+" << endl;
@@ -425,7 +424,7 @@ string Formatter::failedMortgage(const LandPlot& landplot) {
 
 string Formatter::makeSellBuildingOption(int idx, const LandPlot& landPlot) {
     std::ostringstream oss;
-    oss << idx << ". " << landPlot.getName() << " (" << landPlot.getCode() << ") " << "- " << landPlot.getLevel() << " " << landPlot.getBuildingType() << " -> " << "Nilai jual bangunan : " << moneyString(landPlot.getSellPrice()) << endl;
+    oss << idx << ". " << landPlot.getName() << " (" << landPlot.getCode() << ") " << "- " << landPlot.getLevel() << " " << landPlot.getBuildingType() << " -> " << "Nilai jual bangunan : " << moneyString(landPlot.getSellBuildingPrice()) << endl;
 
     return oss.str();
 }
@@ -617,13 +616,22 @@ string Formatter::mortgagedList(int idx, const PropertyPlot& property) {
     return oss.str(); 
 }
 
-string Formatter::sellPropertyToBank(string& name, int money, int moneyrRecieve) {
+string Formatter::sellPropertyToBank(const PropertyPlot& property, int money) {
     std::ostringstream oss;
-    oss << name << " terjual ke Bank. Kamu menerima " << moneyString(moneyrRecieve) << endl;
-    oss << playerMoney(money + moneyrRecieve) << endl;
+    oss << property.getName() << " terjual ke Bank. Kamu menerima " << moneyString(property.calculateTotalValue()) << endl;
+    oss << playerMoney(money + property.calculateTotalValue()) << endl;
 
     return oss.str();
 }
+
+string Formatter::payDebtSuccess(int debt, const Player& visitor, const Player& owner) {
+    std::ostringstream oss;
+    oss << "Kewajiban " << moneyString(debt) << " terpenuhi. Membayar ke " << owner.getUsername() << "..." << endl;
+    oss << playerMoney(visitor.getCash()) << " -> " << playerMoney(visitor.getCash() - debt) << endl;
+    oss << "Uang " << owner.getUsername() << " : " << playerMoney(owner.getCash()) << " -> " << playerMoney(owner.getCash() - debt) << endl;
+
+    return oss.str();
+};
 
 string Formatter::dropCardWarning(string name) {
     std::ostringstream oss;

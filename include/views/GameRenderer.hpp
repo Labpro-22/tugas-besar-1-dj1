@@ -11,11 +11,11 @@ class GameRenderer {
         static void showBoard(const GameState& state);
 
         // ── Dice (command 2 & 3) ────────────────────────────────────────────
-        static void showDiceRoll(string username, const Dice& dice, string position); // 2
-        static void showControlDice(string username, const Dice& dice, string position); // 3
+        static void showDiceRoll(const Player& player, const Dice& dice, string& position); // 2
+        static void showControlDice(const Player& player, const Dice& dice, string& position); // 3
         
         // ── Deed / Akta (command 4) ──────────────────────────────────────────
-        static void showDeed(PropertyPlot& property);
+        static void showDeed(const LandPlot& landPlot);
 
         // ── Property list (command 5 - CETAK_PROPERTI) ──────────────────────
         // Shows the full owned-property list for the active player
