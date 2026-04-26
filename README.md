@@ -2,6 +2,8 @@
 
 **Nimonspoli** adalah permainan papan simulasi perdagangan properti berbasis *Command-Line Interface* (CLI) yang ditulis dalam **C++17**. Proyek ini dikembangkan untuk mata kuliah **IF2010 — Pemrograman Berorientasi Objek (Tubes 1)** dengan fokus pada penerapan prinsip-prinsip OOP: *Encapsulation*, *Inheritance*, *Polymorphism*, dan *Abstraction*.
 
+<img width="1920" height="1080" alt="domtracer (1)" src="https://github.com/user-attachments/assets/effccd3e-3bd0-4e0d-b378-03f114a58e40" />
+
 ---
 
 ## Daftar Isi
