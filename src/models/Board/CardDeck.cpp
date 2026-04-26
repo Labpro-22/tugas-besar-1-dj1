@@ -43,7 +43,7 @@ void CardDeck<T>::initialize(vector<T> cards) {
 template<class T>
 T CardDeck<T>::draw() {
     if (drawPile.empty()) {
-        throw InvalidStateException("Draw pile kosong.");
+        throw InvalidStateException("Draw pile kosong.\n");
     }
     T drawCard = std::move(drawPile.back());
     drawPile.pop_back();

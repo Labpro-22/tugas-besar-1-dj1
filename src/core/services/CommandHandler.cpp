@@ -126,7 +126,7 @@ std::unique_ptr<Command> CommandHandler::parse(const std::string& rawCommand) co
     if (cmd == "PAY_JAIL_FINE" || cmd == "PAY_FINE" || cmd == "PAYJAIL") {
         return std::make_unique<PayJailFineCommand>();
     }
-    throw InvalidInputException("Perintah tidak dikenali: " + tokens[0]);
+    throw InvalidInputException("Perintah tidak dikenali: " + tokens[0] + '\n');
 }
 
 bool CommandHandler::execute(const Command& command, GameState& state, EffectResolver& effectResolver, TurnManager& turnManager) const {
