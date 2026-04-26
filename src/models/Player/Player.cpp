@@ -183,6 +183,7 @@ void Player::buyProperty(PropertyPlot& property, int price) {
     pay(price);
     ownedProperties.push_back(property);
     property.setOwner(this);
+    property.setPropertyStatus(PropertyStatus::OWNED);
 }
 
 void Player::tradeProperty(PropertyPlot& property, Player* targetPlayer, int price){
@@ -209,6 +210,9 @@ void Player::transferProperty(PropertyPlot& property, Player* targetPlayer){
     //Ubah kepemilikan
     targetPlayer->ownedProperties.push_back(property);
     property.setOwner(targetPlayer);
+    if (!property.isMortgaged()) {
+        property.setPropertyStatus(PropertyStatus::OWNED);
+    }
 }
 
 void Player::useCards(std::size_t cardIndex, SkillContext& ctx){
@@ -406,4 +410,19 @@ bool Player::isBankrupt() const {
 
 void Player::addOwnedProperty(PropertyPlot& property) {
     ownedProperties.push_back(std::ref(property));
+}
+
+bool Player::removeOwnedProperty(PropertyPlot& property) {
+    auto it = std::find_if(ownedProperties.begin(), ownedProperties.end(),
+        [&](const std::reference_wrapper<PropertyPlot>& propertyRef) {
+            return &propertyRef.get() == &property;
+        }
+    );
+
+    if (it == ownedProperties.end()) {
+        return false;
+    }
+
+    ownedProperties.erase(it);
+    return true;
 }

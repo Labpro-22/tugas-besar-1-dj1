@@ -10,7 +10,8 @@ LandPlot::LandPlot(std::string name, std::string code, Color color,
             int festivalDuration, int festivalMultiplier):
     PropertyPlot(name, code, color, buyPrice, mortgageValue, owner, propertyStatus, festivalDuration, festivalMultiplier),
     upgHousePrice(upgHousePrice), upgHotelPrice(upgHotelPrice),
-    rentPriceTable(rentPriceTable){}
+    rentPriceTable(rentPriceTable),
+    level(0){}
 
 int LandPlot::getUpgHousePrice() const {
     return upgHotelPrice;

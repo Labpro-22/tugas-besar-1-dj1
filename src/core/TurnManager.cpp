@@ -2,6 +2,7 @@
 
 #include <string>
 #include "core/GameException.hpp"
+#include "core/services/AuctionService.hpp"
 #include "core/services/BankruptcyService.hpp"
 #include "core/services/CommandHandler.hpp"
 #include "models/Board/Board.hpp"
@@ -83,7 +84,12 @@ bool TurnManager::payJailFine(Player& player, GameState& state) {
         bankruptcyService.liquidateAssets(player, JAIL_FINE - player.getCash(), state.getLogger());
     }
     if (!bankruptcyService.canRecover(player, JAIL_FINE)) {
-        bankruptcyService.transferAssets(player, nullptr, state.getLogger());
+        AuctionService auctionService;
+        std::vector<Player*> auctionBidders;
+        for (Player& bidder : state.getPlayers()) {
+            auctionBidders.push_back(&bidder);
+        }
+        bankruptcyService.transferAssets(player, nullptr, state.getLogger(), auctionBidders, auctionService);
         return false;
     }
 
@@ -366,8 +372,9 @@ void TurnManager::drawSkillCardAtStart(Player& player, GameState& state, Command
     //    }
     //    Lihat TODO handleCardOverflow untuk alur drop.
     //
+    CommandHandler commandHandler;
     if (player.getOwnedCards().size() > 3){
-        // TODO: handleCardOverflow(player, state, commandHandler, rawSkillDeck);
+        handleCardOverflow(player, state, commandHandler, rawSkillDeck);
     }
     // 7. Logging:
     //    state.addLog(player.getUsername(), "KARTU", "Mendapat kartu " + card->getName());
