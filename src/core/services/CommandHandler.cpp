@@ -94,7 +94,7 @@ std::unique_ptr<Command> CommandHandler::parse(const std::string& rawCommand) co
     }
     if (cmd == "USE_SKILL") {
         if (tokens.size() < 2) {
-            throw InvalidInputException("USE_SKILL membutuhkan index kartu.");
+            return std::make_unique<UseSkillCardCommand>(0);
         }
         return std::make_unique<UseSkillCardCommand>(parseInt(tokens[1]));
     }

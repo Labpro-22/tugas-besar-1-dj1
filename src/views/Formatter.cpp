@@ -778,7 +778,7 @@ string Formatter::communityChestPlot(CommunityChestCard& card, int cost, int cur
 
 // ── Skill cards (command 20 - GUNAKAN_KEMAMPUAN) ─────────────────────
 string Formatter::makeCardList(int idx, const string& name, const string& description) { 
-    return to_string(idx + 1) + ". " + name + "---" + description + "\n";
+    return to_string(idx) + ". " + name + "---" + description + "\n";
 }
 
 string Formatter::usedSkillCard(bool isUsed) {

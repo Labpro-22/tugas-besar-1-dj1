@@ -447,26 +447,41 @@ bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager
         return false;
     }
  
-    GameRenderer::showCardList(0, "", ""); 
     for (std::size_t i = 0; i < cards.size(); ++i) {
         GameRenderer::showCardList(static_cast<int>(i) + 1,
             cards[i]->getName(), cards[i]->getDescription());
     }
  
-    if (cardIndex < 1 || static_cast<std::size_t>(cardIndex) > cards.size()) {
+    int selectedIndex = cardIndex;
+    if (selectedIndex == 0) {
+        const std::string raw = CommandHandler::promptInput("Pilih nomor kartu (0 untuk batal)");
+        try {
+            std::size_t parsedCount = 0;
+            selectedIndex = std::stoi(raw, &parsedCount);
+            if (parsedCount != raw.size()) {
+                throw InvalidInputException("Index kartu tidak valid.");
+            }
+        } catch (const std::exception&) {
+            throw InvalidInputException("Index kartu tidak valid.");
+        }
+    }
+
+    if (selectedIndex == 0) {
+        return true;
+    }
+    if (selectedIndex < 1 || static_cast<std::size_t>(selectedIndex) > cards.size()) {
         throw InvalidInputException("Index kartu tidak valid.");
     }
  
-    const std::string name = cards[static_cast<std::size_t>(cardIndex) - 1]->getName();
-    const std::string desc = cards[static_cast<std::size_t>(cardIndex) - 1]->getDescription();
+    const std::size_t cardPosition = static_cast<std::size_t>(selectedIndex) - 1;
+    const std::string name = cards[cardPosition]->getName();
+    const std::string desc = cards[cardPosition]->getDescription();
  
     SkillContext ctx{player, state.getPlayers(), state.getBoard(), state.getLogger()};
-    player.useCards(static_cast<std::size_t>(cardIndex) - 1, ctx);
-    player.setUsedSkillThisTurn(true);
+    player.useCards(cardPosition, ctx);
  
-    GameRenderer::showActivateSkillCard(name, desc);
     state.addLog(player.getUsername(), "KARTU",
-        "Pakai " + name + " → " + desc);
+        "Pakai " + name + " -> " + desc);
     return true;
 }
 
