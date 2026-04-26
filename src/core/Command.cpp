@@ -100,11 +100,16 @@ bool SetDiceCommand::execute(GameState& state, EffectResolver& effectResolver, T
     const int effectiveBoardSize = state.getBoardSizeOrDefault(state.getBoard().getSize());
     const bool isDouble = state.getDice().isDouble();
     Player& player = state.getCurrentPlayer();
+
     if (player.getHasRolled()) {
         state.addLog(player.getUsername() + " sudah melakukan ROLL pada giliran ini.");
         return false;
     }
-    
+
+    state.addLog(player.getUsername() + " melempar dadu: " +
+        std::to_string(dice1) + " dan " + std::to_string(dice2) + ".");
+    player.setHasRolled(true);
+
     if (player.getStatus() == PlayerStatus::JAILED) {
         const bool released = turnManager.handleJailedRoll(player, isDouble, state);
         if (!released) {
