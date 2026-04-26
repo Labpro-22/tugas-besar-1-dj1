@@ -7,6 +7,7 @@
 #include <vector>
 #include "core/GameException.hpp"
 #include "views/GameRenderer.hpp"
+#include "utils/SaveLoader.hpp"
 
 namespace {
 
@@ -62,6 +63,39 @@ std::vector<std::string> readPlayerNames(int count) {
     return names;
 }
 
+bool tryLoadGame(GameEngine& engine) {
+    while (true) {
+        std::string filename = CommandHandler::promptInput(
+            "Masukkan nama file save (file harus ada di folder data/)");
+        filename = trim(filename);
+
+        if (filename.empty()) {
+            std::cout << "Nama file tidak boleh kosong.\n";
+            continue;
+        }
+
+        if (!SaveLoader::fileExists(filename)) {
+            GameRenderer::failLoadFile();
+            if (!CommandHandler::promptYesNo("Coba file lain?")) {
+                return false;
+            }
+            continue;
+        }
+
+        try {
+            SaveLoader::load(engine.getState(), filename);
+            std::string currentPlayer = engine.getState().getCurrentPlayer().getUsername();
+            GameRenderer::successLoadFile(filename, currentPlayer);
+            return true;
+        } catch (const std::exception&) {
+            GameRenderer::failLoadFile();
+            if (!CommandHandler::promptYesNo("Coba file lain?")) {
+                return false;
+            }
+        }
+    }
+}
+
 } // namespace
 
 int main() {
@@ -69,9 +103,23 @@ int main() {
         GameEngine engine;
 
         GameRenderer::showGameTitle();
-        const int playerCount = readPositiveInt();
-        const std::vector<std::string> playerNames = readPlayerNames(playerCount);
-        engine.startNewGame(playerNames);
+
+        bool loaded = false;
+        if (CommandHandler::promptYesNo("Apakah anda ingin memuat permainan tersimpan?")) {
+            loaded = tryLoadGame(engine);
+            if (!loaded) {
+                if (!CommandHandler::promptYesNo("Mulai permainan baru?")) {
+                    return 0;
+                }
+            }
+        }
+
+        if (!loaded) {
+            const int playerCount = readPositiveInt();
+            const std::vector<std::string> playerNames = readPlayerNames(playerCount);
+            engine.startNewGame(playerNames);
+        }
+
         
         GameRenderer::showGameStartHint();
         std::string lastPlayerName;
@@ -107,10 +155,6 @@ int main() {
 
             try {
                 engine.run({command});
-                const auto logs = engine.getState().getRecentLogs(1);
-                if (!logs.empty()) {
-                    GameRenderer::showLogger(logs.back());
-                }
 
             } catch (const GameException& e) {
                 GameRenderer::throwException(e);

@@ -123,7 +123,6 @@ bool PrintDeedCommand::execute(GameState& state, EffectResolver&, TurnManager&) 
         return true;
     }
     
-    state.addLog("Perintah CETAK_AKTA untuk properti " + code + " dijalankan.");
     GameRenderer::showDeed(*land);
     return true;
 }
