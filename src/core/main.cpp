@@ -72,15 +72,22 @@ int main() {
         const int playerCount = readPositiveInt();
         const std::vector<std::string> playerNames = readPlayerNames(playerCount);
         engine.startNewGame(playerNames);
-
+        
         GameRenderer::showGameStartHint();
+        std::string lastPlayerName;
         while (!engine.isGameOver()) {
             const GameState& state = engine.getState();
-            GameRenderer::showBoard(state);
+            const std::string& currentPlayerName = state.getCurrentPlayer().getUsername();
+
+            if (currentPlayerName != lastPlayerName) {
+                GameRenderer::showBoard(state);
+                lastPlayerName = currentPlayerName;
+            }
+
             GameRenderer::showTurnHeader(
                 state.getCurrentTurn(),
                 state.getMaxTurn(),
-                state.getCurrentPlayer().getUsername()
+                currentPlayerName
             );
 
             GameRenderer::showCommandPrompt();
@@ -100,10 +107,15 @@ int main() {
 
             try {
                 engine.run({command});
-                const auto logs = engine.getState().getRecentLogs(1);
+                // const auto logs = engine.getState().getRecentLogs(1);
+                const auto logs = engine.getState().getLogs();
                 if (!logs.empty()) {
-                    GameRenderer::showLogger(logs.back());
+                    // GameRenderer::showLogger(logs.back());
+                    for(int i = 0; i < logs.size(); i++) {
+                        GameRenderer::showLogger(logs[i]);
+                    }
                 }
+
             } catch (const GameException& e) {
                 GameRenderer::throwException(e);
             }

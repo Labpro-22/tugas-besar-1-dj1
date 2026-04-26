@@ -63,7 +63,7 @@ string Formatter::showDiceRoll(const Player& player, const Dice& dice, string& p
     std::ostringstream oss;
     oss << "Mengocok dadu..." << endl;
     oss << "Hasil: " << dice.getDice1() << " + " << dice.getDice2() << " = " << dice.getTotal() << endl;
-    oss << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << "petak..." << endl;
+    oss << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << " petak..." << endl;
     oss << onLand(position, "");
 
     return oss.str();
@@ -72,7 +72,7 @@ string Formatter::showDiceRoll(const Player& player, const Dice& dice, string& p
 string Formatter::showControlDice(const Player& player, const Dice& dice, string& position) { 
     std::ostringstream oss;
     oss << "Hasil: " << dice.getDice1() << " + " << dice.getDice2() << " = " << dice.getTotal() << endl;
-    oss << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << "petak..." << endl;
+    oss << "Memajukan Bidak " << player.getUsername() << " sebanyak " << dice.getTotal() << " petak..." << endl;
     oss << onLand(position, "");
 
     return oss.str();
@@ -191,24 +191,29 @@ string Formatter::makePropertyList(PlotContext& ctx, const Player& player) {
 // ── Buy flow (command 6 - BELI) ───────────────────────────────────────────────
 string Formatter::buyProperty(const Player& player, const LandPlot& landPlot) {
     std::ostringstream oss;
+    const int tableWidth = 34;
+    const int contentWidth = tableWidth - 2;
+    const int labelWidth = 15;
+    const int valueWidth = contentWidth - labelWidth - 4;
+    string title = "[" + colorString(landPlot.getColor()) + "] "+ landPlot.getName() + " (" + landPlot.getCode() + ")";
 
+    int leftPad = (contentWidth - static_cast<int>(title.length())) / 2;
+    int rightPad = contentWidth - static_cast<int>(title.length()) - leftPad;
     oss << "Kamu mendarat di " << landPlot.getName() << " (" << landPlot.getCode() << ")!" << endl;
-    oss << "+================================+" << endl;
-    oss << "| [" << colorString(landPlot.getColor()) << "] "
-        << landPlot.getName() << " (" << landPlot.getCode() << ")" << " |" << endl;
-    oss << "+================================+" << endl;
-    oss << "| Harga Beli    : " << moneyString(landPlot.getBuyPrice()) << " |" << endl;
-    oss << "+--------------------------------+" << endl;
-    oss << "| Sewa dasar    : " << moneyString(landPlot.getRentPrice(0)) << " |" << endl;
-    oss << "| Sewa 1 rumah  : " << moneyString(landPlot.getRentPrice(1)) << " |" << endl;
-    oss << "| Sewa 2 rumah  : " << moneyString(landPlot.getRentPrice(2)) << " |" << endl;
-    oss << "| Sewa 3 rumah  : " << moneyString(landPlot.getRentPrice(3)) << " |" << endl;
-    oss << "| Sewa 4 rumah  : " << moneyString(landPlot.getRentPrice(4)) << " |" << endl;
-    oss << "| Sewa hotel    : " << moneyString(landPlot.getRentPrice(5)) << " |" << endl;
-    oss << "+================================+" << endl;
+
+    oss << "+" << string(contentWidth, '=') << "+" << endl;
+    oss << "|" << string(leftPad, ' ') << title << string(rightPad, ' ') << "|" << endl;
+    oss << "+" << string(contentWidth, '=') << "+" << endl;
+    oss << "| " << left << setw(labelWidth) << "Harga Beli"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getBuyPrice())<< "|" << endl;
+    oss << "+" << string(contentWidth, '-') << "+" << endl;
+    oss << "| " << left << setw(labelWidth) << "Sewa dasar"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(0))<< "|" << endl;
+    oss << "| " << left << setw(labelWidth) << "Sewa 1 rumah"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(1))<< "|" << endl;
+    oss << "| " << left << setw(labelWidth) << "Sewa 2 rumah"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(2))<< "|" << endl;
+    oss << "| " << left << setw(labelWidth) << "Sewa 3 rumah"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(3))<< "|" << endl;
+    oss << "| " << left << setw(labelWidth) << "Sewa 4 rumah"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(4))<< "|" << endl;
+    oss << "| " << left << setw(labelWidth) << "Sewa hotel"<< ": " << left << setw(valueWidth) << moneyString(landPlot.getRentPrice(5))<< "|" << endl;
+    oss << "+" << string(contentWidth, '=') << "+" << endl;
     oss << "Uang kamu saat ini: " << moneyString(player.getCash()) << endl;
-    oss << "Apakah kamu ingin membeli properti ini seharga "
-        << moneyString(landPlot.getBuyPrice()) << "? (y/n): ";
 
     return oss.str();
 }
@@ -216,7 +221,7 @@ string Formatter::buyProperty(const Player& player, const LandPlot& landPlot) {
 string Formatter::buySuccess(const Player& player, const LandPlot& landPlot) {
     std::ostringstream oss;
     oss << landPlot.getName() << " kini menjadi milikmu!" << endl;
-    oss << "Uang tersisa: " << moneyString(player.getCash() - landPlot.getBuyPrice()) << endl;
+    oss << "Uang tersisa: " << moneyString(player.getCash()) << endl;
     return oss.str();
 }
 
@@ -524,14 +529,14 @@ string Formatter::buildSuccess(const Player& player, const LandPlot& landPlot) {
     std::ostringstream oss;
     oss << "Kamu membangun 1 rumah di " << landPlot.getName()
         << ". Biaya: " << moneyString(landPlot.getUpgHousePrice()) << endl;
-    oss << "Uang tersisa: " << moneyString(player.getCash() - landPlot.getUpgHousePrice()) << endl;
+    oss << "Uang tersisa: " << moneyString(player.getCash()) << endl;
     return oss.str();
 }
 
 string Formatter::buildUpgradeSuccess(const Player& player, const LandPlot& landPlot) {
     std::ostringstream oss;
     oss << landPlot.getName() << " di-upgrade ke Hotel!" << endl;
-    oss << "Uang tersisa: " << moneyString(player.getCash() - landPlot.getUpgHotelPrice()) << endl;
+    oss << "Uang tersisa: " << moneyString(player.getCash()) << endl;
     return oss.str();
 }
 

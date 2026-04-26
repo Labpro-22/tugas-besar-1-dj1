@@ -4,7 +4,7 @@
 
 class StationPlot: public PropertyPlot{
 private:
-    static std::map<int, int> rentPriceTable; //TODO: consider move this to gamestate
+    static std::map<int, int> rentPriceTable;
 
 public:
     StationPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,
