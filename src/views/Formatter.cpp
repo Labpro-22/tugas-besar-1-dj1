@@ -854,7 +854,7 @@ string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
 // ── Main Setup ─────────────────────────────────────────────────────
 
 string Formatter::invalidIntInput() {
-    return "Masukkan bilangan bulat positif.\n";
+    return "Masukkan bilangan bulat antara 2 sampai 4.\n";
 }
 
 string Formatter::promptPlayerName(int n) {
@@ -878,7 +878,7 @@ string Formatter::gameStartHint() {
 }
 
 string Formatter::promptPlayerCount() {
-    return "Jumlah pemain: ";
+    return "Jumlah pemain (2-4): ";
 }
 
 string Formatter::turnHeader(int turn, int maxTurn, const string& username) {

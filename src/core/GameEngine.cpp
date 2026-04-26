@@ -3,13 +3,18 @@
 #include "core/GameException.hpp"
 #include "views/GameRenderer.hpp"
 
+namespace {
+constexpr std::size_t MIN_PLAYERS = 2;
+constexpr std::size_t MAX_PLAYERS = 4;
+}  // namespace
+
 GameEngine::GameEngine() : state() {
     loadGameConfig();
 }
 
 void GameEngine::startNewGame(const std::vector<std::string>& playerNames) {
-    if (playerNames.empty()) {
-        throw InvalidInputException("Minimal harus ada satu pemain.");
+    if (playerNames.size() < MIN_PLAYERS || playerNames.size() > MAX_PLAYERS) {
+        throw InvalidInputException("Jumlah pemain harus 2 hingga 4 orang.");
     }
 
     for (const std::string& name : playerNames) {
