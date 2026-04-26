@@ -187,11 +187,6 @@ bool BuildCommand::execute(GameState& state, EffectResolver&, TurnManager&) cons
         colorOptions.push_back(pair.first);
     }
 
-    if (colorOptions.empty()) {
-        GameRenderer::throwException(InvalidInputException("Tidak ada color group yang bisa dibangun."));
-        return false;
-    }
-
     Color selectedColor;
     vector<LandPlot*> selectedPlots;
 
@@ -400,7 +395,7 @@ bool RedeemCommand::execute(GameState& state, EffectResolver&, TurnManager&) con
 
     if (mortgaged.empty()) {
         GameRenderer::showRedeemNoEligible();
-        throw InvalidStateException("Tidak ada properti yang sedang digadaikan.");
+        return false;
     }
 
     GameRenderer::showRedeemListHeader(player.getCash());
