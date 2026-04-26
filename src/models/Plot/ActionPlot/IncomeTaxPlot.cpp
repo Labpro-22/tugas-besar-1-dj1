@@ -11,11 +11,11 @@ IncomeTaxPlot::IncomeTaxPlot(std::string name, std::string code, Color color)
     : TaxPlot(name, code, color) {}
 
 int IncomeTaxPlot::getPercentage() const {
-    return percentage;
+    return PPH;
 }
 
 void IncomeTaxPlot::startEvent(PlotContext& ctx) {
-    GameRenderer::showIncomeTaxPrompt(FLAT, percentage);
+    GameRenderer::showIncomeTaxPrompt(FLAT, PPH);
     std::string msg = "Pilihan (1/2)"; 
     std::string answer;
     while (true){
@@ -43,6 +43,6 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
         int totalWealth = ctx.getCurrentPlayer().getTotalWealth();
         int cashBefore = ctx.getCurrentPlayer().getCash();
         ctx.getCurrentPlayer().payTaxes(ctx.getCurrentPlayer().getTotalWealth() * PPH/100);
-        GameRenderer::showIncomeTaxResult(totalWealth, cashBefore, percentage);
+        GameRenderer::showIncomeTaxResult(totalWealth, cashBefore, PPH);
     }
 }

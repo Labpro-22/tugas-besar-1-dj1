@@ -72,7 +72,7 @@ int main() {
         const int playerCount = readPositiveInt();
         const std::vector<std::string> playerNames = readPlayerNames(playerCount);
         engine.startNewGame(playerNames);
-
+        
         GameRenderer::showGameStartHint();
         std::string lastPlayerName;
         while (!engine.isGameOver()) {
