@@ -44,7 +44,7 @@ class Formatter {
         static string payIncomeTax(int flat, int percentage);
         static string payIncomeTaxResult(int totalWealth, int cashBefore, int percentage);              //TAMBAHAN
         static string payFlatTax(int flat, int money);
-        static string failPayFlatTax(int money);
+        static string failPayFlatTax(int flat, int money);
         static string payLuxuryTax(int startMoney, int finalMoney);
         static string failPayLuxuryTax(int money);
    

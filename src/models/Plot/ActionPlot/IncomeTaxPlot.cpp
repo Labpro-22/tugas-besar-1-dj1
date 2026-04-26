@@ -28,7 +28,14 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
     }
 
     if (answer == "1"){
-        ctx.getCurrentPlayer().payTaxes(FLAT);
+        if(ctx.getCurrentPlayer().getCash() < FLAT) {
+            GameRenderer::showFailPayFlatTax(FLAT, ctx.getCurrentPlayer().getCash());
+            // TODO: Handle Bankrupt
+
+        } else {
+            ctx.getCurrentPlayer().payTaxes(FLAT);
+            GameRenderer::showPayFlatTax(FLAT, ctx.getCurrentPlayer().getCash());
+        }
     }
 
     else if (answer == "2"){
