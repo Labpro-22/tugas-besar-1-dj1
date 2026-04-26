@@ -219,15 +219,6 @@ bool UseSkillCardCommand::execute(GameState& state, EffectResolver&, TurnManager
 SaveCommand::SaveCommand(std::string filename) : filename(std::move(filename)) {}
 
 bool SaveCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
-    if (ConfigSaver::fileExists(filename)) {
-        // TODO: overwrite confirmation dialog
-    }
-    ConfigSaver::save(state, filename);
-    state.addLog(state.getCurrentPlayer().getUsername(), "SIMPAN", "Permainan disimpan ke " + filename);
-    return true;
-}
-
-bool SaveCommand::execute(GameState& state, EffectResolver&, TurnManager&) const {
     if (state.getCurrentPlayer().getHasRolled()) {
         state.addLog("SIMPAN hanya bisa dilakukan sebelum melempar dadu.");
         return false;
