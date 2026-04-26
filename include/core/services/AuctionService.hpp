@@ -2,16 +2,15 @@
 
 #include <vector>
 
-class GameState;
+class PropertyPlot;
 class Player;
+class Logger;
 
 class AuctionService {
 public:
     bool startAuction(
-        int basePrice,
+        PropertyPlot& property,
         const std::vector<Player*>& bidders,
-        Player*& winner,
-        int& finalPrice,
-        GameState& state
+        Logger& logger
     ) const;
 };
