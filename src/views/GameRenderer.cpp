@@ -75,12 +75,20 @@ void GameRenderer::showIncomeTaxResult(int totalWealth, int cashBefore, int perc
     cout << Formatter::payIncomeTaxResult(totalWealth, cashBefore, percentage);
 }
 
+void GameRenderer::showPayFlatTax(int flat, int money) {
+    cout << Formatter::payFlatTax(flat, money);
+}
+
+void GameRenderer::showFailPayFlatTax(int flat, int money) {
+    cout << Formatter::failPayFlatTax(flat, money);
+}
+
 void GameRenderer::showLuxuryTax(int startMoney, int finalMoney) {
     cout << Formatter::payLuxuryTax(startMoney, finalMoney);
 }
 
-void GameRenderer::showFailPayTax(int money) {
-    cout << Formatter::failPayTax(money);
+void GameRenderer::showFailPayLuxuryTax(int money) {
+    cout << Formatter::failPayLuxuryTax(money);
 }
 
 // ── Mortgage (command 9 - GADAI) ──────────────────────────────────────

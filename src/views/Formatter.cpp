@@ -276,7 +276,6 @@ string Formatter::payIncomeTax(int flat, int percentage) {
     oss << "1. Bayar flat " << moneyString(flat) << endl;
     oss << "2. Bayar " << percentage << "% " << "dari total kekayaan" << endl;
     oss << "(Pilih sebelum menghitung kekayaan!)" << endl;
-    oss << "Pilihan (1/2): ";
 
     return oss.str();
 }
@@ -294,6 +293,22 @@ string Formatter::payIncomeTaxResult(int totalWealth, int cashBefore, int percen
     return oss.str();
 }
 
+string Formatter::payFlatTax(int flat, int money) {
+    std::ostringstream oss;
+    oss << "Kamu membayar bayar pajak flat " << flat << "!" << endl;
+    oss << playerMoney(money) << endl;
+
+    return oss.str();
+}
+
+string Formatter::failPayFlatTax(int flat, int money) { 
+    std::ostringstream oss;
+    oss << "Kamu tidak mampu bayar pajak flat " << flat << "!" << endl;
+    oss << playerMoney(money) << endl;
+
+    return oss.str();
+}
+
 string Formatter::payLuxuryTax(int startMoney, int finalMoney) { 
     std::ostringstream oss;
     oss << onLand("Pajak Barang Mewah", "(PBM) !");
@@ -303,12 +318,14 @@ string Formatter::payLuxuryTax(int startMoney, int finalMoney) {
     return oss.str();    
 }
 
-string Formatter::failPayTax(int money) { 
+string Formatter::failPayLuxuryTax(int money) { 
     std::ostringstream oss;
-    oss << "Kamu tidak mampu bayar pajak flat M150 !" << endl;
-    oss << playerMoney(money) << endl;
+    oss << onLand("Pajak Barang Mewah", "(PBM) !");
+    oss << "Pajak sebesar M150 langsung dipotong" << endl;
+    oss << "Kamu tidak mampu membayar pajak" << endl;
+    oss << "Uang kamu: " << moneyString(money) << endl;
 
-    return oss.str();
+    return oss.str();   
 }
 
 // ── Mortgage (command 9 - GADAI [TODO REVISION]) ──────────────────────────────────────
@@ -552,7 +569,7 @@ string Formatter::festivalLanding(const Player& player) {
         const PropertyPlot& prop = ref.get();
         oss << "- " << prop.getName() << " (" << prop.getCode() << ")" << endl;
     }
-    oss << "Masukkan kode properti: ";
+
     return oss.str();
 }
 
@@ -733,7 +750,7 @@ string Formatter::communityChestPlot(CommunityChestCard& card, int cost, int cur
     oss << "\"" << card.getDescription() << "\"" << endl;
 
     if(currMoney >= cost) {
-        oss << "Kamu membayar " << moneyString(cost) << " ke Bank. Sisa Uang = " << moneyString(currMoney - cost) << endl;
+        oss << "Kamu membayar " << moneyString(cost) << " ke Bank. Sisa Uang = " << moneyString(currMoney) << endl;
     } else {
         oss << "Kamu tidak mampu bayar (" << moneyString(cost) << ") " << endl;
         oss << playerMoney(currMoney) << endl;

@@ -43,8 +43,10 @@ class Formatter {
     // ── Pay tax (command 8 - BAYAR_PAJAK) ────────────────────────────────────────
         static string payIncomeTax(int flat, int percentage);
         static string payIncomeTaxResult(int totalWealth, int cashBefore, int percentage);              //TAMBAHAN
+        static string payFlatTax(int flat, int money);
+        static string failPayFlatTax(int flat, int money);
         static string payLuxuryTax(int startMoney, int finalMoney);
-        static string failPayTax(int money);
+        static string failPayLuxuryTax(int money);
    
     // ── Mortgage (command 9 - GADAI [TODO REVISION]) ────────────────────────────────────── 
         static string makeCanMortgagedList(const PropertyPlot& property, int money);

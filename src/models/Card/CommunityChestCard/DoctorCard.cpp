@@ -10,6 +10,14 @@ string DoctorCard::getDescription() {
  
 void DoctorCard::activate(SkillContext& ctx) {
     Player& currPlayer = ctx.getCurrentPlayer();
-    currPlayer.pay(700);
+    try {
+        currPlayer.pay(700);
+        GameRenderer::showOnLandCommunityChestCard(*this, 700, currPlayer.getCash());
+        if (currPlayer.getCash() < 700) {
+            // TODO: Handle Bankrupt
+        } 
+    } catch (const GameException& e) {
+        GameRenderer::throwException(e);
+    }
 }
  
