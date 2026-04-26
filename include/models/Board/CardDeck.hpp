@@ -4,7 +4,6 @@
 #include "vector"
 #include "random"
 #include "algorithm"
-#include "views/GameRenderer.hpp"
 using namespace std;
 
 template<class T>
@@ -26,6 +25,6 @@ class CardDeck {
         int drawPileSize();
         int discardPileSize();
 
-        vector<T> getAllCards() const;
+        const deque<T>& getAllCards() const;
 };
 

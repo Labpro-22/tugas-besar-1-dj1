@@ -49,6 +49,15 @@ string Formatter::playerMoney(int money) {
     return "Uang kamu sekarang : " + moneyString(money);
 }
 
+// ── Input Handler ───────────────────────────────────────────────────────
+string Formatter::promptInputMessage(string prompt){
+    return prompt + " :";
+}
+
+string Formatter::promptYesNoMessage(string prompt) {
+    return prompt + " (y/n) :";
+}
+
  // ── Dice (command 2 & 3) ─────────────────────────────────────────────
 string Formatter::showDiceRoll(const Player& player, const Dice& dice, string& position) {
     std::ostringstream oss;
@@ -702,9 +711,9 @@ string Formatter::failSaveFile(string& fileName) {
 }
 
 // ── Log (command 17 - CETAK_LOG) ─────────────────────────────────────
-string showLogger(const LogEntry& log) {
+string Formatter::showLogger(const LogEntry& log) {
     return "[" + to_string(log.turn) + "] " + log.username + " | " + log.actionType + " | " + log.detail + "\n";
-};
+}
 
 // ── Win (command 18 - MENANG) ─────────────────────────────────────────
 string Formatter::makePlayerList(const Player& player) { 
@@ -760,7 +769,7 @@ string Formatter::communityChestPlot(CommunityChestCard& card, int cost, int cur
 }
 
 // ── Skill cards (command 20 - GUNAKAN_KEMAMPUAN) ─────────────────────
-string Formatter::makeCardList(int idx, string& name, string& description) { 
+string Formatter::makeCardList(int idx, const string& name, const string& description) { 
     return to_string(idx + 1) + ". " + name + "---" + description + "\n";
 }
 
@@ -781,7 +790,7 @@ string Formatter::effectSkillCard(string& label, string& description) {
 }
 
 // ── Drop card (command 21 - DROP KARTU) ──────────────────────────────
-string Formatter::dropCardWarning(string& name) {
+string Formatter::dropCardWarning(const string& name) {
     std::ostringstream oss;
     oss << "Kamu mendapatkan 1 kartu acak baru !" << endl;
     oss << "Kartu yang didapat : " << name << endl;
@@ -791,7 +800,7 @@ string Formatter::dropCardWarning(string& name) {
     return oss.str();
 }
 
-string Formatter::dropCardAction(string& name) {
+string Formatter::dropCardAction(const string& name) {
     return name + "telah dibuang. Sekarang kamu memiliki 3 kartu di tangan.\n";
 }
 
@@ -836,6 +845,6 @@ string Formatter::landOnPrisonJailed(int jailTurnsLeft) {
 }
 
 // ── Exception ──────────────────────────────────────────────────────────────
-string Formatter::throwException(GameException e) {
+std::string Formatter::throwException(const GameException& e) {
     return e.what();
 }

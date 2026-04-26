@@ -20,11 +20,11 @@ private:
  
     CardDeck<std::unique_ptr<ChanceCard>>         chanceDeckPile;
     CardDeck<std::unique_ptr<CommunityChestCard>> communityChestDeckPile;
-    CardDeck<std::unique_ptr<SkillCard>>          skillCardDeckPile;
+    CardDeck<std::shared_ptr<SkillCard>>          skillCardDeckPile;
 
     vector<std::unique_ptr<ChanceCard>> ownedChanceCards;
     vector<std::unique_ptr<CommunityChestCard>> ownedCommunityChestCards;
-    vector<std::unique_ptr<SkillCard>> ownedSkillCards;
+    vector<std::shared_ptr<SkillCard>> ownedSkillCards;
  
     Board(const Board&)            = delete;
     Board& operator=(const Board&) = delete;
@@ -52,17 +52,17 @@ public:
 
     void initializeChanceDeck(std::vector<unique_ptr<ChanceCard>> cards);
     void initializeCommunityChestDeck(std::vector<unique_ptr<CommunityChestCard>> cards);
-    void initializeSkillDeck(std::vector<unique_ptr<SkillCard>> cards);
+    void initializeSkillDeck(std::vector<std::shared_ptr<SkillCard>> cards);
  
     CardDeck<std::unique_ptr<ChanceCard>>& getChanceDeckPile();
     CardDeck<std::unique_ptr<CommunityChestCard>>& getCommunityChestDeckPile();
-    CardDeck<std::unique_ptr<SkillCard>>& getSkillCardDeckPile();
+    CardDeck<std::shared_ptr<SkillCard>>& getSkillCardDeckPile();
  
     const CardDeck<std::unique_ptr<ChanceCard>>& getChanceDeckPile() const;
     const CardDeck<std::unique_ptr<CommunityChestCard>>& getCommunityChestDeckPile() const;
-    const CardDeck<std::unique_ptr<SkillCard>>& getSkillCardDeckPile() const;
+    const CardDeck<std::shared_ptr<SkillCard>>& getSkillCardDeckPile() const;
  
     std::unique_ptr<ChanceCard> drawChanceCard();
     std::unique_ptr<CommunityChestCard> drawCommunityChestCard();
-    std::unique_ptr<SkillCard> drawSkillCard();
+    std::shared_ptr<SkillCard> drawSkillCard();
 };

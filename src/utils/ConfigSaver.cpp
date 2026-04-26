@@ -46,23 +46,18 @@ string ConfigSaver::plotTypeToString(PlotType type) {
  
 string ConfigSaver::cardValueString(const shared_ptr<SkillCard>& card,
                                      const Player& player) {
-    
+
     MoveCard* move = dynamic_cast<MoveCard*>(card.get());
     if (move) {
         return to_string(move->getMoveNumber());
     }
- 
+
     DiscountCard* discount = dynamic_cast<DiscountCard*>(card.get());
     if (discount) {
     return to_string(discount->getDiscountValue()) + " "
          + to_string(player.getDiscountTurnLeft());
     }
- 
-    TeleportCard* teleport = dynamic_cast<TeleportCard*>(card.get());
-    if (teleport) {
-        return to_string(teleport->getTargetIndex());
-    }
- 
+
     return "";
 }
  

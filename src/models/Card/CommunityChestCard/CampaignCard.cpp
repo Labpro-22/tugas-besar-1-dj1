@@ -1,5 +1,8 @@
 #include "models/Card/CommunityChestCard/CampaignCard.hpp"
 
+#include "core/GameException.hpp"
+#include "views/GameRenderer.hpp"
+
 string CampaignCard::getName() {
     return "CampaignCard";
 }

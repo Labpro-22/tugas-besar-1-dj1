@@ -11,6 +11,7 @@
 #include "core/services/EffectResolver.hpp"
 #include "models/Player/Player.hpp"
 #include "models/Card/SkillCard/SkillCard.hpp"
+#include "views/GameRenderer.hpp"
 
 using std::cout;
 using std::cin;
@@ -133,16 +134,14 @@ bool CommandHandler::execute(const Command& command, GameState& state, EffectRes
 }
 
 std::string CommandHandler::promptInput(std::string prompt){
-    //TODO: gunakan renderer untuk menampilkan messagenya dan sesuaikan dengan formatter
-    std::cout << prompt << ": ";
-
+    GameRenderer::showInputMessage(prompt);
     std::string answer;
     std::cin >> answer;
     return answer;
 }
 
 bool CommandHandler::promptYesNo(std::string prompt){
-    //TODO: gunakan renderer untuk menampilkan messagenya dan sesuaikan dengan formatter
+    GameRenderer::showYesNoMessage(prompt);
     while(true){
         try{
             std::cout << prompt << " (y/n): ";
@@ -159,8 +158,7 @@ bool CommandHandler::promptYesNo(std::string prompt){
                 throw InvalidInputException();
             }
         } catch (const GameException& e){
-            //TODO: gunakan renderer untuk menampilkan messagenya
-            cout << e.what();
+            GameRenderer::throwException(e);
         }
     }
     return true;
@@ -172,25 +170,23 @@ std::size_t CommandHandler::promptCardDrop(const Player& player) {
 
     while (true) {
         try {
-            // TODO: Tampilkan daftar kartu
-            std::cout << "Tangan penuh! Pilih kartu yang akan dibuang:\n";
+            Formatter::dropCardWarning(cards.at(3)->getName());
             for (std::size_t i = 0; i < cards.size(); ++i) {
-                std::cout << "  [" << (i + 1) << "] "
-                          << cards[i]->getName() << "\n";
+                GameRenderer::showCardList(i, cards.at(i)->getName(), cards.at(i)->getDescription());
             }
 
-            std::string raw = promptInput("Pilih nomor kartu (1-"
-                                          + std::to_string(cards.size()) + ")");
+            std::string raw = promptInput("Pilih nomor kartu (1-"+ std::to_string(cards.size()) + ")");
             int choice = parseInt(raw);
 
             if (choice < 1 || static_cast<std::size_t>(choice) > cards.size()) {
                 throw InvalidInputException("Nomor tidak valid.");
             }
 
+            GameRenderer::showDropCardAction(cards.at(choice)->getName());
             return static_cast<std::size_t>(choice - 1);
 
         } catch (const GameException& e) {
-            std::cout << e.what() << "\n";
+            GameRenderer::throwException(e);
         }
     }
 }

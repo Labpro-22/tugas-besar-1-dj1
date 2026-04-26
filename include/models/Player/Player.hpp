@@ -6,6 +6,7 @@
 #include <vector>
 #include "models/Player/PlayerStatus.hpp"
 
+class Board;
 class Plot;
 class PropertyPlot;
 class SkillCard;
@@ -20,7 +21,7 @@ private:
     PlayerStatus status;
     int jailTurns;
     std::vector<std::reference_wrapper<PropertyPlot>> ownedProperties;
-    std::vector<std::unique_ptr<SkillCard>> ownedCards;
+    std::vector<std::shared_ptr<SkillCard>> ownedCards;
     bool hasRolled;
     bool shieldActive;
     bool usedSkillThisTurn;
@@ -40,7 +41,7 @@ public:
     PlayerStatus getStatus() const;
     int getJailTurns() const;
     const std::vector<std::reference_wrapper<PropertyPlot>>& getOwnedProperties() const;
-    const std::vector<std::unique_ptr<SkillCard>>& getOwnedCards() const;
+    const std::vector<std::shared_ptr<SkillCard>>& getOwnedCards() const;
     bool getHasRolled() const;
     bool isShieldActive() const;
     bool hasUsedSkillThisTurn() const;
@@ -62,7 +63,7 @@ public:
     void tradeProperty(PropertyPlot& property, Player* targetPlayer, int price); //TODO: cek apakah aman untuk trade banyak properti sekaligus
     void transferProperty(PropertyPlot& property, Player* targetPlayer);
     void useCards(std::size_t cardIndex, SkillContext& ctx);
-    void dropCard(std::size_t cardIndex, CardDeck<std::unique_ptr<SkillCard>>& deck);
+    void dropCard(std::size_t cardIndex, CardDeck<std::shared_ptr<SkillCard>>& deck);
     void receive(int amount);
 
     Player& operator+=(int amount);
@@ -82,7 +83,7 @@ public:
     void decrementDiscountTurn();
     void incrementConsecutiveDoubles();
     void resetConsecutiveDoubles();
-    void addOwnedCard(const std::unique_ptr<SkillCard>& card);
+    void addOwnedCard(std::shared_ptr<SkillCard> card);
     void addOwnedProperty(PropertyPlot& property);
     void setUsedSkillThisTurn(bool used);
     void resetTurnFlags();

@@ -1,5 +1,10 @@
 #include "models/Card/SkillCard/DiscountCard.hpp"
 
+#include <sstream>
+#include "core/SkillContext.hpp"
+#include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
+
 DiscountCard::DiscountCard() {
     random_device rd;
     mt19937 g(rd());

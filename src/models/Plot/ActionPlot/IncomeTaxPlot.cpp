@@ -1,10 +1,11 @@
 #include "models/Plot/ActionPlot/IncomeTaxPlot.hpp"
 
-#include <iostream>
 #include "core/GameException.hpp"
+#include "core/services/BankruptcyService.hpp"
 #include "core/services/CommandHandler.hpp"
 #include "views/GameRenderer.hpp"
 #include "models/Player/Player.hpp"
+#include "views/GameRenderer.hpp"
 
 IncomeTaxPlot::IncomeTaxPlot(std::string name, std::string code, Color color)
     : TaxPlot(name, code, color) {}
@@ -18,7 +19,7 @@ void IncomeTaxPlot::startEvent(PlotContext& ctx) {
     std::string msg = "Pilihan (1/2)"; 
     std::string answer;
     while (true){
-        answer = CommandHandler::promptInput(msg);
+        answer = CommandHandler::promptInput("Pilihan (1/2)");
         if (answer == "1" || answer == "2"){
             break;
         }

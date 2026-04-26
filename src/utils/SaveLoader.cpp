@@ -2,6 +2,18 @@
 #include <sstream>
 using namespace std;
 
+namespace {
+int findPlotIndexByCode(const Board& board, const std::string& code) {
+    for (int i = 0; i < board.getSize(); ++i) {
+        Plot* plot = board.getPlot(i);
+        if (plot && plot->getCode() == code) {
+            return i;
+        }
+    }
+    return -1;
+}
+}  // namespace
+
 const string SaveLoader::savePath = "data/";
  
 ifstream SaveLoader::open(const string& path) {
@@ -40,7 +52,7 @@ PropertyStatus SaveLoader::stringToPropertyStatus(const string& str) {
  
 shared_ptr<SkillCard> SaveLoader::makeSkillCard(
         const string& name, int value, int duration) {
-  // SEPERTINYA BELUM AMAN
+    (void)duration;
     if (name == "MoveCard") {
         return make_shared<MoveCard>(value);
     }
@@ -48,7 +60,7 @@ shared_ptr<SkillCard> SaveLoader::makeSkillCard(
         return make_shared<DiscountCard>(value);
     }
     if (name == "TeleportCard") {
-        return make_shared<TeleportCard>(value);
+        return make_shared<TeleportCard>();
     }
     if (name == "ShieldCard") {
         return make_shared<ShieldCard>();
@@ -100,12 +112,11 @@ map<string,string> SaveLoader::loadPlayerState(ifstream& file, GameState& state)
  
             auto card = makeSkillCard(cardName, value, duration);
             if (card) {
-                player.addOwnedCard(card);
- 
                 if (cardName == "DiscountCard" && duration > 0) {
                     player.setDiscountValue(value);
                     player.setDiscountTurnLeft(duration);
                 }
+                player.addOwnedCard(std::move(card));
             }
         }
  
@@ -141,7 +152,7 @@ void SaveLoader::loadPropertyState(ifstream& file, GameState& state, const map<s
         int fmult, fdur;
         file >> kode >> jenis >> pemilik >> statusStr >> fmult >> fdur >> nBangunan;
  
-        int plotIdx = board.findPlotIndex(kode);
+        int plotIdx = findPlotIndexByCode(board, kode);
         if (plotIdx < 0) continue;
  
         Plot* plot = board.getPlot(plotIdx);
@@ -175,7 +186,7 @@ void SaveLoader::loadPropertyState(ifstream& file, GameState& state, const map<s
     for (auto& p : players) {
         auto it = playerPosCodes.find(p.getUsername());
         if (it != playerPosCodes.end()) {
-            int idx = board.findPlotIndex(it->second);
+            int idx = findPlotIndexByCode(board, it->second);
             if (idx >= 0) {
                 p.moveTo(idx, board.getSize());
             }
@@ -187,19 +198,19 @@ void SaveLoader::loadDeckState(ifstream& file, GameState& state) {
     int jumlahKartu;
     file >> jumlahKartu;
     file.ignore();
- // SEPERTINYA BELUM AMAN
-    vector<SkillCard*> deckCards;
+
+    vector<shared_ptr<SkillCard>> deckCards;
     for (int i = 0; i < jumlahKartu; ++i) {
         string cardName;
         getline(file, cardName);
- 
+
         auto card = makeSkillCard(cardName, 0, 0);
         if (card) {
-            deckCards.push_back(card.get());
+            deckCards.push_back(std::move(card));
         }
     }
- 
-    state.getBoard().initializeSkillDeck(deckCards);
+
+    state.getBoard().initializeSkillDeck(std::move(deckCards));
 }
  
 void SaveLoader::loadLogState(ifstream& file, GameState& state) {

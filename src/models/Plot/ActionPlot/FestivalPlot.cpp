@@ -2,6 +2,8 @@
 
 #include "core/services/CommandHandler.hpp"
 #include "models/Board/Board.hpp"
+#include "core/GameException.hpp"
+#include "views/GameRenderer.hpp"
 
 FestivalPlot::FestivalPlot(std::string name, std::string code, Color color)
     : ActionPlot(name, code, color) {}
@@ -23,10 +25,10 @@ void FestivalPlot::startEvent(PlotContext& ctx) {
             targetIdx = idx;
             break;
         }
-        catch (const GameException e){
+        catch (const GameException& e){
            GameRenderer::throwException(e);
         }
-        catch (const GameException e){
+        catch (const GameException& e){
             GameRenderer::throwException(e);
         }
     }

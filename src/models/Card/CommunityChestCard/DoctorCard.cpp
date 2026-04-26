@@ -1,4 +1,7 @@
 #include "models/Card/CommunityChestCard/DoctorCard.hpp"
+
+#include "core/GameException.hpp"
+#include "views/GameRenderer.hpp"
  
 string DoctorCard::getName() {
     return "DoctorCard";

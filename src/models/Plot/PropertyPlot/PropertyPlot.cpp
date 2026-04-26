@@ -1,5 +1,12 @@
 #include "models/Plot/PropertyPlot/PropertyPlot.hpp"
+
+#include <string>
+#include "core/PlotContext.hpp"
+#include "core/services/AuctionService.hpp"
+#include "core/services/BankruptcyService.hpp"
+#include "core/services/CommandHandler.hpp"
 #include "models/Player/Player.hpp"
+
 #include "views/GameRenderer.hpp"
 
 PropertyPlot::PropertyPlot(std::string name, std::string code, Color color, int buyPrice, int mortgageValue,

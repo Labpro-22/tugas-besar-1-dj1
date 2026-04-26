@@ -3,10 +3,7 @@
 #include "core/GameException.hpp"
 
 template<class T>
-CardDeck<T>::CardDeck() {
-    this->drawPile = {};
-    this->discardPile = {};
-}
+CardDeck<T>::CardDeck() = default;
 
 template<class T>
 void CardDeck<T>::shuffle() {
@@ -34,7 +31,8 @@ void CardDeck<T>::reshuffleFromDiscard() {
 }
 
 template<class T>
-void CardDeck<T>::initialize(vector<T> card) {
+void CardDeck<T>::initialize(vector<T> cards) {
+    drawPile.clear();
     for (auto& card : cards) {
         drawPile.push_back(std::move(card));
     }
@@ -68,12 +66,8 @@ int CardDeck<T>::discardPileSize() {
 }
 
 template<class T>
-vector<T> CardDeck<T>::getAllCards() const {
-    vector<T> deck;
-    for(auto it = drawPile.begin(); it < drawPile.end(); ++it) {
-        deck.push_back(*it);
-    }
-    return deck;
+const deque<T>& CardDeck<T>::getAllCards() const {
+    return drawPile;
 }
 
 // Explicit instantiations
@@ -84,5 +78,5 @@ vector<T> CardDeck<T>::getAllCards() const {
 
 template class CardDeck<std::unique_ptr<ChanceCard>>;
 template class CardDeck<std::unique_ptr<CommunityChestCard>>;
-template class CardDeck<std::unique_ptr<SkillCard>>;
+template class CardDeck<std::shared_ptr<SkillCard>>;
 
